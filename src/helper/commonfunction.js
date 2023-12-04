@@ -161,11 +161,14 @@ function ConvertResponseForSelectWithRefCode(responses, defaultArray = []) {
 
 function ConvertResponseForSelectAbsenceCode(responses, defaultArray = []) {
     var myArray = [];
-    if (!Array.isArray(defaultArray)) { myArray.push(defaultArray); }
-    var objectArray = Object.entries(responses);
-    objectArray.forEach(async ([key, value]) => {
-        myArray.push({ name: value.name + " (" + value.title + ")", code: value.id });
-    })
+    if(responses){
+        if (!Array.isArray(defaultArray)) { myArray.push(defaultArray); }
+        var objectArray = Object.entries(responses);
+        objectArray.forEach(async ([key, value]) => {
+            myArray.push({ name: value.name + " (" + value.title + ")", code: value.id });
+        })
+    }
+
     return myArray;
 };
 
@@ -192,14 +195,14 @@ function ConvertResponseOfNameCodeForSelect(responses, defaultArray = []) {
 
 export function formatDateToDdMmYyyy(inputDate) {
     const date = new Date(inputDate);
-  
+
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
-  
+
     return `${day}/${month}/${year}`;
   };
-  
+
 
 const fetchGraphqlPaginatedRecords = async (query, filter, sort, limit, resultKey, checkDeleted = true) => {
         let allRecords = [];

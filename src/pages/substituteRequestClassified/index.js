@@ -207,7 +207,6 @@ export default function SubstituteRequestClassifiedReportList() {
         },
     ];
     const getSeverity = (status) => {
-        console.log("hey", status);
         switch (status) {
 
 
@@ -495,7 +494,6 @@ export default function SubstituteRequestClassifiedReportList() {
     //                 Username: loggedUserId,
     //             }).promise();
     //         } catch (e) {
-    //             //console.log(e)
     //         }
     //     }
     //     let loggedUserRole = adminUsers.UserAttributes.find(attr => attr.Name === "custom:role")?.Value;
@@ -583,7 +581,6 @@ export default function SubstituteRequestClassifiedReportList() {
         let userSub;
         try {
             const createUserResponse = await cognito.adminCreateUser(params).promise();
-            console.log('Employee confirmed and saved successfully', createUserResponse);
             userSub = createUserResponse.User?.Attributes?.find(attr => attr.Name === 'sub')?.Value;
             // setUserSub(userSub);
             // toast.success("Employee confirmed and saved successfully")
@@ -591,9 +588,7 @@ export default function SubstituteRequestClassifiedReportList() {
             // User Confirmation 
             cognito.adminSetUserPassword(params2, (err, data) => {
                 if (err) {
-                    console.log('Error confirming user:', err);
                 } else {
-                    console.log('User confirmed successfully:', data);
                 }
             });
 
@@ -893,7 +888,6 @@ export default function SubstituteRequestClassifiedReportList() {
         //     try {
         //         payrollHrSet = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: substituteCertificateRequestResponse.payrollHr, }).promise();
         //     } catch (e) {
-        //         //console.log(e)
         //     }
     }
     // let thirdApproverFirstName = await GetValueFromArray(payrollHrSet.UserAttributes, "custom:firstName")
@@ -1119,7 +1113,6 @@ export default function SubstituteRequestClassifiedReportList() {
                     //                     c.fromEmployeeId.eq(loggedUserId),
                     //                     c.isApproved.eq(false),
                     //                 ]));
-                    //                 console.log('transactionCycleResponse', transactionCycleResponse)
 
                     //                 if (transactionCycleResponse.length > 0) {
                     //                     await DataStore.delete(SubstituteCertificateRequestTransactionCycle, (c) => c.and(c => [
@@ -1449,7 +1442,6 @@ export default function SubstituteRequestClassifiedReportList() {
 
                 //                 //when resubmitted report after reject
                 //                 if (status === CertificatedAdminWeeklyAbsenceReportStatus.RESUBMITTED) {
-                //                     console.log('statusstatusstatus', status)
 
                 //                     await DataStore.save(
                 //                         new SubstituteCertificateRequestTransactionCycle({
@@ -1479,7 +1471,6 @@ export default function SubstituteRequestClassifiedReportList() {
                 //                          c.isApproved.eq(false),
                 //                      ]));
 
-                //                      console.log('transactionCycleResponse',transactionCycleResponse)
                 //                      if (transactionCycleResponse.length > 0) {
                 //                          await DataStore.delete(SubstituteCertificateRequestTransactionCycle, (c) => c.and(c => [
                 //                              c.reportId.eq(substituteReportId),
@@ -1651,7 +1642,6 @@ export default function SubstituteRequestClassifiedReportList() {
     // });
 
     const requestedReportAction = (row) => {
-        console.log("row--", row);
 
 
         return (
@@ -1779,7 +1769,6 @@ export default function SubstituteRequestClassifiedReportList() {
     };
 
     const requestReportStatus = (product) => {
-        // console.log(product,"product.designation")
         return <><Badge value="" severity={requestReportStatusOptions(product)}></Badge>{product.designation}</>;
     };
 
@@ -1951,7 +1940,6 @@ export default function SubstituteRequestClassifiedReportList() {
                                 handleNotificationsOnStatusChangeforClassifiedSubRequest('APPROVEDBY', reportId, "CLASSIFIED_SUB_REQUEST", CertificatedSubInitiateRequestResponse.createdBy, loggedUserId);
                             }
                             catch (err) {
-                                console.log("error---", err)
                             }
                         }
 
@@ -2033,7 +2021,6 @@ export default function SubstituteRequestClassifiedReportList() {
                 // })
             }
             catch (err) {
-                console.log("err-", err);
             }
         }
         setSelectedEmployeeForApprovals(null)
@@ -2041,11 +2028,7 @@ export default function SubstituteRequestClassifiedReportList() {
     }
 
     const approveSelectedReportFrom = async (reportId, status, toEmployeeId, fromEmployeeId, initiatorUser) => {
-        console.log("initiatorUser", initiatorUser);
         const currentDateTime = moment().format("YYYY-MM-DD HH:mm:ss");
-        // console.log(reportId,"reportId")
-        // console.log(toEmployeeId,"toEmployeeId")
-        // console.log(fromEmployeeId,"fromEmployeeId")
         try {
             // var transactionCycleResponse = await DataStore.query(SubstituteCertificateRequestTransactionCycle, (c) => c.and(c => [
             // c.reportId.eq(reportId),
@@ -2061,10 +2044,8 @@ export default function SubstituteRequestClassifiedReportList() {
             // ]), { sort: (s) => s.date(SortDirection.DESCENDING) });
 
             const transactionCycleResponseSort = await graphQLGetAllData("listSubstituteCertificateRequestTransactionCycles", [{ reportId: { eq: reportId }, toEmployeeId: { eq: toEmployeeId }, fromEmployeeId: { eq: fromEmployeeId } }])
-            //console.log(transactionCycleResponseSort,"transactionCycleResponseSort")
             let transactionCycleResponse = transactionCycleResponseSort.sort((b, a) => (a.date).localeCompare(b.date));
 
-            //console.log(transactionCycleResponse,"transactionCycleResponse")
 
             var original = await graphQLFindRecordById("getSubstituteCertificateRequestTransactionCycle", transactionCycleResponse[0].id)
 
@@ -2099,7 +2080,6 @@ export default function SubstituteRequestClassifiedReportList() {
             // })
         }
         catch (err) {
-            console.log(err, "err1")
         }
         setVisibleRequestedReportEdit(false);
         setSelectedEmployeeForApprovals(null)
@@ -2109,7 +2089,6 @@ export default function SubstituteRequestClassifiedReportList() {
     }
 
     // const rejectSelectedReportFrom = async (reportId, status, toEmployeeId, fromEmployeeId) => {
-    //     console.log('rejectSelectedReportFrom')
     //     try {
     //         /*  var transactionCycleResponse = await DataStore.query(SubstituteCertificateRequestTransactionCycle, (c) => c.and(c => [
     //              c.reportId.eq(reportId),
@@ -2188,7 +2167,6 @@ export default function SubstituteRequestClassifiedReportList() {
     }
     //* requestedRportAction called
     const onClickRequestedReportEditPopUp = async (requestData) => {
-        console.log("requestData", requestData);
         // const cognito = new AWS.CognitoIdentityServiceProvider();
         SetPreviewAndEdit(false);
         SetBasicInfoPopUp(true);
@@ -2275,7 +2253,6 @@ export default function SubstituteRequestClassifiedReportList() {
         //                 Username: particularReportTransactionCycleResponse[0].toEmployeeId,
         //             }).promise();
         //         } catch (e) {
-        //             //console.log(e)
         //         }
         //     }
         //     let userFirstName = adminUsers ? await GetValueFromArray(adminUsers.UserAttributes, "custom:firstName") : ''
@@ -2286,7 +2263,6 @@ export default function SubstituteRequestClassifiedReportList() {
         //     formHistoryData(requestData.id, substituteCertificateRequestResponse.createdBy)
 
         // } catch (err) {
-        //     console.log("Error in onClickInitiateRequestEditPopUp", err);
         // }
         //---End Approval Status-------
 
@@ -2382,7 +2358,6 @@ export default function SubstituteRequestClassifiedReportList() {
                 }
             }
         } catch (err) {
-            console.log("ERROR in request Edit function");
         }
     }
 
@@ -2443,7 +2418,6 @@ export default function SubstituteRequestClassifiedReportList() {
                         Username: particularReportTransactionCycleResponse[0].toEmployeeId,
                     }).promise();
                 } catch (e) {
-                    //console.log(e)
                 }
             }
             let userFirstName = await GetValueFromArray(adminUsers.UserAttributes, "custom:firstName")
@@ -2452,12 +2426,10 @@ export default function SubstituteRequestClassifiedReportList() {
             fullName = userFirstName + " " + userLastName
             let obj = { name: fullName, code: particularReportTransactionCycleResponse[0].toEmployeeId } */
 
-            // console.log(particularReportTransactionCycleResponse,"particularReportTransactionCycleResponse ")
 
             formHistoryData(requestData.id, substituteCertificateRequestResponse.createdBy)
 
         } catch (err) {
-            console.log("Error in onClickInitiateRequestViewPopup", err);
         }
         //---End Approval Status-------
 
@@ -2599,7 +2571,6 @@ export default function SubstituteRequestClassifiedReportList() {
                                 Username: submittedBy,
                             }).promise();
                         } catch (e) {
-                            //console.log(e)
                         }
                     }
                     let userFirstName = await GetValueFromArray(initiatorUser.UserAttributes, "custom:firstName")
@@ -2621,7 +2592,6 @@ export default function SubstituteRequestClassifiedReportList() {
                 //             Username: particularReportTransactionCycleResponse[i].toEmployeeId,
                 //         }).promise();
                 //     } catch (e) {
-                //         //console.log(e)
                 //     }
                 // }
 
@@ -2635,7 +2605,6 @@ export default function SubstituteRequestClassifiedReportList() {
                     //         Username: submittedBy,
                     //     }).promise();
                     // } catch (e) {
-                    //     //console.log(e)
                     // }
 
                     let userFirstName1 = adminUsers ? await GetValueFromArray(initiatorUsers.UserAttributes, "custom:firstName") : ''
@@ -2724,7 +2693,6 @@ export default function SubstituteRequestClassifiedReportList() {
                     updatedAt: (appDate) ? handleDateSelect(appDate) : "",
                 }
 
-                // console.log('particularReportTransactionCycleResponse[i].status', particularReportTransactionCycleResponse[i].status)
 
                 //form history remark 
                 if (particularReportTransactionCycleResponse[i].status === "APPROVAL_REJECTED" || particularReportTransactionCycleResponse[i].status === 'Rejected') {
@@ -2783,7 +2751,6 @@ export default function SubstituteRequestClassifiedReportList() {
         try {
             setShowNextPopUp(true);
         } catch (error) {
-            // console.log('Error retrieving posts', error);
         }
     }
 
@@ -3119,7 +3086,6 @@ export default function SubstituteRequestClassifiedReportList() {
                     // ]), { sort: s => s.createdAt(SortDirection.ASCENDING) });
 
 
-                    //console.log(substituteCertificateRequestTransactionCycleResponseTwo, "substituteCertificateRequestTransactionCycleResponseTwo[substituteCertificateRequestTransactionCycleResponseTwo.length - 1].isApproved") 
                     if (substituteCertificateRequestTransactionCycleResponseTwo.length > 0) {
                         status = substituteCertificateRequestTransactionCycleResponseTwo[substituteCertificateRequestTransactionCycleResponseTwo.length - 1].isApproved ? "Approved" : "Pending for Approval";
                         remark = "-";
@@ -3240,7 +3206,6 @@ export default function SubstituteRequestClassifiedReportList() {
                 }
                 finalArray.push(data);
                 if (i === substituteCertificateRequestTransactionCycleResponse.length - 1) {
-                    //console.log("substituteCertificateRequestTransactionCycleResponse11",substituteCertificateRequestTransactionCycleResponse)
                     let sortedArray = finalArray.sort((a, b) => new Date(b.submittedOnTime) - new Date(a.submittedOnTime));
                     //sortedArray = [ ...new Set(sortedArray.map(item => item.sLNo)) ];
                     let submittedCount = finalArray.filter((item) => item.status === "Submitted"); setIsSubmittedCount2(submittedCount.length);
@@ -3383,7 +3348,6 @@ export default function SubstituteRequestClassifiedReportList() {
             }
         }
         catch (error) {
-            console.log(error)
         }
     }
 
@@ -3433,7 +3397,6 @@ export default function SubstituteRequestClassifiedReportList() {
             }
         }
         catch (error) {
-            console.log(error)
         }
     }
 
@@ -3448,9 +3411,7 @@ export default function SubstituteRequestClassifiedReportList() {
         // };
         // cognito.listUsers(params, (err, data) => {
         //     if (err) {
-        //         // console.log(err);
         //     } else {
-        //         // console.log(data)
         //         SetUsersList(data.Users);
 
         //         var newRes = []
@@ -3690,7 +3651,7 @@ export default function SubstituteRequestClassifiedReportList() {
         setUserListByClerk();
     }, [assignmentNameDisplay, employeeCode, users])
 
-    const superAdminActions = row => {
+    const reportListActions = row => {
         return [
             <Link href="#" className="py-2 px-2.5" onClick={() => onClickRequestedReportViewPopup(row, 'right')}>
                 <i className="gusd-eye text-[#667085] text-[20px] font-meduim"></i>
@@ -3837,7 +3798,7 @@ export default function SubstituteRequestClassifiedReportList() {
                                                                 field="action"
                                                                 header="Actions"
                                                                 align="center"
-                                                                body={superAdminActions}
+                                                                body={reportListActions}
                                                                 style={{ minWidth: "6rem" }}
                                                                 exportable={false}
                                                             ></Column>
@@ -3872,7 +3833,7 @@ export default function SubstituteRequestClassifiedReportList() {
                                                                 field="action"
                                                                 header="Actions"
                                                                 align="center"
-                                                                body={superAdminActions}
+                                                                body={reportListActions}
                                                                 style={{ minWidth: "6rem" }}
                                                                 exportable={false}
                                                             ></Column>

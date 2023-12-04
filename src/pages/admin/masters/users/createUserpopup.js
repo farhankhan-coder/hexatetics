@@ -34,12 +34,9 @@ export default function CreateUser() {
   const [ingredients1, setIngredients1] = useState([]);
   const [ingredients2, setIngredients2] = useState([]);
   const [ingredients3, setIngredients3] = useState([]);
-console.log('ingredients3 --->', ingredients3);
   const [ingredients4, setIngredients4] = useState([]);
   const [allApproverList, setAllApproverList] = useState([]);
 
-  console.log("ingredients3:-", ingredients3);
-  console.log("ingredients4:-", ingredients4);
 
 //   const [AppsData, setAppsData] = useState(Apps);
   const [btnTitle, setBtnTitle] = useState('Create User');
@@ -164,9 +161,6 @@ console.log('ingredients3 --->', ingredients3);
   const [personnelServiceAgreeApprover, SetCheckedPersonnelServiceAgreeApprover] = useState(false);
   const [personnelServiceAgreePayroll, SetPersonnelServiceAgreePayroll] = useState(false);
 
-  console.log("checkedSubReq I", checkedSubReqClassifiedInitiator);
-  console.log("checkedSubReq A", checkedSubReqClassifiedApprover);
-  console.log("checkedSubReq P", checkedSubReqClassifiedPayroll);
 
 
   const setSelectedRole = async (selectedRole) => {
@@ -488,7 +482,6 @@ console.log('ingredients3 --->', ingredients3);
             updated.school_id = selectedSchool?.code;
           })
         );
-        console.log('updatedUserDetails', updatedUserDetails)
       } catch (error) {
         console.error('Error updating employee:', error);
       }
@@ -497,12 +490,8 @@ console.log('ingredients3 --->', ingredients3);
         cognito.adminUpdateUserAttributes(params, function (err, data) {
           navigateTo("/admin/setting/masters/users")
           toast.success("User updated successfully")
-          if (err)
-            console.log("Errr rr", err, err.stack);
-          else
-            console.log(data);
+         
         });
-        console.log('User attribute updated successfully.');
       } catch (error) {
         console.error('Error updating user attribute:', error);
       }
@@ -600,7 +589,6 @@ console.log('ingredients3 --->', ingredients3);
             } catch (error) {
               // goBack()
               redirectBack()
-              console.log("Error uploading file: ", error);
             }
           }
         }
@@ -618,7 +606,6 @@ console.log('ingredients3 --->', ingredients3);
                 }
               })
             );
-            console.log(JSON.stringify(saveData) + 'saveData');
           })
         }
 
@@ -645,11 +632,6 @@ console.log('ingredients3 --->', ingredients3);
             }
           })
         );
-        console.log('createdUserId', createdUserId)
-        console.log('country', country)
-        console.log('state', state)
-        console.log('mobileNumber', mobileNumber)
-        console.log('city', city)
 
         if (createdUserId) {
           var newEmployeeResponse = await DataStore.save(
@@ -672,7 +654,6 @@ console.log('ingredients3 --->', ingredients3);
               "user_Id": createdUserId,
             })
           );
-          console.log('newEmployeeResponse', newEmployeeResponse)
         }
 
         //Here we are going to send welcome email
@@ -788,7 +769,6 @@ console.log('ingredients3 --->', ingredients3);
           }
         })
       );
-      console.log(JSON.stringify(saveData) + 'saveData');
 
     } else {
 
@@ -819,7 +799,6 @@ console.log('ingredients3 --->', ingredients3);
     // const userId = location.state.userId ? location.state.userId : userId;
     let appIdArray = [...userPermission];
     appIdArray.push({ 'name': appId })
-    console.log('appIdArray', appIdArray)
     setUserPermission(appIdArray)
   }
 
@@ -898,11 +877,9 @@ console.log('ingredients3 --->', ingredients3);
       hasMoreData = nextToken4 !== null && nextToken4 !== undefined ? nextToken4 : false;
     }
     getGrantedAppsPermsOfUserResponse = getGrantedAppsPermsOfUserResponse.filter(item => item._deleted !== true);
-    console.log('getGrantedAppsPermsOfUserResponse', getGrantedAppsPermsOfUserResponse)
 
     if (getGrantedAppsPermsOfUserResponse.length > 0) {
       for (let i = 0; i < getGrantedAppsPermsOfUserResponse.length; i++) {
-        console.log('getGrantedAppsPermsOfUserResponseAppId', getGrantedAppsPermsOfUserResponse[i].AppId)
         appIdArray.push({ 'name': getGrantedAppsPermsOfUserResponse[i].AppId })
         setUserPermission(appIdArray)
       }
@@ -929,13 +906,11 @@ console.log('ingredients3 --->', ingredients3);
       filter: {
       }, limit: 10000
     }));
-    console.log("existingUserAdditionalSettingsDataResults not:-", listUserAdditionalSettingsData);
 
 
     existingUserAdditionalSettingsDataResults = listUserAdditionalSettingsData.data.listUserAdditionalSettings.items.filter(item => item._deleted !== true);
     existingUserAdditionalSettingsDataResults = listUserAdditionalSettingsData.data.listUserAdditionalSettings.items.filter(item => item.userId == userNewId);
 
-    console.log("existingUserAdditionalSettingsDataResults filter:-", existingUserAdditionalSettingsDataResults);
 
     if (existingUserAdditionalSettingsDataResults.length > 0) {
       if (existingUserAdditionalSettingsDataResults[0].stipendApprover === '1') {
@@ -994,7 +969,6 @@ console.log('ingredients3 --->', ingredients3);
           sort: s => s.employee_name(SortDirection.ASCENDING),
         }
       );
-      // console.log('original->employeeResponses', employeeResponses)
 
       if (employeeResponses !== null) {
         let employeeData = employeeResponses;
@@ -1018,12 +992,10 @@ console.log('ingredients3 --->', ingredients3);
           setAllApproverList(employee)
         }
 
-        console.log('original->approverRoleList', employee)
 
       }
     }
     catch (error) {
-      console.log(error)
     }
   }
 
@@ -1071,13 +1043,11 @@ console.log('ingredients3 --->', ingredients3);
         })
         setSPUsersWithoutAdmin(usersWithoutAdmin);
       } catch (err) {
-        console.log(err);
       }
       //-------------
 
       cognito.listUsers(params, (err, data) => {
         if (err) {
-          console.log(err);
           toast.error(err.message);
         } else {
 
@@ -1161,7 +1131,6 @@ console.log('ingredients3 --->', ingredients3);
       var schoolResponses = await DataStore.query(Schools, Predicates.ALL, {
         sort: s => s.name(SortDirection.ASCENDING)
       });
-      console.log("schoolResponsesschoolResponses:-", schoolResponses);
       if (schoolResponses) {
         let stateData = schoolResponses;
 
@@ -1177,7 +1146,6 @@ console.log('ingredients3 --->', ingredients3);
       }
     }
     catch (error) {
-      console.log(error);
     }
   }
 
@@ -1209,7 +1177,6 @@ console.log('ingredients3 --->', ingredients3);
         // const selectedSchoolId = (location.state.schoolId) ? location.state.schoolId : ""
         fetchSchoolFromId(selectedSchoolId);
 
-        console.log("objFirst2objFirst2objFirst2objFirst2objFirst2objFirst2objFirst2objFirst2 schoolid:-", location.state.schoolId);
 
 
 
@@ -1284,7 +1251,6 @@ console.log('ingredients3 --->', ingredients3);
         // const selectedPersonnelActionFIsApprover = location.state.personnelIsApprover;
         // const selectedPersonnelActionFIsPayroll = location.state.personnelIsPayroll;
         // const selectedpersonnelActionIsSuperadmin = location.state.ispersonnelIsAdmin;
-console.log('selectedpersonnelActionIsSuperadmin --->', selectedpersonnelActionIsSuperadmin);
 
         let personnelActionFormAccess = [];
         if (selectedPersonnelActionFIsInitiator == 1) {
@@ -1303,15 +1269,11 @@ console.log('selectedpersonnelActionIsSuperadmin --->', selectedpersonnelActionI
           setIngredients3(personnelActionFormAccess);
         }
 
-        // console.log("Edit location", location);
         //sub req certificated
         // const selectedSubReqCertificatedIsInitiator = location.state.certiSubRIsInitiator;
         // const selectedSubReqCertificatedIsApprover = location.state.certiSubReIsApprover;
         // const selectedSubReqCertificatedIsPayroll = location.state.certiSubReqIsPayroll;
 
-        console.log('Edit selectedSubReqCertificatedIsInitiator', selectedSubReqCertificatedIsInitiator);
-        console.log('Edit selectedSubReqCertificatedIsApprover', selectedSubReqCertificatedIsApprover);
-        console.log('Edit selectedSubReqCertificatedIsPayroll', selectedSubReqCertificatedIsPayroll);
 
 
         let subReqCertificatedAccess = [];
@@ -1398,7 +1360,6 @@ console.log('selectedpersonnelActionIsSuperadmin --->', selectedpersonnelActionI
         setDateOfBirth(selectedBirthDate)
 
       } catch (err) {
-        console.log("Error in Edit :-", err);
       }
     }
   }, [userId]);

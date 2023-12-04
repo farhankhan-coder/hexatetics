@@ -14,7 +14,7 @@ import Layout from "@/components/layout/layout";
 import DropdownComponent from "@/components/common/dropdownComponent/dropdownComponent";
 import CalenderComponet from "@/components/common/calenderComponent/calenderComponent";
 import InputComponent from "@/components/common/inputComponent/inputComponent";
-import WarEmployeepopup from "@/components/common/warEmployeepopup";
+import EmployeePopup from "@/components/common/EmployeePopup";
 // import Layout from "../../Component/nav/initiator/nav.component";
 // import DropdownComponent from "../../Component/common/DropdownComponent";
 // import InputComponent from "../../Component/common/InputComponent/InputComponent";
@@ -49,7 +49,6 @@ export default function TimeIinitatorReport() {
   const SchoolDeptNameEvent = {
     onChange: (e) => {
       setSelectedSchoolDeptName(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedSchoolDeptname,
   };
@@ -67,7 +66,6 @@ export default function TimeIinitatorReport() {
   const TypeEvent = {
     onChange: (e) => {
       setSelectedType(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedType,
   };
@@ -85,7 +83,6 @@ export default function TimeIinitatorReport() {
   const RateTypeEvent = {
     onChange: (e) => {
       setSelectedRateType(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedRateType,
   };
@@ -102,7 +99,6 @@ export default function TimeIinitatorReport() {
   const FirstApprovalEvent = {
     onChange: (e) => {
       setSelectedFirstApproval(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedFirstApproval,
   };
@@ -120,7 +116,6 @@ export default function TimeIinitatorReport() {
   const SecondApprovalEvent = {
     onChange: (e) => {
       setSelectedSecondApproval(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedSecondApproval,
   };
@@ -138,7 +133,6 @@ export default function TimeIinitatorReport() {
   const PayrollEvent = {
     onChange: (e) => {
       setSelectedPayroll(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedPayroll,
   };
@@ -156,7 +150,6 @@ export default function TimeIinitatorReport() {
   const EmployeeEvent = {
     onChange: (e) => {
       setSelectedEmployee(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedEmployee,
   };
@@ -209,7 +202,6 @@ export default function TimeIinitatorReport() {
   const eventHandlersofCalender = {
     calenderchangeHandler: (e) => {
       setDate(e.value);
-      console.log("Selected Value:", e.value);
     },
   };
 
@@ -223,7 +215,7 @@ export default function TimeIinitatorReport() {
     // Add more data as needed
   ];
 
-  const superAdminActions = (row) => {
+  const reportListActions = (row) => {
     return [
       <>
         <Link
@@ -573,7 +565,7 @@ export default function TimeIinitatorReport() {
                   </div>
                 </div>
               </div>
-              <WarEmployeepopup
+              <EmployeePopup
                 visible={openNewEmployee}
                 onHide={() => {
                   setOpenNewEmployee(false);
@@ -648,7 +640,7 @@ export default function TimeIinitatorReport() {
                             field="action"
                             header="Actions"
                             align="center"
-                            body={superAdminActions}
+                            body={reportListActions}
                             style={{ minWidth: "12rem" }}
                             exportable={false}
                           ></Column>

@@ -17,7 +17,6 @@ export default function SixperiodInitiateReport() {
     { no: "2", route: "", name: "Preview & Edit" },
   ];
   const [activeIndex, setActiveIndex] = useState(1);
-  console.log("setValue",activeIndex);
 
   return (
     <>

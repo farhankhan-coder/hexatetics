@@ -1,11 +1,11 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
+import React, { Fragment, useState, useEffect, useRef, useId } from 'react';
 import Layout from '@/components/layout/layout';
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import Link from 'next/link';
 import { Tooltip } from 'primereact/tooltip';
-const { API_STATUS, CertificatedAdminWeeklyAbsenceReportStatus } = require("../../../helper/enum");
+const { API_STATUS } = require("../../../helper/enum");
 import axios from "axios";
 import { InputText } from 'primereact/inputtext';
 import { toast } from 'react-toastify';
@@ -15,7 +15,7 @@ import { employeeByCognitoIdActions } from "../../../helper/actions/employeeByCo
 import { getSchoolById } from "../../../helper/actions/schoolByIdActions";
 import { InputNumber } from 'primereact/inputnumber';
 import { getAbsenceCodeList } from "../../../helper/actions/absenceCodeListActions";
-import { ConvertResponseForSelectWithRefCode, checkDuplicates, getResponseFromKeyCertifiedAdmin } from '../../../helper/commonfunction';
+import { ConvertResponseForSelectAbsenceCode, checkDuplicates, getResponseFromKeyCertifiedAdmin } from '../../../helper/commonfunction';
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -24,9 +24,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useRouter } from "next/router";
 import EmployeePopup from '@/components/common/EmployeePopup';
-import { useParams } from 'next/navigation'
+import { AllStatusData } from '@/components/helper/enum';
 
 export default function reportId() {
+
+  const createDetailId = useId();
 
   const router = useRouter();
   const { id } = router.query;
@@ -36,7 +38,7 @@ export default function reportId() {
   const [schoolList, setSchoolList] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedApprover, setApproverEmployee] = useState(null);
-  const [editStatus,setEditStatus] = useState("");
+  const [editStatus, setEditStatus] = useState("");
   const [employeeList, setEmployeeList] = useState();
   const [approverList, setApproverList] = useState();
   const [maxDate, setMaxDate] = useState(null);
@@ -65,13 +67,10 @@ export default function reportId() {
   const [administratorData, setAdministratorData] = useState([]);
   const [CertificatedDatas, setCertificatedDatas] = useState([]);
   const existingResultsAdministrator = mappedData.filter(item => (item.employeeType === 'Administrator'));
-  console.log("editStatus",editStatus);
 
-  console.log("existingResultsAdministrator", selectedApprover);
 
-  const existingResultsCertifiedCertificated = mappedData.filter(item => item.employeeType === ' ');
+  const existingResultsCertifiedCertificated = mappedData.filter(item => item.employeeType === 'Classified');
 
-  console.log("existingResultsCertifiedCertificated", existingResultsCertifiedCertificated);
 
   //set employee type list
   const employeeTypeList = [{ name: "Administrator", code: "Administrator" }, { name: "Classified", code: "Classified" }]
@@ -186,8 +185,6 @@ export default function reportId() {
       // }
     }
     catch (err) {
-      console.log("err----" + err)
-      console.log('error', err.response.status);
       if (err.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push('/')
@@ -225,7 +222,7 @@ export default function reportId() {
               let name = item.employee_code ? `${item.employee_name} (${item.employee_code})` : item.employee_name;
               let obj = {
                 name: name,
-                code: item.user_Id,
+                code: item.id,
                 employeeType: item.employeeType
               }
               employee.push(obj);
@@ -235,7 +232,6 @@ export default function reportId() {
           }
         }
         catch (error) {
-          console.log(error)
           if (error.response.status === API_STATUS.UNAUTHORIZED) {
             toast.error("Session Expired");
             router.push('/')
@@ -264,12 +260,9 @@ export default function reportId() {
     let accessToken = window.localStorage.getItem('accessToken');
     let absenceCodeList = [];
     absenceCodeList = await getAbsenceCodeList(accessToken);
-    console.log("absenceCodeList",absenceCodeList)
     setAbsenceCodeList(absenceCodeList?.rows)
 
-    var myArray = [];
-     myArray = ConvertResponseForSelectWithRefCode(absenceCodeList?.rows); 
-     setAbsentCodeListDropdown(myArray);
+    var myArray = []; myArray = ConvertResponseForSelectAbsenceCode(absenceCodeList?.rows); setAbsentCodeListDropdown(myArray);
   }
 
   async function EmployeeList(e) {
@@ -301,7 +294,7 @@ export default function reportId() {
           let name = item.employee_code ? `${item.employee_name} (${item.employee_code})` : item.employee_name;
           let obj = {
             name: name,
-            code: item.user_Id,
+            code: item.id,
             employeeType: item.employeeType
           }
           employee.push(obj);
@@ -311,7 +304,6 @@ export default function reportId() {
       }
     }
     catch (error) {
-      console.log(error)
       if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push('/')
@@ -336,10 +328,9 @@ export default function reportId() {
         setVisible(true)
         setDisabled(true);
 
-        var getAbsenceReport = await axios.post("/api/war_certificated/getReportById", { requestedData });
+        var getAbsenceReport = await axios.post("/api/war_classified/getReportById", { requestedData });
 
       } catch (e) {
-        console.log("error", e)
       }
 
 
@@ -363,24 +354,23 @@ export default function reportId() {
           let employeeResponseTest = getAbsenceReportOfEmployee[i].employeeCalendarDetails;
 
           // for(var j=0; j<getAbsenceReportOfEmployee[i].employeeCalendarDetails.length; j++){
-          //   console.log("THIS IS", getAbsenceReportOfEmployee[i].employeeCalendarDetails[j])
           // }
 
 
           // let employeeResponse = await getEmployeeDetails(getAbsenceReportOfEmployee[i].id, getAbsenceReportOfEmployee[i].employee_id);
-          let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
+          // let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
 
-          if (empName) {
-            let obj1 = {
-              "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
-              "code": empName.user_Id,
-              "employeeType": empName.employeeType
-            }
+          // if (empName) {
+          //   // let obj1 = {
+          //   //   "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
+          //   //   "code": empName.user_Id,
+          //   //   "employeeType": empName.employeeType
+          //   // }
 
-            // setSelectedEmployee(obj1);
-            newEmp = empName.id;
+          //   // setSelectedEmployee(obj1);
+          //   newEmp = empName.id;
 
-          }
+          // }
 
           // let substituteResponse = allEmployeeList.find(o => o.id === getAbsenceReportOfEmployeeDetails[i].substitute_emp_id)
 
@@ -568,7 +558,7 @@ export default function reportId() {
         "fromDate": moment(periodDates[0]).format("YYYY-MM-DD"),
         "toDate": moment(periodDates[1]).format("YYYY-MM-DD"),
         // This needs to be dynamic
-        "status":editStatus === "APPROVAL DECLINED" || editStatus === "REJECTED"  ? "RESUBMIT" : status,
+        "status": editStatus === "REJECTED" ? "RESUBMITTED" : status,
         "l1Authority": selectedApprover.code,
         "l2Authority": loggedl2authority,
         "schoolId": selectedSchool ? parseInt(selectedSchool.code) : 0,
@@ -578,14 +568,20 @@ export default function reportId() {
         "employeeType": selectedEmployee.employeeType,
         "employeeResponse": mappedData
       }
-
       const response = await axios.post("/api/war_classified/update", { requestedData });
 
       if (response.status === API_STATUS.SUCCESS) {
         toast.success("Form updated successfully.");
       }
 
-      router.push("/war_classified");
+      if (response.data.form.id && status === AllStatusData.PENDING) {
+        let id = response.data.success.id;
+        router.push(`/war_classified/initiate/${id}`);
+      } else {
+        router.push(`/war_classified`);
+      }
+
+
     }
     else {
       let requestedData = {
@@ -598,22 +594,25 @@ export default function reportId() {
         "l1Authority": selectedApprover.code,
         "l2Authority": loggedl2authority,
         "schoolId": selectedSchool ? parseInt(selectedSchool.code) : 0,
-        "approverRemark": "remark",
+        // "approverRemark": "remark",
         "comment": comment,
         "statusDateTime": moment().toISOString(),
         "employeeId": selectedEmployee.code,
         "employeeType": selectedEmployee.employeeType,
         "employeeResponse": mappedData
       }
-      console.log("mappedData",mappedData)
 
       const response = await axios.post("/api/war_classified/create", { requestedData });
-        console.log("response",response);
+
+
       if (response.status === API_STATUS.SUCCESS) {
         toast.success("Form created successfully.");
       }
 
-      // router.push("/war_classified");
+      if (response.data.form.id) {
+        let id = response.data.form.id;
+        router.push(`/war_classified/initiate/${id}`);
+      }
 
     }
   }
@@ -653,8 +652,6 @@ export default function reportId() {
       }
     }
     catch (error) {
-      console.log(error)
-      console.log('error', error.response.status);
       if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push('/')
@@ -667,10 +664,10 @@ export default function reportId() {
   const onClickNameOfSubstitute = (index, event) => {
 
     // if (reportId) {
+
     if (reportId) {
       let nameOfTheSubstitute = event.target.value
       let data = [...mappedData];
-
       if (data.hasOwnProperty(mapDataIndex)) {
         let empResponse = data[mapDataIndex].employeeResponse
         const indexExists = data[mapDataIndex].employeeResponse.hasOwnProperty(index);
@@ -758,8 +755,7 @@ export default function reportId() {
 
     // let empName = await DataStore.query(Employee, (c) => c.id.eq(selectedEmployee.code));
     let accessToken = window.localStorage.getItem('accessToken');
-    let empName = await employeeByCognitoIdActions(selectedEmployee.code, accessToken);
-    // console.log('empName', empName)
+    let empName = await getEmployeeById(selectedEmployee.code, accessToken);
     if (reportId) {
       for (let i = 0; i < date.length; i++) {
         selEmpDate[i] = date[i]
@@ -814,15 +810,18 @@ export default function reportId() {
 
   };
 
+  function generateUniqueId() {
+    return '_' + Math.random().toString(36).substr(2, 9);
+  }
 
   //All state clear
   const stateClear = () => {
     setAbsentDate([])
   };
-
   //Create  Initiate New Report
   const applyReport = async () => {
     setDisabled(true)
+
     setIndexEditMode(false)
     for (var vl = 0; vl < selectedDateRecord.length; vl++) {
       if (selectedDateRecord[vl].absentId === '' || selectedDateRecord[vl].absentId === null) {
@@ -843,10 +842,7 @@ export default function reportId() {
     if (selectedSchool !== null && selectedEmployee !== null && periodDates.length > 0 && selectedDateRecord[0].partialHour !== null) {
 
       //*set data to table
-      
-
       if (mappedData.length > 0) {
-        console.log("myArray - mapped data", mappedData);
         let data = selectedDateRecord
         let getEmployeeNames = data.map((item) => item.employeeName)
         let removeDuplicateArray = checkDuplicates(getEmployeeNames)
@@ -854,14 +850,18 @@ export default function reportId() {
         let getResponse = await getResponseFromKeyCertifiedAdmin(data, removeDuplicateArray, selectedEmployee.code, selectedDateRecord[0].employeeType);
         let object = getResponse[0];
 
+        let innerObj = getResponse[0].employeeResponse;
+        let uniqueId = generateUniqueId()
+        innerObj = { ...innerObj[0], "detailId": uniqueId }
+
+        object = { ...object, "employeeResponse": [innerObj] }
+
+
         let myArray = [...mappedData, object];
-        console.log("myArray - mapped data 1 object", object);
-        console.log("myArray - mapped data 1", myArray);
 
         if (reportId) {
           // let updatedData = mappedData.filter(item => item.employeeId !== selectedEmployee.code);
           let updatedData = mappedData;
-          console.log("myArray - mapped data updatedData 2", updatedData);
 
           let object2 = []
 
@@ -871,23 +871,35 @@ export default function reportId() {
             const dateB = new Date(b.employeeResponse[0].selectedDate);
             return dateA - dateB;
           });
+        
+          let modifiedGetResponse=[]
 
-          object2 = getResponse;
+          for (var i = 0; i < getResponse.length; i++) {
+            let object = getResponse[i];
+  
+            let innerObj = getResponse[i].employeeResponse;
+            let uniqueId = generateUniqueId()
+            innerObj = { ...innerObj[i], "detailId": uniqueId }
+  
+            object = { ...object, "employeeResponse": [innerObj] }
+  
+            modifiedGetResponse.push(object) 
+          }
+          
+          object2 = modifiedGetResponse;
+
+         
           myArray = [...updatedData, ...object2];
-          console.log("myArray - mapped data updatedData 3", myArray);
-          console.log("myArray - mapped data updatedData 3 object2", object2);
 
           //apply hide
           setApply(false)
         }
-console.log("Myarry",myArray);
         myArray = myArray.sort((a, b) => {
           const dateA = new Date(a.employeeResponse[0].selectedDate);
           const dateB = new Date(b.employeeResponse[0].selectedDate);
           return dateA - dateB;
         });
 
-        console.log("myArray - mapped data updatedData 4", myArray);
 
         const groupedData = myArray.reduce((acc, obj) => {
           const existingObj = acc.find(item => item.employeeId === obj.employeeId);
@@ -896,7 +908,6 @@ console.log("Myarry",myArray);
           return acc;
         }, []);
 
-        console.log("myArray - mapped data updatedData 5", groupedData);
 
         //sort by the employeename
         const sortedArray = groupedData.slice().sort((a, b) => {
@@ -912,26 +923,36 @@ console.log("Myarry",myArray);
         });
 
 
-        console.log("myArray - mapped data updatedData 6", sortedArray);
-        let newDataGetting = [];
-        for (let p = 0; p < sortedArray.length; p++) {
-          for (let q = 0; q < sortedArray[p].employeeResponse.length; q++) {
-            newDataGetting = sortedArray[p].employeeResponse.reduce((acc, obj) => {
-              const existingObj = acc.find(item => moment(item.selectedDate) === moment(obj.selectdate));
-              if (!existingObj) { acc.push(obj); }
-              return acc;
-            }, []);
-          }
+        // let newDataGetting = [];
+        // for (let p = 0; p < sortedArray.length; p++) {
+        //   for (let q = 0; q < sortedArray[p].employeeResponse.length; q++) {
+        //     newDataGetting = sortedArray[p].employeeResponse.reduce((acc, obj) => {
+        //       const existingObj = acc.find(item => moment(item.selectedDate) === moment(obj.selectdate));
+        //       if (!existingObj) { acc.push(obj); }
+        //       return acc;
+        //     }, []);
+        //   }
 
-          sortedArray[p].employeeResponse = newDataGetting;
-        }
+        //   sortedArray[p].employeeResponse = newDataGetting;
+        // }
+        sortedArray.forEach(obj => {
+          obj.employeeResponse = obj.employeeResponse.reduce((unique, item) => {
+            const exists = unique.some(u => u.selectedDate === item.selectedDate);
+            if (!exists) {
+              unique.push(item);
+            }
+            return unique;
+          }, []);
+        });
+
+
 
         let administratorData = sortedArray.filter(item => item.employeeType === 'Administrator');
         let certificatedData = sortedArray.filter(item => item.employeeType === 'Classified');
+
         setAdministratorData(administratorData)
         setCertificatedDatas(certificatedData)
 
-        console.log("getting final", sortedArray);
         setMappedData(sortedArray);
 
         //setMappcount
@@ -948,7 +969,8 @@ console.log("Myarry",myArray);
 
 
 
-      } else {
+      }
+      else {
         let data = selectedDateRecord
 
         let getEmployeeNames = data.map((item) => item.employeeName)
@@ -956,16 +978,17 @@ console.log("Myarry",myArray);
         const getResponse = await getResponseFromKeyCertifiedAdmin(data, removeDuplicateArray, selectedEmployee.code, selectedDateRecord[0].employeeType)
 
 
-        const groupedData = getResponse.reduce((acc, obj) => {
-          const existingObj = acc.find(item => item.employeeId === obj.employeeId);
-          if (existingObj) { existingObj.employeeResponse.push(...obj.employeeResponse); }
-          else { acc.push(obj); }
-          return acc;
-        }, []);
+
+        // const groupedData = getResponse.reduce((acc, obj) => {
+        //   const existingObj = acc.find(item => item.employeeId === obj.employeeId);
+        //   if (existingObj) { existingObj.employeeResponse.push(...obj.employeeResponse); }
+        //   else { acc.push(obj); }
+        //   return acc;
+        // }, []);
 
 
         //sort by the employeename
-        const sortedArray = groupedData.slice().sort((a, b) => {
+        const sortedArray = getResponse.slice().sort((a, b) => {
           const nameA = a.employeeName.toLowerCase();
           const nameB = b.employeeName.toLowerCase();
           if (nameA < nameB) {
@@ -977,10 +1000,58 @@ console.log("Myarry",myArray);
           return 0;
         });
 
-        console.log("Final Array", sortedArray);
 
-        setMappedData(sortedArray);
+        let modifiedSortedArray = [];
+        for (var i = 0; i < sortedArray.length; i++) {
+          let object = sortedArray[i];
+
+          let innerObj = sortedArray[i].employeeResponse;
+          let uniqueId = generateUniqueId()
+          innerObj = { ...innerObj[i], "detailId": uniqueId }
+
+          object = { ...object, "employeeResponse": [innerObj] }
+
+          modifiedSortedArray.push(object)
+
+        }
+
+        setMappedData(modifiedSortedArray);
+        let administratorData = modifiedSortedArray.filter(item => item.employeeType === 'Administrator');
+        let certificatedData = modifiedSortedArray.filter(item => item.employeeType === 'Classified');
+
+
+        // const modifiedAdminData = [];
+        // for (var i = 0; i < administratorData.length; i++) {
+
+        //   let object = administratorData[i];
+
+        //   let innerObj = administratorData[i].employeeResponse;
+        //   innerObj = { ...innerObj[i], "detailId": createDetailId }
+
+        //   object = { ...object, "employeeResponse": [innerObj] }
+
+        //   modifiedAdminData.push(object)
+
+        // }
+
+        // const modifiedCertiData = [];
+        // for (var i = 0; i < certificatedData.length; i++) {
+
+        //   let object = certificatedData[i];
+
+        //   let innerObj = certificatedData[i].employeeResponse;
+        //   innerObj = { ...innerObj[i], "detailId": createDetailId }
+
+        //   object = { ...object, "employeeResponse": [innerObj] }
+
+        //   modifiedCertiData.push(object)
+        // }
+
+
+        setAdministratorData(administratorData)
+        setCertificatedDatas(certificatedData)
       }
+
       if (reportId) {
         //
         // setSelectedDateFinal(selectedDateRecord)
@@ -1177,532 +1248,246 @@ console.log("Myarry",myArray);
   };
 
   //*get Existing Data
-//   const getData = async () => {
-//     let accessToken = window.localStorage.getItem('accessToken');
-//     let loggedUserId = window.localStorage.getItem('loggedUserId');
-//     let requestedData = {
-//       "accessToken": accessToken,
-//       "reportId": reportId
-//     }
-//     try {
-//       setVisible(true)
-//       setDisabled(true);
-
-//       var getAbsenceReport = await axios.post("/api/war_classified/getReportById", { requestedData });
-      
-//       if (getAbsenceReport.data) {
-//         let approverEmployee = await employeeByCognitoIdActions(loggedUserId, accessToken);
-//         let empObj = {
-//           name: (approverEmployee.employee_name.toString() + " (" + approverEmployee.employee_code + ")").toString(),
-//           code: approverEmployee.user_Id.toString(),
-//         };
-//         console.log("empObj",approverEmployee)
-
-//         setApproverEmployee(empObj)
-
-//         // if (getAbsenceReport.data.l1_authority) {
-//         //   let empName = await employeeByCognitoIdActions(loggedUserId, accessToken);
-
-//         //   let name = empName.employee_code ? `${empName.employee_name} (${empName.employee_code})` : empName.employee_name;
-
-//         //   let objFirst = { name: name, code: getAbsenceReport.data.l1_authority }
-//         //   setSelectApprover(objFirst)
-//         // }
-
-//         setEditStatus(getAbsenceReport.data.status)
-
-//         if (getAbsenceReport.data.status === 'OPEN') {
-//           setIsPendingRequest(true);
-//         }
-
-
-//         let to_date = new Date(moment(getAbsenceReport.data.toDate).format("MM/DD/YYYY"));
-//         let from_date = new Date(moment(getAbsenceReport.data.fromDate).format("MM/DD/YYYY"));
-
-//         // setApproverStatus(getAbsenceReport.approver_status)
-//         let dateArray = [fromDate, toDate]; setPeriodDates(dateArray);
-
-//         var getAbsenceReportOfEmployee = await getSchoolById(getAbsenceReport.data.school_id  , accessToken);
-
-//         setSelectedSchool({ name: getAbsenceReportOfEmployee.name, code: getAbsenceReportOfEmployee.id })
-
-//         let schoolObj = { name: getAbsenceReportOfEmployee.name, code: getAbsenceReportOfEmployee.id }
-//         EmployeeList(schoolObj)
-//       }
-
-//       if (getAbsenceReport.data.formEmployeeDetails) {
-
-
-//         var getAbsenceReportOfEmployee = getAbsenceReport?.data?.formEmployeeDetails;
-//         console.log("getAbsenceReport", getAbsenceReport);
-
-//         let newResponse = [];
-//         let dataRec = [];
-//         let checkEmployee = [];
-//         let selectdate = []
-//         let newEmp = '';
-
-//         let remarkNew = ''
-//         let statusNew = ''
-//         if (getAbsenceReport.data.payroll_status !== null && getAbsenceReport.data.payroll_status === CertificatedAdminWeeklyAbsenceReportStatus.PAYROLL_ACCEPTED) {
-//           statusNew = "Approved"; remarkNew = "";
-//         } else if (getAbsenceReport.data.payroll_status !== null && getAbsenceReport.data.payroll_status === CertificatedAdminWeeklyAbsenceReportStatus.PAYROLL_REJECTED) {
-//           statusNew = "Rejected"; remarkNew = getAbsenceReport.data.payrollRemark;
-//         } else if (getAbsenceReport.data.approver_status !== null && getAbsenceReport.data.approver_status === CertificatedAdminWeeklyAbsenceReportStatus.APPROVAL_ACCEPTED) {
-//           statusNew = "Approved"; remarkNew = "";
-//         } else if (getAbsenceReport.data.approver_status !== null && getAbsenceReport.data.approver_status === CertificatedAdminWeeklyAbsenceReportStatus.APPROVAL_REJECTED) {
-//           statusNew = "Rejected"; remarkNew = getAbsenceReport.data.approverRemark;
-//         } else if (getAbsenceReport.data.payroll_status === null && getAbsenceReport.data.approver_status === null && getAbsenceReport.data.status === CertificatedAdminWeeklyAbsenceReportStatus.SUBMITTED) {
-//           statusNew = "Submitted"; remarkNew = "";
-//         } else if (getAbsenceReport.data.payroll_status === null && getAbsenceReport.data.approver_status === null && getAbsenceReport.data.status === CertificatedAdminWeeklyAbsenceReportStatus.OPEN) {
-//           statusNew = "Pending"; remarkNew = "";
-//         }
-
-
-//         setStatus(statusNew)
-//         setRemark(remarkNew)
-//         setComment(getAbsenceReport.comment)
-
-
-//         if (getAbsenceReportOfEmployee.length === 0) {
-//           setSelectedEmployee({ name: "No Absence", code: "1", employeeType: "" })
-//           setIsNoAbsence(true)
-//         }
-//         else {
-//           setIsNoAbsence(false)
-//         }
-
-
-
-//         console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
-//         for (var i = 0; i < getAbsenceReportOfEmployee.length; i++) {
-
-//           let employeeResponseTest = getAbsenceReportOfEmployee[i].employeeCalendarDetails;
-
-//           console.log("employeeResponseTest", employeeResponseTest)
-//           // for(var j=0; j<getAbsenceReportOfEmployee[i].employeeCalendarDetails.length; j++){
-//           //   console.log("THIS IS", getAbsenceReportOfEmployee[i].employeeCalendarDetails[j])
-//           // }
-
-
-//           // let employeeResponse = await getEmployeeDetails(getAbsenceReportOfEmployee[i].id, getAbsenceReportOfEmployee[i].employee_id);
-//           let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
-//           console.log("empName", empName)
-
-//           if (empName) {
-//             let obj1 = {
-//               "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
-//               "code": empName.user_Id,
-//               "employeeType": empName.employeeType
-//             }
-
-
-//             console.log("empName", empName)
-//             console.log("setSelectedEmployee", obj1)
-//             setSelectedEmployee(obj1);
-//             newEmp = empName.id;
-
-//           }
-
-//           // let substituteResponse = allEmployeeList.find(o => o.id === getAbsenceReportOfEmployeeDetails[i].substitute_emp_id)
-
-//           // if (substituteResponse) { substituteEmployeeName = substituteResponse.employee_name; } else { substituteResponse = ""; substituteEmployeeName = getAbsenceReportOfEmployeeDetails[i].substitute_emp_id }
-
-
-//           let employeeResponse = [];
-
-//           for (let j = 0; j < employeeResponseTest.length; j++) {
-
-//             let getAbsentCodeObj;
-//             getAbsentCodeObj = { "name": employeeResponseTest[j].absentCodeDetails.n + " (" + employeeResponseTest[j].absentCodeDetails.t + ")", "code": employeeResponseTest[j].absentCodeDetails.i }
-
-//             let substuteName = [];
-
-//             substuteName = { "name": employeeResponseTest[j].substituteEmpId, "code": "123" }
-
-//             employeeResponse.push({
-//               "employeeName": empName.employee_name,
-//               "selectedDate": employeeResponseTest[j].absentDate,
-//               "displayDate": employeeResponseTest[j].absentDate,
-//               "absentCode": getAbsentCodeObj,
-//               "absentId": employeeResponseTest[j].absentCodeId,
-//               "nameOfTheSubstitute": employeeResponseTest[j].substituteEmpId,
-//               "nameOfTheSubstituteId": employeeResponseTest[j].substituteEmpId,
-//               "partialHour": employeeResponseTest[j].partialHour,
-//               "partialMin": employeeResponseTest[j].partialMin,
-//               "isFullDay": employeeResponseTest[j].isFullDay,
-//               "employeeType": getAbsenceReportOfEmployee[i].employeeType,
-//             })
-//           }
-
-
-
-//           console.log("employeeResponse", employeeResponse)
-
-//           employeeResponse.map((item) => item.selectedDate = new Date(moment(item.selectedDate).format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")))
-
-
-//           employeeResponse = [...employeeResponse].sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate));
-
-//           for (let s = 0; s < employeeResponse.length; s++) {
-//             if (employeeResponse[s].partialMin === null || employeeResponse[s].partialMin === "Nan") {
-//               employeeResponse[s].partialMin = 0
-//             }
-//           }
-
-//           console.log("employeeResponse", employeeResponse);
-
-
-
-//           // if (!checkEmployee.includes(empName.id)) {
-//           //   checkEmployee[i] = getAbsenceReportOfEmployee[i].employee_id
-//           // }
-
-//           let data = []
-
-//           data = {
-//             "employeeName": empName.employee_name,
-//             "employeeId": getAbsenceReportOfEmployee[i].employeeId,
-//             "employeeResponse": employeeResponse,
-//             "employeeType": getAbsenceReportOfEmployee[i].employeeType,
-//           }
-
-//           let updatedate = [];
-//           dataRec = []
-
-//           if (newResponse.length > 0) {
-//             newResponse = [...newResponse, data];
-//           } else {
-//             newResponse.push(data)
-//           }
-
-//           let newdate = [];
-//           if (i === getAbsenceReportOfEmployee.length - 1) {
-//             const groupedData = newResponse.reduce((acc, obj) => {
-//               const existingObj = acc.find(item => item.employeeId === obj.employeeId);
-//               if (existingObj) { existingObj.employeeResponse.push(...obj.employeeResponse); }
-//               else { acc.push(obj); }
-//               return acc;
-//             }, []);
-
-//             let newR = newResponse.filter(abc => abc.employeeId === getAbsenceReportOfEmployee[i].employeeId)
-//             // let newR = newResponse;
-//             let countR = 0
-//             for (let key in newR) {
-//               if (newR[key] && newR[key].employeeResponse) {
-//                 for (var k = 0; k < newR[key].employeeResponse.length; k++) {
-//                   newR[key].employeeResponse[k].partialMin = isNaN(newR[key].employeeResponse[k].partialMin) ? 0 : newR[key].employeeResponse[k].partialMin;
-//                   dataRec[countR] = newR[key].employeeResponse[k]
-//                   dataRec[countR].nameOfTheSubstitute = dataRec[countR].nameOfTheSubstituteId
-//                   dataRec[countR].absentCode = newR[key].employeeResponse[k].absentCode
-//                   setSelectedItem(newR[key].employeeResponse[k].selectedDate)
-//                   selectdate.push(newR[key].employeeResponse[k].selectedDate)
-//                   updatedate[countR] = newR[key].employeeResponse[k].selectedDate
-//                   //updName[countR] = newR[key].employeeResponse[k].employeeName
-//                   setSelectedName(newR[key].employeeResponse[k].employeeName)
-//                   countR = countR + 1
-//                 }
-//               }
-//             }
-
-// console.log("groupedData",groupedData)
-//             const sortedArray = groupedData.slice().sort((a, b) => {
-//               const nameA = a.employeeName.toLowerCase();
-//               const nameB = b.employeeName.toLowerCase();
-//               if (nameA < nameB) {
-//                 return -1;
-//               }
-//               if (nameA > nameB) {
-//                 return 1;
-//               }
-//               return 0;
-//             });
-
-
-
-//             let administratorData = sortedArray.filter(item => item.employeeType === 'Administrator');
-//             let certificatedData = sortedArray.filter(item => item.employeeType === 'Classified');
-// console.log("administratorData",administratorData)
-// console.log("certificatedData",certificatedData)
-// console.log("sortedArray",sortedArray)
-
-
-
-//             setAdministratorData(administratorData)
-//             setCertificatedDatas(certificatedData)
-//             setMappedData(sortedArray)
-//             setSelectedDateRecord(dataRec)
-//             setMapDataIndex(newResponse.length - 1)
-//             setSelectedDateFinal(dataRec)
-//             setSelectedDateRecordNew(dataRec)
-//             if (newEmp) { newdate[newEmp] = updatedate }
-//             setDisabledDates(newdate)
-//             setVisible(true);
-
-//           }
-//         }
-
-//         let updatedList = [...selectedEmpDate, ...selectdate]
-//         setSelectedEmpDate(updatedList)
-//       }
-//     } catch (e) {
-//       console.log("error", e)
-//     }
-//   }
-
-const getData = async () => {
-  let accessToken = window.localStorage.getItem('accessToken');
-  let requestedData = {
-    "accessToken": accessToken,
-    "reportId": reportId
-  }
-  try {
-    setVisible(true)
-    setDisabled(true);
-
-    var getAbsenceReport = await axios.post("/api/war_classified/getReportById", { requestedData });
-    if (getAbsenceReport.data) {
-      console.log("cognito", getAbsenceReport.data.l1Authority)
-      let approverEmployee = await employeeByCognitoIdActions(getAbsenceReport.data.l1Authority, accessToken);
-      let empObj = {
-        name: (approverEmployee.employee_name.toString() + " (" + approverEmployee.employee_code + ")").toString(),
-        code: approverEmployee.user_Id.toString(),
-      };
-      console.log("empObj",empObj)
-
-      setApproverEmployee(empObj)
-
-      if (getAbsenceReport.data.l1Authority) {
-        let empName = await employeeByCognitoIdActions(getAbsenceReport.data.l1Authority, accessToken);
-
-        let name = empName.employee_code ? `${empName.employee_name} (${empName.employee_code})` : empName.employee_name;
-
-        let objFirst = { name: name, code: getAbsenceReport.data.l1Authority }
-        setSelectApprover(objFirst)
-      }
-
-      setEditStatus(getAbsenceReport.data.status)
-
-      if (getAbsenceReport.data.status === 'OPEN') {
-        setIsPendingRequest(true);
-      }
-
-
-      let to_date = new Date(moment(getAbsenceReport.data.toDate).format("MM/DD/YYYY"));
-      let from_date = new Date(moment(getAbsenceReport.data.fromDate).format("MM/DD/YYYY"));
-
-      // setApproverStatus(getAbsenceReport.approver_status)
-      let dateArray = [from_date, to_date]; setPeriodDates(dateArray);
-
-      var getAbsenceReportOfEmployee = await getSchoolById(getAbsenceReport.data.schoolId, accessToken);
-
-      setSelectedSchool({ name: getAbsenceReportOfEmployee.name, code: getAbsenceReportOfEmployee.id })
-
-      let schoolObj = { name: getAbsenceReportOfEmployee.name, code: getAbsenceReportOfEmployee.id }
-      EmployeeList(schoolObj)
+  const getData = async () => {
+    let accessToken = window.localStorage.getItem('accessToken');
+    let requestedData = {
+      "accessToken": accessToken,
+      "reportId": reportId
     }
+    try {
+      setVisible(true)
+      setDisabled(true);
 
-    if (getAbsenceReport.data.formEmployeeDetails) {
+      var getAbsenceReport = await axios.post("/api/war_classified/getReportById", { requestedData });
+      if (getAbsenceReport.data) {
+        let approverEmployee = await employeeByCognitoIdActions(getAbsenceReport.data.l1Authority, accessToken);
+        let empObj = {
+          name: (approverEmployee.employee_name.toString() + " (" + approverEmployee.employee_code + ")").toString(),
+          code: approverEmployee.user_Id.toString(),
+        };
+
+        setApproverEmployee(empObj)
+
+        if (getAbsenceReport.data.l1Authority) {
+          let empName = await employeeByCognitoIdActions(getAbsenceReport.data.l1Authority, accessToken);
+
+          let name = empName.employee_code ? `${empName.employee_name} (${empName.employee_code})` : empName.employee_name;
+
+          let objFirst = { name: name, code: getAbsenceReport.data.l1Authority }
+          setSelectApprover(objFirst)
+        }
+
+        setEditStatus(getAbsenceReport.data.status)
+
+        if (getAbsenceReport.data.status === 'OPEN') {
+          setIsPendingRequest(true);
+        }
 
 
-      var getAbsenceReportOfEmployee = getAbsenceReport.data.formEmployeeDetails;
-      console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
+        let to_date = new Date(moment(getAbsenceReport.data.toDate).format("MM/DD/YYYY"));
+        let from_date = new Date(moment(getAbsenceReport.data.fromDate).format("MM/DD/YYYY"));
 
-      let newResponse = [];
-      let dataRec = [];
-      let checkEmployee = [];
-      let selectdate = []
-      let newEmp = '';
+        // setApproverStatus(getAbsenceReport.approver_status)
+        let dateArray = [from_date, to_date]; setPeriodDates(dateArray);
 
-      // setRemark(remarkNew)
-      setComment(getAbsenceReport.data.comment)
-      setStatus(getAbsenceReport.data.status);
+        var getAbsenceReportOfEmployee = await getSchoolById(getAbsenceReport.data.schoolId, accessToken);
 
+        setSelectedSchool({ name: getAbsenceReportOfEmployee.name, code: getAbsenceReportOfEmployee.id })
 
-      if (getAbsenceReportOfEmployee.length === 0) {
-        setSelectedEmployee({ name: "No Absence", code: "1", employeeType: "" })
-        setIsNoAbsence(true)
+        let schoolObj = { name: getAbsenceReportOfEmployee.name, code: getAbsenceReportOfEmployee.id }
+        EmployeeList(schoolObj)
       }
-      else {
-        setIsNoAbsence(false)
-      }
+
+      if (getAbsenceReport.data.formEmployeeDetails) {
+
+
+        var getAbsenceReportOfEmployee = getAbsenceReport.data.formEmployeeDetails;
+
+        let newResponse = [];
+        let dataRec = [];
+        let checkEmployee = [];
+        let selectdate = []
+        let newEmp = '';
+
+        // setRemark(remarkNew)
+        setComment(getAbsenceReport.data.comment)
+        setStatus(getAbsenceReport.data.status);
+
+
+        if (getAbsenceReportOfEmployee.length === 0) {
+          setSelectedEmployee({ name: "No Absence", code: "1", employeeType: "" })
+          setIsNoAbsence(true)
+        }
+        else {
+          setIsNoAbsence(false)
+        }
 
 
 
-      console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
-      for (var i = 0; i < getAbsenceReportOfEmployee.length; i++) {
+        for (var i = 0; i < getAbsenceReportOfEmployee.length; i++) {
 
-        let employeeResponseTest = getAbsenceReportOfEmployee[i].employeeCalendarDetails;
+          let employeeResponseTest = getAbsenceReportOfEmployee[i].employeeCalendarDetails;
 
-        console.log("employeeResponseTest", employeeResponseTest)
-        // for(var j=0; j<getAbsenceReportOfEmployee[i].employeeCalendarDetails.length; j++){
-        //   console.log("THIS IS", getAbsenceReportOfEmployee[i].employeeCalendarDetails[j])
-        // }
+          // for(var j=0; j<getAbsenceReportOfEmployee[i].employeeCalendarDetails.length; j++){
+          // }
 
 
-        // let employeeResponse = await getEmployeeDetails(getAbsenceReportOfEmployee[i].id, getAbsenceReportOfEmployee[i].employee_id);
-        let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
+          // let employeeResponse = await getEmployeeDetails(getAbsenceReportOfEmployee[i].id, getAbsenceReportOfEmployee[i].employee_id);
+          let empName = await getEmployeeById(getAbsenceReportOfEmployee[i].employeeId, accessToken);
 
-        if (empName) {
-          let obj1 = {
-            "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
-            "code": empName.user_Id,
-            "employeeType": empName.employeeType
+          if (empName) {
+            let obj1 = {
+              "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
+              "code": empName.id,
+              "employeeType": empName.employeeType
+            }
+
+
+            setSelectedEmployee(obj1);
+            newEmp = empName.user_Id;
+
+          }
+
+          // let substituteResponse = allEmployeeList.find(o => o.id === getAbsenceReportOfEmployeeDetails[i].substitute_emp_id)
+
+          // if (substituteResponse) { substituteEmployeeName = substituteResponse.employee_name; } else { substituteResponse = ""; substituteEmployeeName = getAbsenceReportOfEmployeeDetails[i].substitute_emp_id }
+
+
+          let employeeResponse = [];
+
+          for (let j = 0; j < employeeResponseTest.length; j++) {
+
+            let getAbsentCodeObj;
+            getAbsentCodeObj = { "name": employeeResponseTest[j].absentCodeDetails.n + " (" + employeeResponseTest[j].absentCodeDetails.t + ")", "code": employeeResponseTest[j].absentCodeDetails.i }
+
+            let substuteName = [];
+
+            substuteName = { "name": employeeResponseTest[j].substituteEmpId, "code": "123" }
+
+            employeeResponse.push({
+              "employeeName": empName.employee_name,
+              "selectedDate": employeeResponseTest[j].absentDate,
+              "displayDate": employeeResponseTest[j].absentDate,
+              "absentCode": getAbsentCodeObj,
+              "absentId": employeeResponseTest[j].absentCodeId,
+              "nameOfTheSubstitute": employeeResponseTest[j].substituteEmpId,
+              "nameOfTheSubstituteId": employeeResponseTest[j].substituteEmpId,
+              "partialHour": employeeResponseTest[j].partialHour,
+              "partialMin": employeeResponseTest[j].partialMin,
+              "isFullDay": employeeResponseTest[j].isFullDay,
+              "employeeType": getAbsenceReportOfEmployee[i].employeeType,
+              "detailId": employeeResponseTest[j].id
+            })
           }
 
 
-          console.log("empName", empName)
-          console.log("setSelectedEmployee", obj1)
-          setSelectedEmployee(obj1);
-          newEmp = empName.user_Id;
-
-        }
-
-        // let substituteResponse = allEmployeeList.find(o => o.id === getAbsenceReportOfEmployeeDetails[i].substitute_emp_id)
-
-        // if (substituteResponse) { substituteEmployeeName = substituteResponse.employee_name; } else { substituteResponse = ""; substituteEmployeeName = getAbsenceReportOfEmployeeDetails[i].substitute_emp_id }
 
 
-        let employeeResponse = [];
+          employeeResponse.map((item) => item.selectedDate = new Date(moment(item.selectedDate).format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")))
 
-        for (let j = 0; j < employeeResponseTest.length; j++) {
 
-          let getAbsentCodeObj;
-          getAbsentCodeObj = { "name": employeeResponseTest[j].absentCodeDetails.n + " (" + employeeResponseTest[j].absentCodeDetails.t + ")", "code": employeeResponseTest[j].absentCodeDetails.i }
+          employeeResponse = [...employeeResponse].sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate));
 
-          let substuteName = [];
+          for (let s = 0; s < employeeResponse.length; s++) {
+            if (employeeResponse[s].partialMin === null || employeeResponse[s].partialMin === "Nan") {
+              employeeResponse[s].partialMin = 0
+            }
+          }
 
-          substuteName = { "name": employeeResponseTest[j].substituteEmpId, "code": "123" }
 
-          employeeResponse.push({
+
+
+          // if (!checkEmployee.includes(empName.id)) {
+          //   checkEmployee[i] = getAbsenceReportOfEmployee[i].employee_id
+          // }
+
+          let data = []
+
+          data = {
             "employeeName": empName.employee_name,
-            "selectedDate": employeeResponseTest[j].absentDate,
-            "displayDate": employeeResponseTest[j].absentDate,
-            "absentCode": getAbsentCodeObj,
-            "absentId": employeeResponseTest[j].absentCodeId,
-            "nameOfTheSubstitute": employeeResponseTest[j].substituteEmpId,
-            "nameOfTheSubstituteId": employeeResponseTest[j].substituteEmpId,
-            "partialHour": employeeResponseTest[j].partialHour,
-            "partialMin": employeeResponseTest[j].partialMin,
-            "isFullDay": employeeResponseTest[j].isFullDay,
+            "employeeId": getAbsenceReportOfEmployee[i].employeeId,
+            "employeeResponse": employeeResponse,
             "employeeType": getAbsenceReportOfEmployee[i].employeeType,
-            "detailId":employeeResponseTest[j].id
-          })
-        }
-
-
-
-        console.log("employeeResponse", employeeResponse)
-
-        employeeResponse.map((item) => item.selectedDate = new Date(moment(item.selectedDate).format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")))
-
-
-        employeeResponse = [...employeeResponse].sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate));
-
-        for (let s = 0; s < employeeResponse.length; s++) {
-          if (employeeResponse[s].partialMin === null || employeeResponse[s].partialMin === "Nan") {
-            employeeResponse[s].partialMin = 0
           }
-        }
 
-        console.log("employeeResponse", employeeResponse);
+          let updatedate = [];
+          dataRec = []
 
+          if (newResponse.length > 0) {
+            newResponse = [...newResponse, data];
+          } else {
+            newResponse.push(data)
+          }
 
+          let newdate = [];
+          if (i === getAbsenceReportOfEmployee.length - 1) {
+            const groupedData = newResponse.reduce((acc, obj) => {
+              const existingObj = acc.find(item => item.employeeId === obj.employeeId);
+              if (existingObj) { existingObj.employeeResponse.push(...obj.employeeResponse); }
+              else { acc.push(obj); }
+              return acc;
+            }, []);
 
-        // if (!checkEmployee.includes(empName.id)) {
-        //   checkEmployee[i] = getAbsenceReportOfEmployee[i].employee_id
-        // }
-
-        let data = []
-
-        data = {
-          "employeeName": empName.employee_name,
-          "employeeId": getAbsenceReportOfEmployee[i].employeeId,
-          "employeeResponse": employeeResponse,
-          "employeeType": getAbsenceReportOfEmployee[i].employeeType,
-        }
-
-        let updatedate = [];
-        dataRec = []
-
-        if (newResponse.length > 0) {
-          newResponse = [...newResponse, data];
-        } else {
-          newResponse.push(data)
-        }
-
-        let newdate = [];
-        if (i === getAbsenceReportOfEmployee.length - 1) {
-          const groupedData = newResponse.reduce((acc, obj) => {
-            const existingObj = acc.find(item => item.employeeId === obj.employeeId);
-            if (existingObj) { existingObj.employeeResponse.push(...obj.employeeResponse); }
-            else { acc.push(obj); }
-            return acc;
-          }, []);
-
-          let newR = newResponse.filter(abc => abc.employeeId === getAbsenceReportOfEmployee[i].employeeId)
-          // let newR = newResponse;
-          let countR = 0
-          for (let key in newR) {
-            if (newR[key] && newR[key].employeeResponse) {
-              for (var k = 0; k < newR[key].employeeResponse.length; k++) {
-                newR[key].employeeResponse[k].partialMin = isNaN(newR[key].employeeResponse[k].partialMin) ? 0 : newR[key].employeeResponse[k].partialMin;
-                dataRec[countR] = newR[key].employeeResponse[k]
-                dataRec[countR].nameOfTheSubstitute = dataRec[countR].nameOfTheSubstituteId
-                dataRec[countR].absentCode = newR[key].employeeResponse[k].absentCode
-                setSelectedItem(newR[key].employeeResponse[k].selectedDate)
-                selectdate.push(newR[key].employeeResponse[k].selectedDate)
-                updatedate[countR] = newR[key].employeeResponse[k].selectedDate
-                //updName[countR] = newR[key].employeeResponse[k].employeeName
-                setSelectedName(newR[key].employeeResponse[k].employeeName)
-                countR = countR + 1
+            let newR = newResponse.filter(abc => abc.employeeId === getAbsenceReportOfEmployee[i].employeeId)
+            // let newR = newResponse;
+            let countR = 0
+            for (let key in newR) {
+              if (newR[key] && newR[key].employeeResponse) {
+                for (var k = 0; k < newR[key].employeeResponse.length; k++) {
+                  newR[key].employeeResponse[k].partialMin = isNaN(newR[key].employeeResponse[k].partialMin) ? 0 : newR[key].employeeResponse[k].partialMin;
+                  dataRec[countR] = newR[key].employeeResponse[k]
+                  dataRec[countR].nameOfTheSubstitute = dataRec[countR].nameOfTheSubstituteId
+                  dataRec[countR].absentCode = newR[key].employeeResponse[k].absentCode
+                  setSelectedItem(newR[key].employeeResponse[k].selectedDate)
+                  selectdate.push(newR[key].employeeResponse[k].selectedDate)
+                  updatedate[countR] = newR[key].employeeResponse[k].selectedDate
+                  //updName[countR] = newR[key].employeeResponse[k].employeeName
+                  setSelectedName(newR[key].employeeResponse[k].employeeName)
+                  countR = countR + 1
+                }
               }
             }
+
+
+            const sortedArray = groupedData.slice().sort((a, b) => {
+              const nameA = a.employeeName.toLowerCase();
+              const nameB = b.employeeName.toLowerCase();
+              if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+              return 0;
+            });
+
+
+
+            let administratorData = sortedArray.filter(item => item.employeeType === 'Administrator');
+            let certificatedData = sortedArray.filter(item => item.employeeType === 'Classified');
+
+
+
+            setAdministratorData(administratorData)
+            setCertificatedDatas(certificatedData)
+            setMappedData(sortedArray)
+            setSelectedDateRecord(dataRec)
+            setMapDataIndex(newResponse.length - 1)
+            setSelectedDateFinal(dataRec)
+            setSelectedDateRecordNew(dataRec)
+            if (newEmp) { newdate[newEmp] = updatedate }
+            setDisabledDates(newdate)
+            setVisible(true);
+
           }
-
-
-          const sortedArray = groupedData.slice().sort((a, b) => {
-            const nameA = a.employeeName.toLowerCase();
-            const nameB = b.employeeName.toLowerCase();
-            if (nameA < nameB) {
-              return -1;
-            }
-            if (nameA > nameB) {
-              return 1;
-            }
-            return 0;
-          });
-
-
-
-          let administratorData = sortedArray.filter(item => item.employeeType === 'Administrator');
-          let certificatedData = sortedArray.filter(item => item.employeeType === 'Classified');
-
-
-          console.log('administratorData',administratorData);
-          console.log('certificatedData',certificatedData)
-
-          setAdministratorData(administratorData)
-          setCertificatedDatas(certificatedData)
-          setMappedData(sortedArray)
-          setSelectedDateRecord(dataRec)
-          setMapDataIndex(newResponse.length - 1)
-          setSelectedDateFinal(dataRec)
-          setSelectedDateRecordNew(dataRec)
-          if (newEmp) { newdate[newEmp] = updatedate }
-          setDisabledDates(newdate)
-          setVisible(true);
-
         }
-      }
 
-      let updatedList = [...selectedEmpDate, ...selectdate]
-      setSelectedEmpDate(updatedList)
+        let updatedList = [...selectedEmpDate, ...selectdate]
+        setSelectedEmpDate(updatedList)
+      }
+    } catch (e) {
     }
-  } catch (e) {
-    console.log("error", e)
   }
-}
 
   const getMasterData = async () => {
     setDataLoaded(false)
@@ -1723,7 +1508,6 @@ const getData = async () => {
     if (isDataLoaded === true) {
       if (reportId) {
         // getEditData()
-        console.log("getting", reportId)
         getData()
       }
       // getModuleId(topicId, categoryId, requestReceiveFromList[0].name)
@@ -1752,15 +1536,26 @@ const getData = async () => {
 
   //onclick remove container details
   const onClickRemove = (index, detailIndex, detail, item) => {
-
     let data = [...mappedData];
     let selData = [...selectedDateRecord];
     setIndexEditMode(false)
 
+
+    // const resp =data.map((elm)=>{
+    //   elm.employeeResponse.map((jjj)=>{
+    //     return jjj.detailId === detail.detailId
+    //   })
+    // })
+
+
+    // let adminData = administratorData.filter( item => item.detailId !== detail.detailId);
+
     setSelectedDateRecordNew([])
     //set disabledates
-
-    var indexofdate = disabledDates.indexOf(detail.selectedDate);
+    const dynamicKey = item.employeeId;
+    // const arrayForDynamicKey = dynamicKey;
+    const arrayForDynamicKey = disabledDates[dynamicKey];
+    var indexofdate = arrayForDynamicKey?.indexOf(detail.displayDate);
     let newDates = disabledDates.splice(indexofdate);
     let updateDate = []
     if (disabledDates[item.employeeId] && disabledDates[item.employeeId].length) {
@@ -1778,6 +1573,7 @@ const getData = async () => {
     }
 
     setDisabledDates(updateDate)
+
 
     if (data[index].employeeResponse.length === 1) {
 
@@ -1814,6 +1610,73 @@ const getData = async () => {
   useEffect(() => {
     getMasterData();
   }, []);
+
+
+  const onClickRemoveData = (detail, item) => {
+
+    // let data = [...mappedData];
+    // let selData = [...selectedDateRecord];
+    // setIndexEditMode(false)
+
+
+    // // const resp =data.map((elm)=>{
+    // //   elm.employeeResponse.map((jjj)=>{
+    // //     return jjj.detailId === detail.detailId
+    // //   })
+    // // })
+
+
+    // // let adminData = administratorData.filter( item => item.detailId !== detail.detailId);
+
+    // setSelectedDateRecordNew([])
+    // //set disabledates
+    // const dynamicKey = item.employeeId;
+    // // const arrayForDynamicKey = dynamicKey;
+    // const arrayForDynamicKey = disabledDates[dynamicKey];
+    // var indexofdate = arrayForDynamicKey?.indexOf(detail.displayDate);
+    // let newDates = disabledDates.splice(indexofdate);
+    // let updateDate = []
+    // if (disabledDates[item.employeeId] && disabledDates[item.employeeId].length) {
+    //   let newDisabele = disabledDates[item.employeeId].filter(item => item !== detail.selectedDate)
+    //   for (var key in disabledDates) {
+    //     if (key === item.employeeId) {
+    //       //newDisabele = disabledDates[item.employeeId].filter(item => item !== detail.selectedDate)
+    //       newDisabele[key] = disabledDates[item.employeeId].filter(item => item !== detail.selectedDate)
+    //     } else {
+    //       newDisabele[key] = disabledDates[key]
+    //     }
+    //   }
+
+    //   updateDate = newDisabele
+    // }
+
+    // setDisabledDates(updateDate)
+    const updatedData = mappedData.map((test) => {
+      if (test.employeeId === item.employeeId) {
+        const updatedEmployeeResponse = (test.employeeResponse || []).filter(
+          (elm) => elm.detailId !== detail.detailId
+        );
+        return { ...test, employeeResponse: updatedEmployeeResponse };
+      }
+      return test;
+    });
+
+    setMappedData(updatedData);
+
+    const administratorData = updatedData.filter((item) => item.employeeType === 'Administrator' && item.employeeResponse &&
+      item.employeeResponse.length > 0);
+    const certificatedData = updatedData.filter((item) =>
+      item.employeeType === 'Classified' &&
+      item.employeeResponse &&
+      item.employeeResponse.length > 0
+    );
+
+    const hasNonZeroLengthAdministration = administratorData.some((elm) => elm.employeeResponse.length > 0);
+    setAdministratorData(hasNonZeroLengthAdministration ? administratorData : []);
+
+    const hasNonZeroLengthCertificated = certificatedData.some((elm) => elm.employeeResponse.length > 0);
+    setCertificatedDatas(hasNonZeroLengthCertificated ? certificatedData : []);
+  }
 
   return (
     <>
@@ -1906,6 +1769,12 @@ const getData = async () => {
                   setEmployeeList={setEmployeeList}
                   setSelectedEmployee={setSelectedEmployee}
                   onHide={() => { setOpenNewEmployee(false) }}
+                  employeeTypeList=
+                  {[
+                    { name: "Administrator", code: "Administrator" },
+                    { name: "Classified", code: "Classified" },
+                  ]
+                  }
                 />
                 <div className="w-full">
                   <label
@@ -2054,7 +1923,7 @@ const getData = async () => {
                   </div>
                   <div className="mt-6 xl:mt-[1.250vw]">
                     {
-                      administratorData.length !== 0 || existingResultsAdministrator.length !== 0 ?
+                      administratorData.length !== 0 ?
                         <>
 
                           <div className="p-4 xl:p-[0.833vw] pb-0">
@@ -2072,76 +1941,85 @@ const getData = async () => {
                           {
                             visible &&
                             <Paper>
-                              <Table>
-                                <TableHead>
-                                  {
-                                    administratorData.length !== 0 || existingResultsAdministrator.length !== 0 ?
-                                      <TableRow>
-                                        <TableCell>Name of Employee</TableCell>
-                                        <TableCell>
-                                          Dates Absent</TableCell>
-                                        <TableCell>Absent Codes</TableCell>
-                                        <TableCell>Total Hours</TableCell>
-                                        <TableCell>Name of Substitute1</TableCell>
-                                        <TableCell>Action</TableCell>
-                                      </TableRow> : null
-                                  }
-                                </TableHead>
+                              {
+                                administratorData.length == 0 ? null :
+                                  <Table>
+                                    <TableHead>
+                                      {
+                                        administratorData.length == 0 || existingResultsAdministrator.length == 0 ?
+                                          null : <TableRow>
+                                            <TableCell>Name of Employee</TableCell>
+                                            <TableCell>
+                                              Dates Absent</TableCell>
+                                            <TableCell>Absent Codes</TableCell>
+                                            <TableCell>Total Hours</TableCell>
+                                            <TableCell>Name of Substitute</TableCell>
+                                            <TableCell>Action</TableCell>
+                                          </TableRow>
+                                      }
+                                    </TableHead>
 
-                                <TableBody>
-                                  {
-                                    (administratorData.length !== 0 ? administratorData : existingResultsAdministrator).map((item, i) => (
-                                      <Fragment key={i}>
-                                        {
-                                          administratorData.length !== 0 || existingResultsAdministrator.length !== 0 ?
-                                            <TableRow>
-                                              <TableCell
-                                                rowSpan={item.employeeResponse.length + 1}
-                                              >
-                                                {/* {(reportId) ?
-                                                  <Link className=' show default overflow-hidden truncate w-5 underline text-blue-600 hover:text-blue-800 visited:text-purple-600 ' onClick={() => {
-                                                    onClickUpdateFollow(i, item)
-                                                  }}> {item.employeeName}</Link> : item.employeeName
-                                                } */}
-                                                {item.employeeName}
-                                              </TableCell>
-                                            </TableRow> : null
+                                    <TableBody>
+                                      {
+                                        (administratorData.length !== 0 ? administratorData : existingResultsAdministrator).map((item, i) => (
+                                          <Fragment key={i}>
+                                            {
+                                              administratorData.length !== 0 || existingResultsAdministrator.length !== 0 ?
+                                                <TableRow>
+                                                  <TableCell
+                                                    rowSpan={item.employeeResponse.length + 1}
+                                                  >
+                                                    {/* {(reportId) ?
+                                                 <Link className=' show default overflow-hidden truncate w-5 underline text-blue-600 hover:text-blue-800 visited:text-purple-600 ' onClick={() => {
+                                                   onClickUpdateFollow(i, item)
+                                                 }}> {item.employeeName}</Link> : item.employeeName
+                                               } */}
+                                                    {
+                                                      administratorData.length === 0 ?
+                                                        null :
+                                                        item.employeeName
+                                                    }
+                                                  </TableCell>
+                                                </TableRow> : null
 
-                                        }
-
-
-                                        {item.employeeResponse.map((detail, detailIndex) => (
-
-                                          <TableRow>
-                                            <TableCell>{moment(detail.selectedDate).format("MM/DD/YYYY")}</TableCell>
-
-                                            <TableCell>{detail.absentCode.name}</TableCell>
-                                            {detail.isFullDay ?
-                                              <TableCell>
-                                                {fullDay}
-                                              </TableCell>
-                                              :
-                                              <TableCell>
-                                                {detail.partialHour === null + "." && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" === null ? "-" : detail.partialHour + "." !== null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') === null ? detail.partialHour : detail.partialHour + "." === null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" !== null ? Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + "min" : detail.partialHour + "." + Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr"}</TableCell>
                                             }
 
-                                            <TableCell>{detail.nameOfTheSubstitute}</TableCell>
-                                            <TableCell>
+
+                                            {item.employeeResponse.map((detail, detailIndex) => (
+
+                                              <TableRow>
+                                                <TableCell>{moment(detail.selectedDate).format("MM/DD/YYYY")}</TableCell>
+
+                                                <TableCell>{detail.absentCode.name}</TableCell>
+                                                {detail.isFullDay ?
+                                                  <TableCell>
+                                                    {fullDay}
+                                                  </TableCell>
+                                                  :
+                                                  <TableCell>
+                                                    {detail.partialHour === null + "." && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" === null ? "-" : detail.partialHour + "." !== null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') === null ? detail.partialHour : detail.partialHour + "." === null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" !== null ? Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + "min" : detail.partialHour + "." + Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr"}</TableCell>
+                                                }
+
+                                                <TableCell>{detail.nameOfTheSubstitute}</TableCell>
+                                                <TableCell>
 
 
-                                              <a className="pi pi-trash ml-3" onClick={() => {
-                                                onClickRemove(i, detailIndex, detail, item)
-                                              }}>
-                                              </a>
+                                                  <a className="pi pi-trash ml-3" onClick={() => {
+                                                    onClickRemoveData(detail, item)
+                                                  }}>
+                                                  </a>
 
-                                            </TableCell>
-                                          </TableRow>
-                                        ))}
-                                      </Fragment>
-                                    ))
-                                  }
-                                </TableBody>
-                              </Table>
+                                                </TableCell>
+                                              </TableRow>
+                                            ))}
+                                          </Fragment>
+                                        ))
+                                      }
+                                    </TableBody>
+                                  </Table>
+
+                              }
+
                             </Paper>
                           }
                         </div>
@@ -2149,16 +2027,15 @@ const getData = async () => {
                     </div>
 
                     {
-                      CertificatedDatas.length !== 0 || existingResultsCertifiedCertificated.length !== 0 ?
-                        <>
+                      CertificatedDatas.length === 0 || existingResultsCertifiedCertificated.length === 0 ?
+                        null :
 
-                          <div className="p-4 xl:p-[0.833vw] pb-0">
-                            <div className="text-[#101828] font-semibold -tracking-[0.02em] text-base xl:text-[0.833vw]">
-                              <p>Preview - Classified</p>
-                            </div>
+                        <div className="p-4 xl:p-[0.833vw] pb-0">
+                          <div className="text-[#101828] font-semibold -tracking-[0.02em] text-base xl:text-[0.833vw]">
+                            <p>Preview - Classified</p>
                           </div>
+                        </div>
 
-                        </> : null
 
                     }
                     <div className="bg-white box-shadow-1">
@@ -2167,72 +2044,81 @@ const getData = async () => {
                         {
                           visible &&
                           <Paper>
-                            <Table>
+                            {
 
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell>Name of Employee</TableCell>
-                                  <TableCell>
-                                    Dates Absent</TableCell>
-                                  <TableCell>Absent Codes1</TableCell>
-                                  <TableCell>Total Hours</TableCell>
-                                  <TableCell>Name of Substitute</TableCell>
-                                  <TableCell>Action</TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                {
-
-                                  (CertificatedDatas.length !== 0 ? CertificatedDatas : existingResultsCertifiedCertificated).map((item, i) => (
-
-                                    <Fragment>
+                              CertificatedDatas.length === 0 ? null :
+                                <Table>
+                                  {CertificatedDatas.length === 0 || existingResultsCertifiedCertificated.length === 0 ? null :
+                                    <TableHead>
                                       <TableRow>
-                                        <TableCell
-                                          rowSpan={item.employeeResponse.length + 1}
-                                        >
-                                          {/* {(reportId) ?
+                                        <TableCell>Name of Employee</TableCell>
+                                        <TableCell>
+                                          Dates Absent</TableCell>
+                                        <TableCell>Absent Codes</TableCell>
+                                        <TableCell>Total Hours</TableCell>
+                                        <TableCell>Name of Substitute</TableCell>
+                                        <TableCell>Action</TableCell>
+                                      </TableRow>
+                                    </TableHead>
+
+                                  }
+                                  <TableBody>
+                                    {
+
+                                      (CertificatedDatas.length !== 0 ? CertificatedDatas : existingResultsCertifiedCertificated).map((item, i) => (
+
+                                        <Fragment>
+                                          <TableRow>
+                                            <TableCell
+                                              rowSpan={item.employeeResponse.length + 1}
+                                            >
+                                              {/* {(reportId) ?
                                           <Link className=' show default overflow-hidden truncate w-5 underline text-blue-600 hover:text-blue-800 visited:text-purple-600 ' onClick={() => {
                                             onClickUpdateFollow(i, item)
                                           }}> {item.employeeName}</Link> : item.employeeName
                                         } */}
-                                          {item.employeeName}
-                                        </TableCell>
-                                      </TableRow>
-                                      {item.employeeResponse.map((detail, detailIndex) => (
 
-                                        <TableRow>
-                                          {/* Set to selectedDate while create */}
 
-                                          <TableCell>{moment(detail.selectedDate).format("MM/DD/YYYY")}</TableCell>
-
-                                          <TableCell>{detail.absentCode?.name}</TableCell>
-
-                                          {detail.isFullDay ?
-                                            <TableCell>
-                                              {fullDay}
+                                              {CertificatedDatas.length === 0 ? null : item.employeeName}
                                             </TableCell>
-                                            :
-                                            <TableCell>
+                                          </TableRow>
+                                          {item.employeeResponse.map((detail, detailIndex) => (
 
-                                              {detail.partialHour === null + "." && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" === null ? "-" : detail.partialHour + "." !== null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') === null ? detail.partialHour : detail.partialHour + "." === null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" !== null ? Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + "min" : detail.partialHour + "." + Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr"}</TableCell>
-                                          }
+                                            <TableRow>
+                                              {/* Set to selectedDate while create */}
 
-                                          <TableCell>{detail.nameOfTheSubstitute}</TableCell>
-                                          <TableCell>
+                                              <TableCell>{moment(detail.selectedDate).format("MM/DD/YYYY")}</TableCell>
 
-                                            <a className="pi pi-trash ml-3" onClick={() => {
-                                              onClickRemove(i, detailIndex, detail, item)
-                                            }}>
-                                            </a>
+                                              <TableCell>{detail.absentCode?.name}</TableCell>
 
-                                          </TableCell>
-                                        </TableRow>
-                                      ))}
-                                    </Fragment>
-                                  ))
-                                }
-                              </TableBody>
-                            </Table>
+                                              {detail.isFullDay ?
+                                                <TableCell>
+                                                  {fullDay}
+                                                </TableCell>
+                                                :
+                                                <TableCell>
+
+                                                  {detail.partialHour === null + "." && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" === null ? "-" : detail.partialHour + "." !== null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') === null ? detail.partialHour : detail.partialHour + "." === null && Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr" !== null ? Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + "min" : detail.partialHour + "." + Number(detail.partialMin / 60).toFixed(2).slice(-2).padStart(2, '0') + " hr"}</TableCell>
+                                              }
+
+                                              <TableCell>{detail.nameOfTheSubstitute}</TableCell>
+                                              <TableCell>
+
+                                                <a className="pi pi-trash ml-3" onClick={() => {
+                                                  onClickRemoveData(detail, item)
+                                                }}>
+                                                </a>
+
+                                              </TableCell>
+                                            </TableRow>
+                                          ))}
+                                        </Fragment>
+                                      ))
+                                    }
+                                  </TableBody>
+                                </Table>
+                            }
+
                           </Paper>
                         }
 
@@ -2290,13 +2176,13 @@ const getData = async () => {
                         <button className="font-medium inline-block text-[#FFFFFF] text-xs xl:text-[0.938vw] py-[0.833vw] px-[2.448vw] box-shadow-2 rounded xl:rounded-lg bg-[#113699] border border-[#F2F4F7]">
                           <i className="mr-3 gusd-print-outline"></i>Print
                         </button>
-                        <Link
+                        {(reportId == '' || status === AllStatusData.PENDING) && <Link
                           className="font-medium inline-block text-[#2D5BE5] text-xs xl:text-[0.938vw] py-[0.833vw] px-[2.448vw] box-shadow-2 rounded xl:rounded-lg bg-[#EFF8FF] border border-[#D0D5DD]"
                           href="#"
                           onClick={() => { submitForm("PENDING"); }}
                         >
                           Save
-                        </Link>
+                        </Link>}
                         <Link
                           className="font-medium inline-block text-[#FFFFFF] text-xs xl:text-[0.938vw] py-[0.833vw] px-[2.448vw] box-shadow-2 rounded xl:rounded-lg bg-[#113699] border border-[#F2F4F7]"
                           href="#"

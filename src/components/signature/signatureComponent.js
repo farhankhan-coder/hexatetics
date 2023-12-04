@@ -36,7 +36,6 @@ const SignatureComponent = ({signatureText, setSignature}) => {
 
     const handleSignatureSelect = async (signature, element) => {
         if (text?.trim() != '') {
-            console.log("element", element);
             const image = await generateSignatureImage(element);
             setSignature(image);
             setSelectedSignature(signature);

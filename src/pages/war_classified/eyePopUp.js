@@ -5,8 +5,6 @@ import { Inter } from "@next/font/google";
 import Link from "next/link";
 import { Dialog } from "primereact/dialog";
 import { Tag } from "primereact/tag";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { Timeline } from "primereact/timeline";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -15,43 +13,28 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import moment from 'moment';
-import reportId from '@/pages/war_certificated/initiate/[id]';
 import axios from 'axios';
 import { getAbsenceCodeList } from "../../helper/actions/absenceCodeListActions";
 import sidebar from "../../../public/assets/images/sidebarright.svg"
-import { AllStatusData } from '../helper/enum';
 import { Apps } from '@/helper/enum';
-
-const myInter = Inter({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
-  display: "swap",
-});
+import { AllStatusData } from '@/components/helper/enum';
 
 function EyePopup(props) {
 
   const [absentCodeList, setAbsenceCodeList] = useState([]);
-
   const getAllAbsentCodeList = async () => {
 
     //*Get userID, Access Token from local storage
     let accessToken = window.localStorage.getItem('accessToken');
     let absenceCodeList = [];
     absenceCodeList = await getAbsenceCodeList(accessToken);
-    console.log('absenceCodeList____________________________', absenceCodeList);
     setAbsenceCodeList(absenceCodeList?.rows)
   }
 
-  console.log('props', props);
-
   const userRole = props.userRole
-  // console.log("props", props);
-  const [checked, setChecked] = useState(false);
-  const [reportEmployeeList, setReportEmployeeList] = useState([]);
   const fullDay = "Full Day";
 
   const handlePrint = () => {
-    console.log('Wait PRINITIG');
   }
 
   const getSeverity = (status) => {
@@ -89,7 +72,6 @@ function EyePopup(props) {
   };
 
   const approveStatusOptions = (product) => {
-    console.log("product", product.status);
     switch (product.status) {
       case AllStatusData.PENDING:
         return 'warning';
@@ -124,9 +106,7 @@ function EyePopup(props) {
   };
 
   const handelAction = async (status) => {
-    console.log('reaching in action');
     let accessToken = window.localStorage.getItem("accessToken");
-    console.log('accessToken', accessToken);
 
     const requestedData = {
       "accessToken": accessToken,
@@ -136,9 +116,9 @@ function EyePopup(props) {
       "reportId": props.reportId
     }
 
-    const response = await axios.post("/api/war_classified/updateWarClassifiedStatus", { requestedData });
 
-    console.log('response', response);
+    const response = await axios.post(`/api/war_classified/updateWarClassifiedStatus`, { requestedData });
+
     props.onHide();
     props.bindList();
 
@@ -179,11 +159,11 @@ function EyePopup(props) {
               </div>
               <div className="flex justify-between text-[#344054] text-[12px] py-[0.729vw] px-[0.417vw] border-b border-[#E4E7EC]">
                 <div className="font-medium">From </div>
-                <div className="font-semibold ">{props.fromDate ? moment(props.fromDate, "YYYY-MM-DD").format("YYYY/MM/DD") : "-"}</div>
+                <div className="font-semibold ">{props.fromDate ? moment(props.fromDate, "YYYY-MM-DD").format("MM/DD/YYYY") : "-"}</div>
               </div>
               <div className="flex justify-between text-[#344054] text-[12px] py-[0.729vw] px-[0.417vw] border-b border-[#E4E7EC]">
                 <div className="font-medium">To </div>
-                <div className="font-semibold ">{props.toDate ? moment(props.toDate, "YYYY-MM-DD").format("YYYY/MM/DD") : "-"}</div>
+                <div className="font-semibold ">{props.toDate ? moment(props.toDate, "YYYY-MM-DD").format("MM/DD/YYYY") : "-"}</div>
               </div>
               <div className="flex justify-between custTable text-[#344054] text-[12px] py-[0.729vw] px-[0.417vw] border-b border-[#E4E7EC]">
                 <div className="font-medium">Status </div>

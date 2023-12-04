@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
@@ -14,6 +14,7 @@ const LogInpage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoginProcessRunning, setLoginProcessRunning] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -21,18 +22,22 @@ const LogInpage = () => {
 
   const authenticateEmployee = async () => {
 
+    setLoginProcessRunning(true);
+
     let API_KEY = process.env.HEXA_API_KEY;
     let SECRET_KEY = process.env.HEXA_SECRETE_KEY;
 
-    if(username.trim().length === 0){
+    if (username.trim().length === 0) {
       toast.error("Please Enter email")
+      setLoginProcessRunning(false);
       return;
     }
-    if(password.trim().length === 0){
+    if (password.trim().length === 0) {
       toast.error("Please Enter password")
+      setLoginProcessRunning(false);
       return;
     }
-   
+
     //*Request Data
     let requestData = {
       "username": username,
@@ -48,41 +53,42 @@ const LogInpage = () => {
       if (response.status === API_STATUS.SUCCESS) {
         toast.success("Login Successfully!");
         //SETTING LOCAL STORAGE HERE.
-        reactLocalStorage.set('accessToken',returnData.accessToken);
-        reactLocalStorage.set('refreshToken',returnData.refreshToken);
-        reactLocalStorage.set('loggedUserId',returnData.userDetails.cognitoUserId);
-        reactLocalStorage.set('loggedFirstName',returnData.userDetails.firstName);
-        reactLocalStorage.set('loggedLastName',returnData.userDetails.lastName);
-        reactLocalStorage.set('loggedUserRole',returnData.userDetails.role);
-        reactLocalStorage.set('loggedl2authority',returnData.userDetails.L2_authoritys);
-        reactLocalStorage.set('loggedStipendApprover',returnData.userDetails.loggedStipendApprover);
-        reactLocalStorage.set('loggedStipendInitiator',returnData.userDetails.loggedStipendInitiator);
-        reactLocalStorage.set('loggedStipendPayroll',returnData.userDetails.loggedStipendPayroll);
-        reactLocalStorage.set('loggedPersonnelServiceAgreeInitiator',returnData.userDetails.loggedPersonnelServiceAgreeInitiator);
-        reactLocalStorage.set('loggedPersonnelServiceAgreeApprover',returnData.userDetails.loggedPersonnelServiceAgreeApprover);
-        reactLocalStorage.set('loggedl1authority',returnData.userDetails.loggedl1authority);
-        reactLocalStorage.set('SPReportingManager',returnData.userDetails.SPReportingManager);
-        reactLocalStorage.set('sixPeriodIsInitiator',returnData.userDetails.sixPeriodIsInitiator);
-        reactLocalStorage.set('sixPeriodIsApprover',returnData.userDetails.sixPeriodIsApprover);
-        reactLocalStorage.set('sixPeriodIsPayroll',returnData.userDetails.sixPeriodIsPayroll);
-        reactLocalStorage.set('isSixPeriodSAdmin',returnData.userDetails.isSixPeriodSAdmin);
-        reactLocalStorage.set('personnelIsInitiator',returnData.userDetails.personnelIsInitiator);
-        reactLocalStorage.set('personnelIsApprover',returnData.userDetails.personnelIsApprover);
-        reactLocalStorage.set('personnelIsPayroll',returnData.userDetails.personnelIsPayroll);
-        reactLocalStorage.set('ispersonnelIsAdmin',returnData.userDetails.ispersonnelIsAdmin);
-        reactLocalStorage.set('timeRIsInitiator',returnData.userDetails.timeRIsInitiator);
-        reactLocalStorage.set('timeRIsApprover',returnData.userDetails.timeRIsApprover);
-        reactLocalStorage.set('timeRIsPayroll',returnData.userDetails.timeRIsPayroll);
-        reactLocalStorage.set('timeRIsSAdmin',returnData.userDetails.timeRIsSAdmin);
-        reactLocalStorage.set('certiSubRIsInitiator',returnData.userDetails.certiSubRIsInitiator);
-        reactLocalStorage.set('certiSubReIsApprover',returnData.userDetails.certiSubReIsApprover);
-        reactLocalStorage.set('certiSubReqIsPayroll',returnData.userDetails.certiSubReqIsPayroll);
+        reactLocalStorage.set('accessToken', returnData.accessToken);
+        reactLocalStorage.set('refreshToken', returnData.refreshToken);
+        reactLocalStorage.set('loggedUserId', returnData.userDetails.cognitoUserId);
+        reactLocalStorage.set('loggedFirstName', returnData.userDetails.firstName);
+        reactLocalStorage.set('loggedLastName', returnData.userDetails.lastName);
+        reactLocalStorage.set('loggedUserRole', returnData.userDetails.role);
+        reactLocalStorage.set('loggedl2authority', returnData.userDetails.L2_authoritys);
+        reactLocalStorage.set('loggedStipendApprover', returnData.userDetails.loggedStipendApprover);
+        reactLocalStorage.set('loggedStipendInitiator', returnData.userDetails.loggedStipendInitiator);
+        reactLocalStorage.set('loggedStipendPayroll', returnData.userDetails.loggedStipendPayroll);
+        reactLocalStorage.set('loggedPersonnelServiceAgreeInitiator', returnData.userDetails.loggedPersonnelServiceAgreeInitiator);
+        reactLocalStorage.set('loggedPersonnelServiceAgreeApprover', returnData.userDetails.loggedPersonnelServiceAgreeApprover);
+        reactLocalStorage.set('loggedl1authority', returnData.userDetails.loggedl1authority);
+        reactLocalStorage.set('SPReportingManager', returnData.userDetails.SPReportingManager);
+        reactLocalStorage.set('sixPeriodIsInitiator', returnData.userDetails.sixPeriodIsInitiator);
+        reactLocalStorage.set('sixPeriodIsApprover', returnData.userDetails.sixPeriodIsApprover);
+        reactLocalStorage.set('sixPeriodIsPayroll', returnData.userDetails.sixPeriodIsPayroll);
+        reactLocalStorage.set('isSixPeriodSAdmin', returnData.userDetails.isSixPeriodSAdmin);
+        reactLocalStorage.set('personnelIsInitiator', returnData.userDetails.personnelIsInitiator);
+        reactLocalStorage.set('personnelIsApprover', returnData.userDetails.personnelIsApprover);
+        reactLocalStorage.set('personnelIsPayroll', returnData.userDetails.personnelIsPayroll);
+        reactLocalStorage.set('ispersonnelIsAdmin', returnData.userDetails.ispersonnelIsAdmin);
+        reactLocalStorage.set('timeRIsInitiator', returnData.userDetails.timeRIsInitiator);
+        reactLocalStorage.set('timeRIsApprover', returnData.userDetails.timeRIsApprover);
+        reactLocalStorage.set('timeRIsPayroll', returnData.userDetails.timeRIsPayroll);
+        reactLocalStorage.set('timeRIsSAdmin', returnData.userDetails.timeRIsSAdmin);
+        reactLocalStorage.set('certiSubRIsInitiator', returnData.userDetails.certiSubRIsInitiator);
+        reactLocalStorage.set('certiSubReIsApprover', returnData.userDetails.certiSubReIsApprover);
+        reactLocalStorage.set('certiSubReqIsPayroll', returnData.userDetails.certiSubReqIsPayroll);
 
+        setLoginProcessRunning(false);
         router.push("/dashboard");
       }
     } catch (error) {
-      console.log('error', error);
-      if( error.response.status === API_STATUS.UNAUTHORIZED){
+      setLoginProcessRunning(false);
+      if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Invalid username or password");
         router.push('/')
       }
@@ -95,7 +101,7 @@ const LogInpage = () => {
 
   return (
     <>
-    <PageHeader pageTitle={"Login"}/>
+      <PageHeader pageTitle={"Login"} />
       <div className="overflow-auto login-page">
         <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2 ">
           <div className="flex flex-wrap flex-row justify-center login bg-transparent dark:bg-[#1E2124] xl:border-r xl:border[#F9FAFB] xl:border-opacity-10 bg-none">
@@ -194,7 +200,7 @@ const LogInpage = () => {
                 <Link href="#">
                   <div onClick={authenticateEmployee} className="my-[15px] xl:my-[2.138vw]">
                     <button type="submit" className="w-full  custmBtn blue radius8 text-lg ">
-                      Login
+                      {isLoginProcessRunning === true ? 'Please Wait...' : 'Login'}
                     </button>
                   </div>
                 </Link>

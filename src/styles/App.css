@@ -542,9 +542,9 @@ background: transparent !important;
   .pageA{
     height: 1800px !important;
   }
-  .text-sm{
+  /* .text-sm{
     line-height: 2rem;
-  }
+  } */
   .pageB{
     height: 1800px !important;
   }
@@ -576,9 +576,9 @@ background: transparent !important;
   .pageA1{
     height: 1500px !important;
   }
-  .text-sm{
+  /* .text-sm{
     line-height: 3rem;
-  }
+  } */
   .pageA2{
     height: 1400px !important;
   }

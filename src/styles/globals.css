@@ -556,6 +556,10 @@ body {
       text-align: center !important;
     
   }
+  .p-datatable-emptymessage td{
+    text-align: center !important;
+  
+}
     .custTable tr.p-datatable-emptymessage td {
       
       justify-content: center;
@@ -616,7 +620,11 @@ body {
     width: 68.125vw !important;
   }
 }
-@media only screen and (max-width: 1600px) {}
+@media only screen and (min-width: 1600px) {
+.marginTop{
+  margin: 15px 0px 0px 50px;
+}
+}
 @media only screen and (max-width: 1024px) {
   .sideTabs li a i {
     width: 40px !important;

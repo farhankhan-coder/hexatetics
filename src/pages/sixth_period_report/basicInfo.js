@@ -5,351 +5,492 @@ import React, { useEffect, useState } from 'react'
 import Link from "next/link";
 import { Tooltip } from "primereact/tooltip";
 import axios from "axios";
+// const { API_STATUS } = require("../../helper/enum");
+import { useRouter } from "next/router";
 //  import Employeepopup from "@/components/common/Employeepopup";
-
 // import { Link } from 'react-router-dom';
 import DropdownComponent from '../../components/common/dropdownComponent/dropdownComponent';
 import CalenderComponet from '../../components/common/calenderComponent/calenderComponent';
 import InputComponent from '../../components/common/inputComponent/inputComponent'
 import EmployeePopup from '@/components/common/EmployeePopup';
+import { toast } from 'react-toastify';
+import { API_STATUS } from '../../helper/enum';
 
 export default function BasicInfo({ setActiveIndex, activeIndex }) {
-    const { API_STATUS } = require("../../helper/enum");
-    const [value, setValue] = useState('');
-    const [date, setDate] = useState('')
+    const router = useRouter();
+    const [requestPayload, setRequestPayload] = useState({
+        assignmentTitle: '',
+        employeeId: null,
+        assighmentAt: null,
+        fromDate: null,
+        toDate: null,
+        subjectArea: null,
+        totalStaffingAllocation: null,
+        accountCharged: null,
+        currentFteUtilized: null,
+        submittedBy: '',
+        submittedAt: '',
+        createdBy: '',
+        particularEmpReportingManager: null,
+        budgetClerkId: null,
+        budgetManagerId: null,
+        hrDirectorI: null,
+        payrollId: 'bd6e717c-568a-4728-85eb-5d8689a11b88', //Remove this static once we get payroll data and replace 
+        editable: true,
+        updatedAt: '',
+        createdAt: '',
+        modifiedFromDate: '',
+        modifiedToDate: '',
+    })
+    const [validateFieldList, setValidateFieldList] = useState(['employeeId', 'assighmentAt','fromDate', 'toDate', 'particularEmpReportingManager', 'hrDirectorI', 'payrollId'])
+    const [error, seterror] = useState({
+        employeeId: {error: true, message: "Please Select Employee"},
+        assighmentAt: {error: true, message: "Please Select Assignment"},
+        fromDate: {error: true, message: "Please Enter From Date"},
+        toDate: {error: true, message: "Please Enter To Date"},
+        particularEmpReportingManager: {error: true, message: "Please Select Site Admin"},
+        hrDirectorI: {error: true, message: "Please Select HR Director"},
+        payrollId: {error: false, message: "Please Select HR Technician"},
+
+    })
+
+    const [disableFieldData,setDisableFieldData] = useState({pId: '', employeeName: ''})
     const [openNewEmployee, setOpenNewEmployee] = useState(false);
-    const calenderConfig = {
-        value: date,
-        placeholder: 'Start Date',
-        className: "w-full h-11 pl-8",
-        dateFormat: "dd/mm/yy"
-    }
-    const calenderConfig1 = {
-        value: 'calenderStart',
-        placeholder: 'End Date',
-        className: "w-full h-11 pl-8",
-        dateFormat: "dd/mm/yy"
-    }
-    const eventHandlersofCalender = {
-        calenderchangeHandler: (e) => {
-            setDate(e.value)
-            console.log('Selected Value:', e.value);
-        },
-    };
+    function formatDate(inputDate) {
+        const date = new Date(inputDate);
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based, so we add 1
+        const day = (date.getDate() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+      
+        return `${month}/${day}/${year}`;
+      }
+
+    const calenderchangeHandler = (e) => {
+            const {name, value} = e.target;
+            if(name == 'fromDate'){
+                const updatedValue = formatDate(value.toISOString().slice(0,10))
+                setRequestPayload({...requestPayload, toDate: '',modifiedFromDate: updatedValue, [name]: value})
+
+            }else{
+                const updatedValue = formatDate(value.toISOString().slice(0,10))
+                setRequestPayload({...requestPayload,modifiedToDate: updatedValue, [name]: value})
+            }
+            if(value){
+                if(name == 'fromDate'){
+                    seterror({...error, [name]: {...error[name], error: false}, toDate: {error: true, message: 'Please Enter To Date'}})
+                }else{
+                    seterror({...error, [name]: {...error[name], error: false}})
+                }
+            }else{
+                seterror({...error, [name]: {...error[name], error: true}})
+            }
+        }
+    
     const [employeeList, setEmployeeList] = useState();
     const [approverList, setApproverList] = useState();
 
-    const [selectedEmployee, setSelectedEmployee] = useState(null);
-    const EmployeeDropdown = {
-        // options: [
-        //     { label: 'Option 1', value: 'option1' },
-        //     { label: 'Option 2', value: 'option2' },
-        // ],
-        options:employeeList,
-        placeholder: 'Select an Employee',
-        className: 'md:w-[21rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085] mr-2'
-    };
-    const EmployeeEvent = {
-        onChange: (e) => {
-            setSelectedEmployee(e.target.value);
-            console.log('Selected Value:', e.value);
-        },
-        selectedValue: selectedEmployee
-    };
+    
+    const [schoolList, setSchoolList] = useState([]);
 
-    //Employeelist Api
-
-   async function getEmployeeListData(e) {
-   // let schoolId = e?.code;
-    // console.log("schoolId", schoolId)
-
-   // setSelectedSchool(e);
-    try {
-      let accessToken = window.localStorage.getItem("accessToken");
-
-      //*Request data
-      let requestedData = {
-        accessToken: accessToken,
-        page: 1,
-        limit: 100,
-        search: "",
-       // employeeType: ["Certificated", "Administrator"],
-       //  schoolId: schoolId ? parseInt(schoolId) : "",
-      };
-
-      const response = await axios.post("/api/common/getEmployeeList", {
-        requestedData,
-      });
-      var employeeResponses = response.data;
-      if (employeeResponses !== null) {
-        let employee = [{ label: "No Absence", value: "1" }];
-        let Approver = [{label: "No Absence", value: "1"}];
-        employeeResponses.rows.map((item) => {
-          let name = item.employee_code
-            ? `${item.employee_name} (${item.employee_code})`
-            : item.employee_name;
-          let obj = {
-            label: name,
-            value: item.id,
-           // employeeType: item.employeeType,
-          };
-          let AppObj = {
-            label: name,
-            value: item.user_Id,
-          };
-          employee.push(obj);
-          Approver.push(AppObj)
+    async function getEmployeeListData() {
+      try {
+        let accessToken = window.localStorage.getItem("accessToken");
+        let requestedData = {
+          accessToken: accessToken,
+          page: 1,
+          limit: 100,
+          search: "",
+        };
+        
+        const response = await axios.post("/api/common/getEmployeeList", {
+          requestedData,
         });
-        setEmployeeList(employee);
-        setApproverList(Approver);
-      }
-    } catch (error) {
-      console.log(error);
-      console.log("error", error.response.status);
-      if (error.response.status === API_STATUS.UNAUTHORIZED) {
-        toast.error("Session Expired");
-        router.push("/");
+        var employeeResponses = response.data;
+        if (employeeResponses !== null) {
+          let employee = [];
+          let Approver = [];
+          employeeResponses.rows.map((item) => {
+            let name = item.employee_code
+              ? `${item.employee_name} (${item.employee_code})`
+              : item.employee_name;
+            let obj = {
+                ...item,
+              label: name,
+              value: item.id,
+            };
+            let AppObj = {
+              label: name,
+              value: item.user_Id,
+            };
+            employee.push(obj);
+            Approver.push(AppObj);
+          });
+          
+          setEmployeeList(employee);
+          setApproverList(Approver);
+        }
+      } catch (error) {
+        if (error?.response?.status === API_STATUS.UNAUTHORIZED) {
+          toast.error("Session Expired");
+          router.push("/");
+        }
       }
     }
-  }
-    
-    //school dropwown
-    const [schoolList, setSchoolList] = useState([]);
-    const [selectedSchool, setSelectedSchool] = useState(null);
-    const SchoolDropdown = {
-        // options: [
-        //     { label: 'Option 1', value: 'option1' },
-        //     { label: 'Option 2', value: 'option2' },
-        // ],
-        options:schoolList,
-        placeholder: 'Select School',
-        className: 'md:w-[33.3rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085]'
-    };
-    const SchoolEvent = {
-        onChange: (e) => {
-            setSelectedSchool(e.target.value)
-            console.log('Selected Value:', e.value);
-        },
-        selectedValue: selectedSchool
-    };
+
     //School List API
     const getShoolListData = async () => {
-        try {
-            //*Get userID, Access Token from local storage
-            let accessToken = window.localStorage.getItem("accessToken");
-            //*Request data
-            console.log(accessToken,"accessTokenaccessToken")
-            let requestedData = {
-                accessToken: accessToken,
-                page: 1,
-                limit: 100,
-            };
+      try {
+        let accessToken = window.localStorage.getItem("accessToken");
+        let requestedData = {
+          accessToken: accessToken,
+          page: 1,
+          limit: 100,
+        };
 
-            const response = await axios.post("/api/common/getSchoolList", {
-                requestedData,
-            });
-            console.log(response,"responseresponse")
-            let getSchoolListDetails = response.data;
-            
-            let getSchoolListResponse = getSchoolListDetails.rows;
-            let finalArray = [];
-            getSchoolListResponse.map((item, index) => {
-                finalArray.push({ label: item.name, value: item.id });
-                setSchoolList(finalArray);
-               
-            });
-        } catch (err) {
-            console.log("err----" + err);
-            if (err.response.status === API_STATUS.UNAUTHORIZED) {
-                toast.error("Session Expired");
-                router.push("/");
-            }
+        const response = await axios.post("/api/common/getSchoolList", {
+          requestedData,
+        });
+        let getSchoolListDetails = response.data;
+
+        let getSchoolListResponse = getSchoolListDetails.rows;
+        const updatedSchoolList = getSchoolListResponse.map((item, index) => {
+          return { label: item.name, value: item.name };
+        });
+        setSchoolList([...updatedSchoolList]);
+      } catch (err) {
+        if (err?.response?.status === API_STATUS.UNAUTHORIZED) {
+          toast.error("Session Expired");
+          router.push("/");
         }
+      }
     };
-    useEffect(() => {
-        getShoolListData();
-        getEmployeeListData();
-          
-      }, []);
 
-    //Admin Buget clerk
-    const [selectedClerk, setSelectedClerk] = useState(null);
+    useEffect(() => {
+      getShoolListData();
+      getEmployeeListData();
+    }, []);
+
+
+    const setDisableFieldsData = (value) => {
+        const getEmployee = employeeList.find((item) => {
+            return item.id == value
+        })
+
+        if(getEmployee){
+            const pId = getEmployee.employee_code;
+            const employeeName = getEmployee.employee_name
+
+            setDisableFieldData({pId: pId,employeeName: employeeName})
+        }else{
+            setDisableFieldData({pId: '',employeeName: ''})
+        }
+    }
+
+    const checkIsNeedToBeDisable = () => {
+        const budgetClerkValue = requestPayload['budgetClerkId']
+        if(budgetClerkValue && budgetClerkValue.length > 0){
+            return false
+        }
+        return true;
+    }
+    //Dropdown attriutes
+    const commonList = {
+        options: employeeList,
+        className: 'md:w-[21rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085] mr-2',
+    }
+
+    const EmployeeDropdown = {
+        placeholder: 'Select an Employee',
+        name: 'employeeId',
+        isClearable: true,
+        ...commonList
+    };
+
+    const SchoolDropdown = {
+        options:schoolList,
+        placeholder: 'Select School',
+        name: 'assighmentAt',
+        isClearable: true,
+        className: 'md:w-[33.3rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085]'
+    };
+
     const ClerkDropdown = {
-        // options: [
-        //     { label: 'Option 1', value: 'option1' },
-        //     { label: 'Option 2', value: 'option2' },
-        // ],
         options:approverList,
         placeholder: 'Select a Budget Clerk',
-        className: 'w-full md:w-14rem'
-    };
-    const ClerkEvent = {
-        onChange: (e) => {
-            setSelectedClerk(e.target.value)
-            console.log('Selected Value:', e.value);
-        },
-        selectedValue: selectedClerk
+        className: 'w-full md:w-14rem',
+        isClearable: true,
+        name: 'budgetClerkId'
     };
 
-    //Admin dept head Dropdown
-    const [selectedAdminDept, setSelectedAdminDept] = useState(null);
     const AdmindeptheadDropdown = {
-        // options: [
-        //     { label: 'Option 1', value: 'option1' },
-        //     { label: 'Option 2', value: 'option2' },
-        // ],
         options:approverList,
         placeholder: 'Select an Site Admin/ Dept Head',
-        className: 'w-full md:w-14rem'
+        className: 'w-full md:w-14rem',
+        isClearable: true,
+        name: 'particularEmpReportingManager'
     };
-    const AdmindeptheadEvent = {
-        onChange: (e) => {
-            setSelectedAdminDept(e.target.value)
-            console.log('Selected Value:', e.value);
-        },
-        selectedValue: selectedAdminDept
-    };
-    //Admin Budget Director
-    const [selectedBudgetDirector, setSelectedBudgetDirector] = useState(null);
+
     const BudgetDirectorDropdown = {
-        // options: [
-        //     { label: 'Option 1', value: 'option1' },
-        //     { label: 'Option 2', value: 'option2' },
-        // ],
         options:approverList,
         placeholder: 'Select a Budget Director',
-        className: 'w-full md:w-14rem'
+        className: 'w-full md:w-14rem',
+        name: 'budgetManagerId',
+        isClearable: true,
+        isDisable: checkIsNeedToBeDisable()
     };
-    const BudgetDirectorEvent = {
-        onChange: (e) => {
-            setSelectedBudgetDirector(e.target.value)
-            console.log('Selected Value:', e.value);
-        },
-        selectedValue: selectedBudgetDirector
-    };
-    //Admin HR director
-    const [selectedHrdireactor, setSelectedHrdireactor] = useState(null);
+
     const HrdireactorDropdown = {
-        // options: [
-        //     { label: 'Option 1', value: 'option1' },
-        //     { label: 'Option 2', value: 'option2' },
-        // ],
         options:approverList,
         placeholder: 'Select HR Direactor',
-        className: 'w-full md:w-14rem'
-    };
-    const HrdireactorEvent = {
-        onChange: (e) => {
-            setSelectedHrdireactor(e.target.value)
-            console.log('Selected Value:', e.value);
-        },
-        selectedValue: selectedHrdireactor
+        className: 'w-full md:w-14rem',
+        isClearable: true,
+        name: 'hrDirectorI'
     };
 
-    //Admin dept head Dropdown
-    const [selectedHrTechnician, setSelectedHrTechnician] = useState(null);
     const HrTechnicianDropdown = {
-        // options: [
-        //     { label: 'Option 1', value: 'option1' },
-        //     { label: 'Option 2', value: 'option2' },
-        // ],
         options:approverList,
         placeholder: 'Select an HR Technician',
-        className: 'w-full md:w-14rem'
-    };
-    const HrTechnicianEvent = {
-        onChange: (e) => {
-            setSelectedHrTechnician(e.target.value)
-            console.log('Selected Value:', e.value);
-        },
-        selectedValue: selectedHrTechnician
+        className: 'w-full md:w-14rem',
+        name: 'payrollId',
+        isClearable: true,
+        isDisable: true
     };
 
-    //ID input filed
+    //Droopdown eventhandlers
+    const commonOnChange = (event) => {
+        const {name,value} = event.target;
+
+        if(name == 'employeeId'){
+        //   setDisableFieldsData(value);
+          const getEmployee = employeeList.find((item) => {
+            return item.id == value;
+          });
+          if (getEmployee) {
+            const pId = getEmployee.employee_code;
+            const employeeName = getEmployee.employee_name;
+
+            setDisableFieldData({ pId: pId, employeeName: employeeName });
+          } else {
+            setDisableFieldData({ pId: "", employeeName: "(Employee)" });
+          }
+        }
+        if(name == 'budgetClerkId'){
+        setRequestPayload({...requestPayload,[name]: value, budgetManagerId: null})
+        }else{
+            setRequestPayload({...requestPayload,[name]: value})
+        }
+        if(validateFieldList.includes(name)){
+            if(value && value.length > 0){
+                seterror({...error, [name]: {...error[name], error: false}})
+            }else{
+                seterror({...error, [name]: {...error[name], error: true}})
+            }
+        }
+        
+    }
+
+    const EmployeeEvent = {
+        onChange: commonOnChange,
+        selectedValue: requestPayload['employeeId']
+    }
+
+    const SchoolEvent = {
+        onChange: commonOnChange,
+        selectedValue: requestPayload['assighmentAt']
+    };
+
+    const ClerkEvent = {
+        onChange: commonOnChange,
+        selectedValue: requestPayload['budgetClerkId']
+    };
+
+    const AdmindeptheadEvent = {
+        onChange: commonOnChange,
+        selectedValue: requestPayload['particularEmpReportingManager']
+    };
+
+    const BudgetDirectorEvent = {
+        onChange: commonOnChange,
+        selectedValue: requestPayload['budgetManagerId']
+    };
+
+    const HrdireactorEvent = {
+        onChange: commonOnChange,
+        selectedValue: requestPayload['hrDirectorI']
+    };
+
+    const HrTechnicianEvent = {
+        onChange: commonOnChange,
+        selectedValue: requestPayload['payrollId']
+    };
+
+
+    //Input data option
+
     const [selectID, setSelectID] = useState("");
     const IDInput = {
         placeHolders: 'ID',
-        values: selectID,
-        clasname: 'md:w-[9.5rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085] mx-2 pl-2'
+        values: disableFieldData['pId'],
+        clasname: 'md:w-[9.5rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085] mx-2 pl-2',
+        isDisable: true
     };
+
+    const SubjectInput = {
+        placeHolders: 'Subject',
+        values: requestPayload['subjectArea'],
+        clasname: 'md:w-[5.1rem] h-10 pl-1 text-[16px] xl:text-[0.733vw] px-[12px] py-[8px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]',
+        name: 'subjectArea'
+    };
+
+    const TypeInput = {
+        placeHolders: 'Type here',
+        values: requestPayload['totalStaffingAllocation'],
+        clasname: 'md:w-[5.1rem] h-10 pl-1 text-[16px] xl:text-[0.833vw] px-[14px] py-[10px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]',
+        name: 'totalStaffingAllocation'
+    };
+
+    const AccountInput = {
+        placeHolders: 'Type here',
+        values: requestPayload['accountCharged'],
+        clasname: 'h-11 md:w-[25rem] text-[16px] xl:text-[0.833vw] px-[14px] py-[10px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]',
+        name: 'accountCharged'
+    };
+
+    const CurrentFTEInput = {
+        placeHolders: 'Type here',
+        values: requestPayload['currentFteUtilized'],
+        clasname: 'h-11  md:w-[24rem] text-[16px] xl:text-[0.833vw] px-[14px] py-[10px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]',
+        name: 'currentFteUtilized'
+    };
+
+    const SchoolInput = {
+        placeHolders: 'School',
+        values: requestPayload['assighmentAt'],
+        clasname: 'md:w-[23rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085] placeholder-y-[0.2rem]',
+        name: 'assighmentAt',
+        isDisable: true
+    };
+
+    const AssigmentTitleInput = {
+        placeHolders: '(Employee) - (Start Date) - (End Date)',
+        values: `${disableFieldData['employeeName'] ? disableFieldData['employeeName'] : "(Employee)"} - ${requestPayload['modifiedFromDate'] ? requestPayload['modifiedFromDate'] : "(Start Date)"} - ${requestPayload['modifiedToDate'] ? requestPayload['modifiedToDate'] : "(End Date)"}`,
+        clasname: 'w-full placeholder:text-[#667085]',
+        name: 'assignment',
+        isDisable: true
+    };
+
+    const FromDate = {
+        placeHolders: 'Start Date',
+        values: requestPayload['modifiedFromDate'],
+        clasname: 'h-11 pl-8',
+        name: 'fromDate',
+        isDisable: true
+    };
+
+    const ToDate = {
+        placeHolders: 'End Date',
+        values: requestPayload['modifiedToDate'],
+        clasname: 'h-11 pl-8',
+        name: 'toDate',
+        isDisable: true
+    };
+
+    //Input eventhandlers
     const InputIDEvent = {
         handelChange: (e) => {
             setSelectID(e.target.value)
         },
     };
 
-    //ID input filed
-    const [selectSubject, setSelectSubject] = useState("");
-    const SubjectInput = {
-        placeHolders: 'Subject',
-        values: selectSubject,
-        clasname: 'md:w-[5.1rem] h-10 pl-1 text-[16px] xl:text-[0.733vw] px-[12px] py-[8px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]'
-    };
     const SubjectEvent = {
-        handelChange: (e) => {
-            setSelectSubject(e.target.value)
-        },
+        handelChange: commonOnChange,
     };
-    //ID input filed
-    const [selectType, setSelectType] = useState("");
-    const TypeInput = {
-        placeHolders: 'Type here',
-        values: selectType,
-        clasname: 'md:w-[5.1rem] h-10 pl-1 text-[16px] xl:text-[0.833vw] px-[14px] py-[10px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]'
-    };
+
     const TypeEvent = {
-        handelChange: (e) => {
-            setSelectType(e.target.value)
-        },
+        handelChange: commonOnChange,
     };
-    //Account input filed
-    const [selectAccount, setSelectAccount] = useState("");
-    const AccountInput = {
-        placeHolders: 'Type here',
-        values: selectAccount,
-        clasname: 'h-11 md:w-[25rem] text-[16px] xl:text-[0.833vw] px-[14px] py-[10px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]'
-    };
+
     const AccountEvent = {
-        handelChange: (e) => {
-            setSelectAccount(e.target.value)
-        },
+        handelChange: commonOnChange
     };
-    //Current FTE input filed
-    const [selectCurrentFTE, setSelectCurrentFTE] = useState("");
-    const CurrentFTEInput = {
-        placeHolders: 'Type here',
-        values: selectCurrentFTE,
-        clasname: 'h-11  md:w-[24rem] text-[16px] xl:text-[0.833vw] px-[14px] py-[10px] bg-white border border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] focus:outline-none focus:border-[#D0D5DD] focus:ring-[#D0D5DD] block w-full rounded-[8px] xl:rounded-[0.417vw]'
-    };
+    
     const CurrentFTEEvent = {
-        handelChange: (e) => {
-            setSelectCurrentFTE(e.target.value)
-        },
+        handelChange: commonOnChange
     };
-    //School input filed
-    const [selectSchool, setSelectSchool] = useState("");
-    const SchoolInput = {
-        placeHolders: 'School',
-        values: selectSchool,
-        clasname: 'md:w-[23rem] h-11 rounded-md border border-[#E4E7EC] placeholder:text-[#667085] placeholder-y-[0.2rem]'
-    };
+
     const SchoolassinEvent = {
-        handelChange: (e) => {
-            setSelectSchool(e.target.value)
-        },
+        handelChange: commonOnChange
     };
-    //Assigment title input filed
-    const [selectAssigmentTitle, setSelectAssigmentTitle] = useState("");
-    const AssigmentTitleInput = {
-        placeHolders: 'School',
-        values: selectAssigmentTitle,
-        clasname: 'w-full placeholder:text-[#667085]'
-    };
+
     const AssigmentTitleEvent = {
-        handelChange: (e) => {
-            setSelectAssigmentTitle(e.target.value)
-        },
+        handelChange: commonOnChange
     };
+
+    const findFieldWithError = (fields) => {
+        for (const fieldName in fields) {
+          if (fields[fieldName].error) {
+            return fieldName;
+          }
+        }
+        return null; // Return null if no field with error is found
+      }
+    
+
+    const handleSubmit = async () => {
+        const userId = window.localStorage.getItem('loggedUserId')
+        const token = window.localStorage.getItem('accessToken')
+        
+        const fieldWithError = findFieldWithError(error);
+        
+        if (fieldWithError) {
+          toast.error(error[fieldWithError].message);
+          return
+        } else {
+            if(requestPayload.budgetClerkId && !requestPayload.budgetManagerId){
+                toast.error("Please Select Budget Director")
+                return
+            }
+        }
+        const baseUrl = process.env.API_URL;
+        try{
+            const payload = {
+              assignmentTitle: `${disableFieldData['employeeName'] ? disableFieldData['employeeName'] : "(Employee)"} - ${requestPayload['modifiedFromDate'] ? requestPayload['modifiedFromDate'] : "(Start Date)"} - ${requestPayload['modifiedToDate'] ? requestPayload['modifiedToDate'] : "(End Date)"}`,
+              employeeId: requestPayload.employeeId,
+              assighmentAt: requestPayload.assighmentAt,
+              fromDate: requestPayload.fromDate.toISOString().slice(0,10),
+              toDate: requestPayload.toDate.toISOString().slice(0,10),
+              subjectArea: requestPayload.subjectArea,
+              totalStaffingAllocation: requestPayload.totalStaffingAllocation,
+              accountCharged: requestPayload.accountCharged,
+              currentFteUtilized: requestPayload.currentFteUtilized,
+              submittedBy: userId,
+              submittedAt: (new Date()).toISOString().slice(0,10),
+              createdBy: userId,
+              particularEmpReportingManager: requestPayload.particularEmpReportingManager,
+              budgetClerkId: requestPayload.budgetClerkId == undefined ? null : requestPayload.budgetClerkId,
+              budgetManagerId: requestPayload.budgetClerkId ? requestPayload.budgetManagerId : null,
+              hrDirectorI: requestPayload.hrDirectorI,
+              payrollId: requestPayload.payrollId,
+              editable: true
+            };
+
+            const response = await axios.post(`${baseUrl}sixthperiod`,payload,{
+                headers:{
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+            if(response.status == 201){
+                toast.success("Submited Successfully")
+                router.push("/sixth_period_report");
+            }else{
+                toast.error("Something went wrong!")
+            }
+
+        }catch (error){
+            toast.error("Something went wrong!")
+        }
+    }
 
     return (
         <div>
@@ -429,15 +570,33 @@ export default function BasicInfo({ setActiveIndex, activeIndex }) {
                                                                 <i className="gusd-calendar text-[#667085] text-sm absolute left-3 top-1/2 transform -translate-y-1/2 z-10"></i>
                                                                 <i className="gusd-arrow-down text-[#344054] text-xs xl:text-[0.7rem] absolute right-4 top-1/2 transform -translate-y-1/2 z-10"></i>
                                                                 <div className="flex card justify-content-center">
-                                                                    <CalenderComponet attribute={calenderConfig} eventHandlersofCalender={eventHandlersofCalender} />
+                                                                <Calendar
+                                                                    value={requestPayload['fromDate']}
+                                                                    placeholder={'Start Date'}
+                                                                    className={'w-full h-11 pl-8'}
+                                                                    onChange={calenderchangeHandler}
+                                                                    dateFormat={'mm/dd/yy'}
+                                                                    selectionMode={'single'}
+                                                                    name='fromDate'
+                                                                />
                                                                 </div>
+                                                                
                                                             </div>
                                                             <span>To</span>
                                                             <div className="relative md:w-40 mx-3">
                                                                 <i className="gusd-calendar text-[#667085] text-sm absolute left-3 top-1/2 transform -translate-y-1/2 z-10"></i>
                                                                 <i className="gusd-arrow-down text-[#344054] text-xs xl:text-[0.7rem] absolute right-4 top-1/2 transform -translate-y-1/2 z-10"></i>
                                                                 <div className="flex card justify-content-center">
-                                                                    <CalenderComponet attribute={calenderConfig1} eventHandlersofCalender={eventHandlersofCalender} />
+                                                                <Calendar
+                                                                    value={requestPayload['toDate']}
+                                                                    placeholder={'End Date'}
+                                                                    className={'w-full h-11 pl-8'}
+                                                                    onChange={calenderchangeHandler}
+                                                                    dateFormat={'mm/dd/yy'}
+                                                                    selectionMode={'single'}
+                                                                    name='toDate'
+                                                                    minDate={requestPayload['fromDate']}
+                                                                />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -499,13 +658,21 @@ export default function BasicInfo({ setActiveIndex, activeIndex }) {
                                                         </div>
 
                                                         <div className="flex flex-wrap items-start md:items-center mb-4 space-y-4 md:space-y-0 md:space-x-2">
-                                                            <CalenderComponet
+                                                            {/* <CalenderComponet
                                                                 attribute={calenderConfig}
-                                                                eventHandlersofCalender={eventHandlersofCalender} />
+                                                                eventHandlersofCalender={eventHandlersofCalender} /> */}
+                                                                <InputComponent
+                                                                    datas={FromDate}
+                                                                    inputEventHandler={() => {}}
+                                                                />
                                                             <span>to</span>
-                                                            <CalenderComponet
+                                                            {/* <CalenderComponet
                                                                 attribute={calenderConfig}
-                                                                eventHandlersofCalender={eventHandlersofCalender} />
+                                                                eventHandlersofCalender={eventHandlersofCalender} /> */}
+                                                                <InputComponent
+                                                                    datas={ToDate}
+                                                                    inputEventHandler={() => {}}
+                                                                />
                                                         </div>
                                                     </div>
 
@@ -608,7 +775,7 @@ export default function BasicInfo({ setActiveIndex, activeIndex }) {
                             <Link href="#" onClick={() => setActiveIndex(activeIndex)} className="flex items-center text-[#2D5BE5] text-[14px] xl:text-[0.833vw] font-medium border border-[#D0D5DD] bg-[#EFF8FF] rounded-[8px] xl:rounded-[0.417vw] py-[10px] xl:py-[0.521vw] px-[18px] xl:px-[0.938vw]">
                                 <i className="mr-1 pi pi-save" style={{ fontSize: "0.8rem" }}></i>Save
                             </Link>
-                            <Link href="#" class="flex items-center text-white text-[14px] xl:text-[0.833vw] font-medium bg-[#113699] hover:bg-[#0f296e] border border-[#113699] hover:border-[#0f296e] rounded-[8px] xl:rounded-[0.417vw] py-[10px] xl:py-[0.521vw] px-[18px] xl:px-[0.938vw] "><i class="mr-1 gusd-check"></i>Submit</Link>
+                            <Link href="#" onClick={handleSubmit} class="flex items-center text-white text-[14px] xl:text-[0.833vw] font-medium bg-[#113699] hover:bg-[#0f296e] border border-[#113699] hover:border-[#0f296e] rounded-[8px] xl:rounded-[0.417vw] py-[10px] xl:py-[0.521vw] px-[18px] xl:px-[0.938vw] "><i class="mr-1 gusd-check"></i>Submit</Link>
                             <Link href="#" onClick={() => setActiveIndex(activeIndex + 1)} className="flex items-center text-white text-[14px] xl:text-[0.833vw] font-medium border-[#D0D5DD] bg-[#3366FF] rounded-[8px] xl:rounded-[0.417vw] py-[10px] xl:py-[0.521vw] px-[18px] xl:px-[0.938vw] ">
                                 <i className="mr-1 gusd-eye"></i>
                                 Preview

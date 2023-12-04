@@ -15,6 +15,5 @@ export const getAbsenceCodeList = async (accessToken) => {
         // }
     }
     catch (err) {
-        console.log("err----" + err)
     }
 }

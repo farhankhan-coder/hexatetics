@@ -43,20 +43,16 @@ function EyePopup(props) {
     let accessToken = window.localStorage.getItem('accessToken');
     let absenceCodeList = [];
     absenceCodeList = await getAbsenceCodeList(accessToken);
-    console.log('absenceCodeList____________________________', absenceCodeList);
     setAbsenceCodeList(absenceCodeList?.rows)
   }
 
-  console.log('props', props);
 
   const userRole = props.userRole
-  // console.log("props", props);
   const [checked, setChecked] = useState(false);
   const [reportEmployeeList, setReportEmployeeList] = useState([]);
   const fullDay = "Full Day";
 
   const handlePrint = () => {
-    console.log('Wait PRINITIG');
   }
 
   const getSeverity = (status) => {
@@ -94,7 +90,6 @@ function EyePopup(props) {
   };
 
   const approveStatusOptions = (product) => {
-    console.log("product", product.status);
     switch (product.status) {
       case AllStatusData.PENDING:
         return 'warning';
@@ -129,9 +124,7 @@ function EyePopup(props) {
   };
 
   const handelAction = async (status) => {
-    console.log('reaching in action');
     let accessToken = window.localStorage.getItem("accessToken");
-    console.log('accessToken', accessToken);
 
     const requestedData = {
       "accessToken": accessToken,
@@ -143,7 +136,6 @@ function EyePopup(props) {
 
     const response = await axios.post("/api/war_certificated/updateWarCertificatedStatus", { requestedData });
 
-    console.log('response', response);
     props.onHide();
     props.bindList();
 
@@ -184,11 +176,11 @@ function EyePopup(props) {
               </div>
               <div className="flex justify-between text-[#344054] text-[12px] py-[0.729vw] px-[0.417vw] border-b border-[#E4E7EC]">
                 <div className="font-medium">From </div>
-                <div className="font-semibold ">{props.fromDate ? moment(props.fromDate, "YYYY-MM-DD").format("YYYY/MM/DD") : "-"}</div>
+                <div className="font-semibold ">{props.fromDate ? moment(props.fromDate, "YYYY-MM-DD").format("MM/DD/YYYY") : "-"}</div>
               </div>
               <div className="flex justify-between text-[#344054] text-[12px] py-[0.729vw] px-[0.417vw] border-b border-[#E4E7EC]">
                 <div className="font-medium">To </div>
-                <div className="font-semibold ">{props.toDate ? moment(props.toDate, "YYYY-MM-DD").format("YYYY/MM/DD") : "-"}</div>
+                <div className="font-semibold ">{props.toDate ? moment(props.toDate, "YYYY-MM-DD").format("MM/DD/YYYY") : "-"}</div>
               </div>
               <div className="flex justify-between custTable text-[#344054] text-[12px] py-[0.729vw] px-[0.417vw] border-b border-[#E4E7EC]">
                 <div className="font-medium">Status </div>

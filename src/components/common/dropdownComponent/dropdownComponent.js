@@ -12,9 +12,8 @@ export default function DropdownComponent({ attribute, eventHandlers}) {
 
     return null;
   }
-  const { options, placeholder,className,style } = attribute;
+  const { options, placeholder,className,style, name, isDisable, isClearable } = attribute;
 
-  console.log("emplist",options);
 
   return (
     <>
@@ -26,6 +25,9 @@ export default function DropdownComponent({ attribute, eventHandlers}) {
           placeholder={placeholder}
           className={className}
           style={style}
+          name={name ?? ''}
+          disabled={isDisable ?? false}
+          showClear={isClearable ?? false}
         />
 </>
   )

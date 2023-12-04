@@ -17,8 +17,7 @@ export default function ReportLeftNav({ data, title, back, activeIndex, setActiv
         </Link>
         <div className="text-[#101828] text-[12px] mt-[7px] font-normal">{title}</div>
         {
-          data.map((elm, i) => {
-            console.log("index", i);
+          data?.map((elm, i) => {
             return (
               <div className="mt-[32px] xl:[1.667vw]">
                 <ul className="sideTabs">

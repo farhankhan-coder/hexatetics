@@ -310,7 +310,7 @@ export default function TopComponent({ children, ...pageProps }) {
       <div className={sidebarOpen ? 'fixed left-0 top-0 bg-[#113699] py-[20px] xl:py-[1.042vw] px-[12px] xl:px-[0.625vw] w-full max-w-[80px] xl:max-w-[4.167vw] h-full z-20 menu-wrap active' : 'fixed left-0 top-0 bg-[#113699] py-[20px] xl:py-[1.042vw] px-[12px] xl:px-[0.625vw] w-full max-w-[80px] xl:max-w-[4.167vw] h-full z-20 menu-wrap'} onMouseEnter={handleSidebarOpen} onMouseLeave={handleSidebarClose}>
         <ul>
           <li className='logo ' data-aos="fade-right" data-aos-duration="500" data-aos-delay="500">
-            <Link href="/admin/adminDashboard"><Image src="/assets/images/landing_logo.png" width={"104"} height={"105"} imageClassName='' /></Link>
+            <Link href="/"><Image src="/assets/images/landing_logo.png" width={"104"} height={"105"} imageClassName='' /></Link>
           </li>
           <li data-aos="fade-right" data-aos-duration="500" data-aos-delay="500">
             <Link href="javascript:void(0)" className='active'>

@@ -1,33 +1,22 @@
-import React, { Fragment, useState, useEffect } from "react";
-import Head from "next/head";
+import React, { useState, useEffect } from "react";
 import Layout from "@/components/layout/layout";
-import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import Link from "next/link";
-import { DataTable } from "primereact/datatable";
-import { InputText } from "primereact/inputtext";
-import { Column } from "primereact/column";
-import { Dropdown } from "primereact/dropdown";
-import { Tag } from "primereact/tag";
-import EyePopup from "@/components/popups/eyePopup";
+import EyePopup from "@/pages/war_classified/eyePopUp";
 import { reactLocalStorage } from "reactjs-localstorage";
 import axios from "axios";
-import { CertificatedAdminWeeklyAbsenceReportStatus } from "../../helper/enum";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { API_STATUS, Apps } from "../../helper/enum";
+import { API_STATUS } from "../../helper/enum";
 import { getEmployeeById } from "../../helper/actions/employeeByIdActions";
 import { employeeByCognitoIdActions } from "../../helper/actions/employeeByCognitoIdActions";
 import { getSchoolById } from "../../helper/actions/schoolByIdActions";
-import { ProgressSpinner } from "primereact/progressspinner";
-import { TabPanel, TabView } from "primereact/tabview";
 import WARCertificatedReports from "@/pages/war_classified/report";
 import { AllStatusData } from "@/components/helper/enum";
 import { getTimeline } from "../../helper/actions/getTimeline";
 
 export default function Index() {
   const router = useRouter();
-  const handle = useFullScreenHandle();
   const [visible, setVisible] = useState(false);
   const [isMasterDataLoaded, setIsMasterDataLoaded] = useState(false);
   const [weeklyAbsenceReports, setWeeklyAbsenceReports] = useState([]);
@@ -39,13 +28,11 @@ export default function Index() {
     rows: 10,
     page: 1,
   });
-  const [onPageNumber, setOnPageNumber] = useState();
   const [rows, setRows] = useState(10);
   const [schoolFilterValue, setSchoolFilter] = useState("");
   const [weekFilterValue, setWeekFilter] = useState("");
   const [submittedFilterVlaue, setSubmittedFilter] = useState("");
   const [statusFilterValue, setStatusFilter] = useState("");
-  const [activeIndex, setActiveIndex] = useState(0);
 
   //State's for EYEPOPUP
   const [schoolName, setSchoolName] = useState("");
@@ -55,7 +42,6 @@ export default function Index() {
   const [approvedBy, setApprovedBy] = useState("");
   const [submittedBy, setSubmittedBy] = useState("");
   const [comment, setComment] = useState("");
-  const [employeeReports, setEmployeeReports] = useState([]);
   const [administratorData, setAdministratorData] = useState([]);
   const [CertificatedDatas, setCertificatedDatas] = useState([]);
   const [events, setEvents] = useState([]);
@@ -81,17 +67,16 @@ export default function Index() {
       reportId: rowData.id,
     };
     let eventsData = [];
-    let initiateDateTime;
-    let approverDateTime;
-    let payrollDateTime;
 
     try {
+      let initiateDateTime;
+      let approverDateTime;
+      let payrollDateTime;
       var getAbsenceReport = await axios.post(
         "/api/war_classified/getReportById",
         { requestedData }
       );
 
-      console.log("getAbsenceReport", getAbsenceReport);
       initiateDateTime = moment(getAbsenceReport.data.createdAt).format(
         "MM/DD/YYYY HH:mm "
       );
@@ -103,7 +88,6 @@ export default function Index() {
       );
 
       if (getAbsenceReport.data) {
-        console.log("empName", getAbsenceReport.data.userId);
         if (getAbsenceReport.data.userId) {
           let empName = await employeeByCognitoIdActions(
             getAbsenceReport.data.userId,
@@ -113,7 +97,6 @@ export default function Index() {
           let name = empName.employee_code
             ? `${empName.employee_name} (${empName.employee_code})`
             : empName.employee_name;
-          console.log("name", name);
 
           setSubmittedBy(name);
           let eventsTimeline = await getTimeline(
@@ -124,7 +107,6 @@ export default function Index() {
           eventsTimeline = eventsTimeline.sort(
             (a, b) => new Date(a.date) - new Date(b.date)
           );
-          console.log("eventsTimeline", eventsTimeline);
 
           for (var i = 0; i < eventsTimeline.length; i++) {
             let obj = {};
@@ -151,7 +133,6 @@ export default function Index() {
           let name = empName.employee_code
             ? `${empName.employee_name} (${empName.employee_code})`
             : empName.employee_name;
-          console.log("empName", name);
 
           setApprovedBy(name);
         }
@@ -186,7 +167,6 @@ export default function Index() {
       if (getAbsenceReport.data.formEmployeeDetails) {
         var getAbsenceReportOfEmployee =
           getAbsenceReport.data.formEmployeeDetails;
-        console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
 
         let newResponse = [];
         let dataRec = [];
@@ -199,7 +179,6 @@ export default function Index() {
           let employeeResponse =
             getAbsenceReportOfEmployee[i].employeeCalendarDetails;
 
-          console.log("employeeResponse", employeeResponse);
           employeeResponse.map(
             (item) =>
               (item.selectedDate = new Date(
@@ -222,9 +201,8 @@ export default function Index() {
             }
           }
 
-          console.log("employeeResponse", employeeResponse);
 
-          let empName = await employeeByCognitoIdActions(
+          let empName = await getEmployeeById(
             getAbsenceReportOfEmployee[i].employeeId,
             accessToken
           );
@@ -238,8 +216,6 @@ export default function Index() {
               employeeType: empName.employeeType,
             };
 
-            console.log("empName", empName);
-            console.log("setSelectedEmployee", obj1);
             // setSelectedEmployee(obj1);
             newEmp = empName.id;
           }
@@ -261,7 +237,6 @@ export default function Index() {
 
           let newdate = [];
           if (i === getAbsenceReportOfEmployee.length - 1) {
-            console.log("newResponse", newResponse);
             const groupedData = newResponse.reduce((acc, obj) => {
               const existingObj = acc.find(
                 (item) => item.employeeId === obj.employeeId
@@ -275,8 +250,6 @@ export default function Index() {
             }, []);
 
             let newR = newResponse;
-            console.log("gettttting", getAbsenceReportOfEmployee[i].employeeId);
-            console.log("newR", newR);
             let countR = 0;
             for (let key in newR) {
               if (newR[key] && newR[key].employeeResponse) {
@@ -326,7 +299,6 @@ export default function Index() {
         }
       }
     } catch (e) {
-      console.log("error", e);
       if (e.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push("/");
@@ -336,7 +308,7 @@ export default function Index() {
     setVisible(true);
   };
 
-  const superAdminActions = (rowData) => {
+  const reportListActions = (rowData) => {
     return (
       <>
         <div className="flex justify-center w-full gap-2">
@@ -365,145 +337,7 @@ export default function Index() {
     );
   };
 
-  const getSeverity = (status) => {
-    switch (status) {
-      case AllStatusData.PENDING:
-        return "warning";
-
-      case AllStatusData.SUBMITTED:
-        return "info";
-
-      case AllStatusData.CLOSED:
-        return "success";
-
-      case AllStatusData.REVIEWED_AND_RESUBMITTED:
-        return "warning";
-
-      case AllStatusData.APPROVED:
-        return "warning";
-
-      case AllStatusData.REJECTED:
-        return "danger";
-
-      case AllStatusData.CLOSED:
-        return "success";
-
-      case AllStatusData.PENDING_FOR_APPROVAL:
-        return "warning";
-
-      case AllStatusData.PENDING_FOR_ACKNOWLEDGEMENT:
-        return "warning";
-
-      default:
-        return null;
-    }
-  };
-
-  const [statuses] = useState([
-    AllStatusData.APPROVED,
-    AllStatusData.PENDING,
-    AllStatusData.REJECTED,
-    AllStatusData.SUBMITTED,
-    AllStatusData.REVIEWED_AND_RESUBMITTED,
-  ]);
-
-  const statusRowFilterTemplate = (options) => {
-    return (
-      <Dropdown
-        value={statusFilterValue}
-        options={statuses}
-        // onChange={(e) => {options.filterApplyCallback(e.value)}}
-        onChange={(e) => {
-          setStatusFilter(e.value);
-        }}
-        itemTemplate={statusItemTemplate}
-        placeholder="Select"
-        className="p-column-filter custDropdown"
-        showClear
-        style={{ minWidth: "7rem" }}
-      />
-    );
-  };
-
-  const statusItemTemplate = (option) => {
-    return <Tag value={option} severity={getSeverity(option)} />;
-  };
-
-  const TimeSubmitted = (rowdata) => {
-    return rowdata.submittedOn !== null && rowdata.statusDateTime !== null ? (
-      <span> {moment(rowdata.statusDateTime).format("MM/DD/YYYY")} </span>
-    ) : (
-      "-"
-    );
-  };
-
-  const TaskStatusSLA = (rowdata) => {
-    return <Tag value={rowdata.status} severity={TaskStatusSL(rowdata)}></Tag>;
-  };
-
-  const TaskStatusSL = (rowdata) => {
-    switch (rowdata.status) {
-      case AllStatusData.REJECTED:
-        return "danger";
-
-      case AllStatusData.PENDING:
-        return "warning";
-
-      case AllStatusData.SUBMITTED:
-        return "info";
-
-      case AllStatusData.APPROVED:
-        return "success";
-
-      case AllStatusData.REVIEWED_AND_RESUBMITTED:
-        return "warning";
-
-      default:
-        return null;
-    }
-  };
-
-  const handelWeekDurationChange = () => {
-    return (
-      <InputText
-        value={weekFilterValue}
-        onChange={(e) => setWeekFilter(e.target.value)}
-        placeholder="Select"
-        className="p-column-filter custDropdown"
-        showClear
-        style={{ minWidth: "7rem" }}
-      />
-    );
-  };
-
-  const handelSchoolNameChange = () => {
-    return (
-      <InputText
-        value={schoolFilterValue}
-        onChange={(e) => setSchoolFilter(e.target.value)}
-        placeholder="Select"
-        className="p-column-filter custDropdown"
-        showClear
-        style={{ minWidth: "7rem" }}
-      />
-    );
-  };
-
-  const handelSubmittedOnChange = () => {
-    return (
-      <InputText
-        value={submittedFilterVlaue}
-        onChange={(e) => setSubmittedFilter(e.target.value)}
-        placeholder="Select"
-        className="p-column-filter custDropdown"
-        showClear
-        style={{ minWidth: "7rem" }}
-      />
-    );
-  };
-
   const loadAbsenceReport = async (pageNumber, row) => {
-    console.log("calling load absense report");
     const accessToken = reactLocalStorage.get("accessToken");
     const loggedUserId = reactLocalStorage.get("loggedUserId");
 
@@ -528,12 +362,9 @@ export default function Index() {
         { requestedData }
       );
       weeklyAbsenceReport = response.data.rows;
-      console.log("weeklyAbsenceReport", weeklyAbsenceReport);
       const weeklyAbsenceReportCount = response.data.count;
       setCount(weeklyAbsenceReportCount);
-      // console.log('weeklyAbsenceReportCount', weeklyAbsenceReportCount);
     } catch (err) {
-      console.log("err----" + err.response.status);
       if (err.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push("/");
@@ -606,13 +437,11 @@ export default function Index() {
         })
 
         if (i === weeklyAbsenceReport.length - 1) {
-          console.log("mmmm");
           let weeklyAbsenceReportForInitiator = newResponse;
 
           const sortedData = [...weeklyAbsenceReportForInitiator].sort((a, b) => new Date(b.statusDateTime) - new Date(a.statusDateTime));
 
           setWeeklyAbsenceReports(sortedData)
-          console.log('sortedData', sortedData)
 
         }
 
@@ -633,11 +462,6 @@ export default function Index() {
     setRows(event.rows);
   };
 
-  const onSelectionChange = (event) => {
-    const value = event.value;
-    // console.log("value",value)
-  };
-
   const BindList = async () => {
     loadAbsenceReport(1, rows);
   };
@@ -645,7 +469,6 @@ export default function Index() {
   const getMasterData = async () => {
     setIsMasterDataLoaded(false);
     const accessToken = reactLocalStorage.get("accessToken");
-    const loggedUserId = reactLocalStorage.get("loggedUserId");
 
     var requestedData = {
       accessToken: accessToken,
@@ -668,7 +491,6 @@ export default function Index() {
         }
       });
     } catch (err) {
-      console.log("err----" + err);
       if (err.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push("/");
@@ -681,7 +503,6 @@ export default function Index() {
   useEffect(() => {
     // onLoad();
     getMasterData();
-    // MyAccountTable.getProductsSmall().then((data) => setProducts(data.slice(0, 9)));
   }, []);
 
   useEffect(() => {
@@ -694,7 +515,6 @@ export default function Index() {
     try {
       loadAbsenceReport(pageNo, rows);
     } catch (error) {
-      console.log("error", error);
       if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push("/");
@@ -711,7 +531,6 @@ export default function Index() {
     <>
       <Layout pageTitle="WAR Classified" activeMenu="Initiator">
         <div className="report-wrapper pt-24 md:pt-28 xl:pt-[2.083vw] mb-10">
-          <FullScreen handle={handle}>
             <WARCertificatedReports
               weeklyAbsenceReports={weeklyAbsenceReports}
               isListLoaded={isListLoaded}
@@ -729,9 +548,8 @@ export default function Index() {
               lazyState={lazyState}
               rows={rows}
               activeIndex={0}
-              superAdminActions={superAdminActions}
+              reportListActions={reportListActions}
             ></WARCertificatedReports>
-          </FullScreen>
         </div>
         <EyePopup
           visible={visible}

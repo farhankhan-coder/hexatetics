@@ -367,7 +367,6 @@ export default function Dashboard() {
 
       try {
          const cognito = new AWS.CognitoIdentityServiceProvider();
-         console.log("cognitocognito:-", cognito)
 
          var params =
          {
@@ -376,13 +375,10 @@ export default function Dashboard() {
          };
 
          cognito.listUsers(params, (err, data) => {
-            // console.log('uuuuuu:',data.Users);
             if (err) {
-               console.log(err);
                toast.error(err.message);
             } else {
                let usersData = data.Users;
-               console.log('usersData:-', usersData)
 
 
                let initiatorUsers = [];
@@ -425,11 +421,8 @@ export default function Dashboard() {
       try {
          const groupData = await DataStore.query(Groups);
          var topValues = groupData.sort((a, b) => b.assigned_members_count - a.assigned_members_count).slice(0, 5);
-         // console.log('topValues',topValues)
          setGroupData(topValues);
-         // console.log("groupData:-", groupData)
       } catch (err) {
-         console.log("Error in fetch Group data")
       }
 
    }

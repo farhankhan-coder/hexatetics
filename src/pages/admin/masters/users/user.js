@@ -45,7 +45,6 @@ function user() {
         {
             name: 'Employees',
             // selector: row =>  row.employee_name ,
-            // console.log("row",row),
 
             // !== "" ? row.employee_name : `${row.firstName} ${row.lastName}`,
 

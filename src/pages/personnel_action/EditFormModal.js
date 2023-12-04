@@ -3,10 +3,10 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 // import empDetailsImg from "../../../assets/images/applicationImg.png";
-// import { Image } from "primereact/image";
+import { Image } from "primereact/image";
 // import BoardsYet from '../../../../src/assets/images/boards_yet.svg';
 import { Sidebar } from "primereact/sidebar";
-// import CalendarIcon from '../../../../src/assets/images/icon/calendar.svg';
+import CalendarIcon from '../../../public/assets/images/icon/calendar.svg';
 import { DataTable } from "primereact/datatable";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Column } from "primereact/column";
@@ -18,7 +18,7 @@ import { AutoComplete } from "primereact/autocomplete";
 // import { Employee, PersonnelActionInitiatorForm, PersonnelActionEmployee, TransactionCyclePersonnel } from "../../../models";
 
 import moment from "moment";
-import { reactLocalStorage } from "reactjs-localstorage";
+// import { reactLocalStorage } from "reactjs-localstorage";
 // import { USER_TYPES, USER_TYPES_NAMES } from "../../../helper/enum";
 import { Dropdown } from "primereact/dropdown";
 import { toast } from "react-toastify";
@@ -32,12 +32,10 @@ import { USER_TYPES, USER_TYPES_NAMES } from "@/helper/enum";
 
 
 const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindList, requestedData, personnelActionIsSuperadmin, setrequestedreportEdit }) => {
-  console.log('data12 --->', requestedData);
   const [AddNewForm, setAddNewForm] = useState(false);
   const [reloadonce, setreloadonce] = useState(false);
   const [editEmployee, seteditEmployee] = useState(false);
   const [editEmployeeArray, seteditEmployeeArray] = useState({});
-  console.log('editEmployeeArray: ', editEmployeeArray);
   const [location, setLocation] = useState(requestedData?.location);
   const [actiontobetaken, setActiontobetaken] = useState(requestedData?.actionToBeTaken);
   const [actionDate, setActionDate] = useState(requestedData?.actionDate);
@@ -52,11 +50,9 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
   const [rejectCount, setRejectCount] = useState(0);
   const [EmpType, setEmpType] = useState(requestedData?.type || 'Certificated');
   const [startDate, setStartDate] = useState(requestedData?.boardMeetingDate);
-  console.log('startDate: ', startDate);
   const [positionTo, setPositionTo] = useState(editEmployee ? editEmployeeArray?.positionTitleTo : "");
   const [positionFrom, setPositionFrom] = useState(editEmployee ? editEmployeeArray?.positionTitleFrom : "");
   const [startEndDate, setStarEndDate] = useState(editEmployee ? editEmployeeArray?.effectiveDatesFrom : null);
-  console.log('startEndDate: ', startEndDate);
   const [salaryRate, setsalaryRate] = useState(editEmployee ? editEmployeeArray?.salaryRate : "");
   const [rateofPay, setrateofPay] = useState(editEmployee ? editEmployeeArray?.rateofPay : "");
   const [reason, setreason] = useState(editEmployee ? editEmployeeArray?.reason : "");
@@ -65,7 +61,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
   const [budgetCode, setbudgetCode] = useState(editEmployee ? editEmployeeArray?.budgetCode : "");
   const [endDate, setEndDate] = useState(editEmployee ? editEmployeeArray?.effectiveDatesTo : null);
   const [EmployeeArray, setEmployeeArray] = useState([]);
-  // console.log('deptHead: ', requestedData?.deptHead);
   const [users, SetUsersList] = useState([]);
   const [empCodeList, setEmpCodeList] = useState([]);
   const [employeeList, setEmployeeList] = useState([]);
@@ -74,7 +69,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
   let hrTechnicianedit = employeeList?.filter(item => item.code === requestedData?.hrTechnician)?.[0]
   let budgetManageredit = employeeList?.filter(item => item.code === requestedData?.budgetManager)?.[0]
   let deptHeadedit = employeeList?.filter(item => item.code === requestedData?.deptHead)?.[0]
-  // console.log('deptHeadedit --->', deptHeadedit);
   let exeSecreataryedit = employeeList?.filter(item => item.code === requestedData?.executiveSecretary)?.[0]
   // let employee_Idedit = empCodeList?.filter(item => item.code === data?.employeeId)?.[0]
   const [budgetClerk, setBudgetClerk] = useState(budgetClerkedit);
@@ -84,20 +78,17 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
   const [deptHead, setDeptHead] = useState(deptHeadedit);
   const [exeSecreatary, setExeSecreatery] = useState(exeSecreataryedit);
   const [employee_Id, setEmployee_Id] = useState(empCodeList?.filter(item => item.code === editEmployeeArray?.employeeId)?.[0]);
-  console.log('employee_Id --->', employee_Id);
   const [employeeName, setemployeeName] = useState(editEmployeeArray?.employeeName);
   const [employeeListdetailes, setEmployeeListdetailes] = useState([]);
   const [employeeDetailsList, setEmployeeDetailsList] = useState([]);
   const [loggedInUserData, setLoggedInUserData] = useState([]);
   const [visibleNewForm, setVisibleNewForm] = useState(false);
-  console.log('editEmployeeArray --->', editEmployeeArray);
   const [showPreviewPopUp, setShowPreviewPopUp] = useState(0);
   const [showPreviewbasic, setShowPreviewbasic] = useState(false);
   const [showPreviewrouting, setShowPreviewrouting] = useState(false);
   const [Report_sent, setReport_sent] = useState(false);
   const [position, setPosition] = useState('center');
   const [firstApproverOption, setFirstApproverOption] = useState([]);
-  console.log('firstApproverOption: ', firstApproverOption);
   const [secondApproverOption, setSecondApproverOption] = useState([]);
   const [thirdApproverOption, setThirdApproverOption] = useState([]);
   const [fourthApproverOption, setFourthApproverOption] = useState([]);
@@ -114,7 +105,7 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
   useEffect(() => {
     setVisibleNewForm(showNewFormModal);
   }, [showNewFormModal]);
-  const loggedUserId = reactLocalStorage.get("loggedUserId");
+  const loggedUserId = 1;//reactLocalStorage.get("loggedUserId");
   const handlePaste = (event, field) => {
     const clipboardData = event.clipboardData || window.clipboardData;
     const pastedText = clipboardData.getData('text');
@@ -169,9 +160,7 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
           }
         }
       ));
-    console.log('savedemployee --->', savedemployee);
     // setEmployeeArray([...savedemployee].concat(EmployeeArray));
-    // console.log('newFormData --->',newFormData);
 
     // Reset the form fields
     // setEmployee_Id('');
@@ -193,14 +182,12 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
 
   const handleApplyEdit = async (rowid) => {
     let distinctEmployeeName = [...new Set(EmployeeNameArray)];
-    console.log('rowid --->', rowid);
     const original = await API.graphql(
       graphqlOperation(queries.getPersonnelActionEmployee,
         { id: rowid }
       )
     );
     // await fetchInitiateReport(rowid);
-    console.log('original --->', original);
     let updateremployeedetails = await API.graphql(
       graphqlOperation(mutations.updatePersonnelActionEmployee, {
         input: {
@@ -221,7 +208,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
         }
       })
     );
-    console.log('updateremployeedetails --->', updateremployeedetails);
     if (updateremployeedetails) {
       let newFormData = [{
         id: updateremployeedetails?.data?.updatePersonnelActionEmployee?.id,
@@ -262,7 +248,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
     const toDelete = await DataStore.query(PersonnelActionEmployee, employeeId);
     if (toDelete) {
       DataStore.delete(toDelete);
-      console.log("deleted a row");
     }
     setreloadonce(true);
   };
@@ -278,7 +263,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
           })
           .promise();
       } catch (e) {
-        console.log("Error is ", e);
       }
     }
     return user;
@@ -383,7 +367,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
       setEmployeeListdetailes(employeeResponses)
       if (employeeResponses !== null) {
         let employeeData = employeeResponses;
-        console.log('employeeData --->', employeeData);
 
         let finalEmployeeList = [];
         employeeData.map((item) => {
@@ -434,11 +417,9 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
           setSixthApproverOption(finalEmployeeList)
           setEmployeeList(finalEmployeeList);
         }
-        console.log('finalEmployeeList', finalEmployeeList)
       }
     }
     catch (error) {
-      console.log(error)
     }
   };
 
@@ -538,7 +519,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
     }
   }
   const buildReportDetails = async (personalActionTransactionCycle, title, status, initiator_id, target_user_id, approver_id, next_approver_id) => {
-    console.log('personalActionTransactionCycle: ', personalActionTransactionCycle);
     let reportDetails = {};
 
     try {
@@ -604,7 +584,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
   }
 
   const onSendEmailNotification = async ({ id }) => {
-    console.log(users);
     if (!employee_Id.userId) return;
     const empDetails = users.find(emp => emp.Username === employee_Id.userId);
     if (!empDetails) return;
@@ -629,11 +608,9 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
   };
   const saveBasicEditInfo = async (e, type, currentStatus) => {
     //Save Basic Info
-    // console.log(
     //   "selectedReportingManagerEmployee---",
     //   propsReportingManagerEmployee ? propsReportingManagerEmployee.code : selectedReportingManagerEmployee.code
     // );
-    console.log("current status is + ", currentStatus);
     //check type
     if (type === "submit") {
       let original = await API.graphql(
@@ -642,7 +619,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
         )
       );
       // await DataStore.query(PersonnelActionInitiatorForm, requestedData?.id);
-      console.log('original --->', original);
       original = original?.data?.getPersonnelActionInitiatorForm
       let to_id = deptHead && deptHead?.code ? deptHead?.code : requestedData?.deptHead;
       if (showNewFormModal == true) {
@@ -759,7 +735,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
             await handleNotificationsOnStatusChangeforPersonnelAction(currentStatus, reportDetails, "PERSONNEL_ACTION_FORM");
           }
         } catch (err) {
-          console.log("Error in reviewedAndResubmit:-", err);
         }
 
       }
@@ -772,7 +747,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
       try {
         await onSendEmailNotification({ id: original?.deptHead });
       } catch (e) {
-        console.log("Error in sending email notification", e);
       }
 
       await initiatorBindList();
@@ -831,10 +805,8 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
       // );
       toast.warning("Form Saved successfully.");
       try {
-        console.log('original --->', original);
         await onSendEmailNotification({ id: original?.deptHead });
       } catch (e) {
-        console.log("Error in sending email notification", e);
       }
       await initiatorBindList();
       setrequestedreportEdit()
@@ -849,7 +821,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
     return concatenatedString;
   }
   const employeeArrayList = async (id) => {
-    console.log('id316: ', id);
     var employeeArrayResponses = await fetchPaginatedRecords(
       queries.listPersonnelActionEmployees,
       { formId: { eq: id } },
@@ -858,7 +829,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
       'listPersonnelActionEmployees'
     )
 
-    console.log('employeeArrayResponses --->', employeeArrayResponses);
     // await DataStore.query(PersonnelActionEmployee,
 
     //   c => c.formId.eq(id)
@@ -900,7 +870,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
 
   const initiateNewReport = async () => {
 
-    console.log('usersusersusers:-', users);
 
     var newRes = []
     let userRole = '', userName = '', userEmail = '', userCode = '', sub = '';
@@ -924,8 +893,7 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
 
     //get only those users are without admin
     let usersWithoutAdmin = [];
-    const loggedUserId = reactLocalStorage.get('loggedUserId');
-    console.log("loggedUserIdloggedUserId:-", loggedUserId)
+    const loggedUserId = 1;//reactLocalStorage.get('loggedUserId');
 
     newRes.map((currentItem) => {
       if (currentItem.role !== 'Admin'
@@ -940,7 +908,6 @@ const EditFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLi
       finalEmpList.push(obj);
     })
     setEmpCodeList(finalEmpList);
-    console.log("empCodeList:-", usersWithoutAdmin)
     setAllEmployeeDetails(usersWithoutAdmin);
     // setVisibleNewForm(false);
   }
@@ -1366,7 +1333,7 @@ const startYear = 1990;
                                       <div className='text-[#344054] font-medium text-xs xl:text-[0.729vw]'>Effective Dates <span className="text-[red] pl-0.2">*</span></div>
                                       <div className='grid grid-cols-2 gap-3'>
                                         <div className='relative mt-1'>
-                                          <div className='absolute z-10 top-3 left-3'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
+                                          <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
                                           <DatePicker
                                             onChange={e => {
                                               setStarEndDate(e);
@@ -1381,7 +1348,7 @@ const startYear = 1990;
                                           {/* <Calendar value={new Date(startEndDate)} onChange={(e) => setStarEndDate(e.value)} dateFormat="mm/dd/yy" placeholder='From' className='w-full placeholder:text-[#667085] custm_calender md:h-[2.292vw] h-[40px]' /> */}
                                         </div>
                                         <div className='relative mt-1'>
-                                          <div className='absolute z-10 top-3 left-3'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
+                                          <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
                                           <DatePicker
                                             onChange={e => {
                                               setEndDate(e);
@@ -1968,7 +1935,7 @@ const startYear = 1990;
                   <div className='text-[#344054] font-medium text-xs xl:text-[0.729vw]'>Effective Dates</div>
                   <div className='grid grid-cols-2 gap-3'>
                     <div className='relative mt-1'>
-                      <div className='absolute z-10 top-3 left-3'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
+                      <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
                       <DatePicker
                         onChange={e => {
                           setStarEndDate(e);
@@ -1983,7 +1950,7 @@ const startYear = 1990;
                       {/* <Calendar value={new Date(startEndDate)} onChange={(e) => setStarEndDate(e.value)} dateFormat="mm/dd/yy" placeholder='From' className='w-full placeholder:text-[#667085] custm_calender md:h-[2.292vw] h-[40px]' /> */}
                     </div>
                     <div className='relative mt-1'>
-                      <div className='absolute z-10 top-3 left-3'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
+                      <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
                       <DatePicker
                         onChange={e => {
                           setEndDate(e);
@@ -2129,7 +2096,7 @@ const startYear = 1990;
                   <div className='text-[#344054] font-medium text-xs xl:text-[0.729vw]'>Effective Dates</div>
                   <div className='grid grid-cols-2 gap-3'>
                     <div className='relative mt-1'>
-                      <div className='absolute z-10 top-3 left-3'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
+                      <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
                       <DatePicker
                         onChange={e => {
                           setStarEndDate(e);
@@ -2144,7 +2111,7 @@ const startYear = 1990;
                       {/* <Calendar value={new Date(startEndDate)} onChange={(e) => setStarEndDate(e.value)} dateFormat="mm/dd/yy" placeholder='From' className='w-full placeholder:text-[#667085] custm_calender md:h-[2.292vw] h-[40px]' /> */}
                     </div>
                     <div className='relative mt-1'>
-                      <div className='absolute z-10 top-3 left-3'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
+                      <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'><Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /></div>
                       <DatePicker
                         onChange={e => {
                           setEndDate(e);

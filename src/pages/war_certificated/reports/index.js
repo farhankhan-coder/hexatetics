@@ -1,5 +1,5 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { useFullScreenHandle } from "react-full-screen";
+import React, { useState } from 'react';
+import { FullScreen,useFullScreenHandle } from "react-full-screen";
 import Link from 'next/link';
 import { DataTable } from "primereact/datatable";
 import { InputText } from 'primereact/inputtext';
@@ -9,7 +9,6 @@ import { Tag } from "primereact/tag";
 import moment from "moment";
 import { Apps } from '../../../helper/enum'
 import { ProgressSpinner } from 'primereact/progressspinner';
-import { TabPanel, TabView } from 'primereact/tabview';
 import { useRouter } from "next/router";
 import { Button } from 'primereact/button';
 import { AllStatusData } from '@/components/helper/enum';
@@ -17,31 +16,7 @@ import { AllStatusData } from '@/components/helper/enum';
 export default function Index(props) {
   const handle = useFullScreenHandle();
   const router = useRouter();
-  const [lazyState, setlazyState] = useState({
-    first: 0,
-    rows: 10,
-    page: 1,
-  });
-  const [rows, setRows] = useState(10)
-  const [schoolFilterValue, setSchoolFilter] = useState('');
-  const [weekFilterValue, setWeekFilter] = useState('');
-  const [submittedFilterVlaue, setSubmittedFilter] = useState('');
-  const [statusFilterValue, setStatusFilter] = useState('')
-  console.log('props.activeIndex', props.activeIndex)
-  //State's for EYEPOPUP
-  const [schoolName, setSchoolName] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
-  const [status, setStatus] = useState("");
-  const [approvedBy, setApprovedBy] = useState("");
-  const [submittedBy, setSubmittedBy] = useState("");
-  const [comment, setComment] = useState("");
-  const [employeeReports, setEmployeeReports] = useState([]);
-  const [administratorData, setAdministratorData] = useState([]);
-  const [CertificatedDatas, setCertificatedDatas] = useState([]);
-  const [events, setEvents] = useState([])
-
-
+  
   const getSeverity = (status) => {
     switch (status) {
       case AllStatusData.PENDING:
@@ -76,14 +51,12 @@ export default function Index(props) {
     }
   };
 
-  // const [statuses] = useState(['Approved', 'Pending', 'Rejected', 'Submitted', 'Reviewed And Resubmitted']);
   const [statuses] = useState([AllStatusData.APPROVED, AllStatusData.PENDING, AllStatusData.REJECTED,
   AllStatusData.SUBMITTED, AllStatusData.REVIEWED_AND_RESUBMITTED, AllStatusData.CLOSED]);
 
   const statusRowFilterTemplate = (options) => {
     return (
       <Dropdown value={props.statusFilterValue} options={statuses}
-        // onChange={(e) => {options.filterApplyCallback(e.value)}} 
         onChange={(e) => { props.setStatusFilter(e.value) }}
         itemTemplate={statusItemTemplate} placeholder="Select" className="p-column-filter custDropdown" showClear style={{ minWidth: '7rem' }} />
     );
@@ -102,7 +75,6 @@ export default function Index(props) {
   };
 
   const TaskStatusSL = (rowdata) => {
-    console.log("rowData",rowdata)
     switch (rowdata.status) {
       case AllStatusData.PENDING:
         return 'warning';
@@ -156,11 +128,12 @@ export default function Index(props) {
 
   const onSelectionChange = (event) => {
     const value = event.value;
-    // console.log("value",value)
   };
 
   return (
     <>
+          <FullScreen handle={handle}>
+
       <div
         className="relative z-10 col-span-12 lg:col-span-12 pt-9"
         data-aos="fade-down"
@@ -269,7 +242,7 @@ export default function Index(props) {
                     alignFrozen='right'
                     header="Action"
                     align="center"
-                    body={props.superAdminActions}
+                    body={props.reportListActions}
                     style={{ minWidth: "3rem" }}
 
                   ></Column>
@@ -281,6 +254,7 @@ export default function Index(props) {
           }
         </div >
       </div >
+      </FullScreen>
 
     </>
   );

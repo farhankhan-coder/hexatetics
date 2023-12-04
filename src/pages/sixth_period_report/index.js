@@ -54,8 +54,9 @@ import EyePopup from '@/components/popups/eyePopup';
 import HtmlToPdfSix from './htmlToPdf';
 import BasicInfo from './basicInfo';
 import SixPeriodPDF from '@/components/reportpdftemplate/sixPeriodPDF';
-
+import { Badge } from 'primereact/badge';
 export default function SixthPeriodInitiatorReportList() {
+
 
   //states start
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -69,6 +70,13 @@ export default function SixthPeriodInitiatorReportList() {
   const [rejectCount, setRejectCount] = useState(0);
 
   const [initiatorReportList, setInitiatorReportList] = useState([]);
+
+  const [initiator,setInitiator]  = useState('');
+  const [approver,setApprover]  = useState('');
+  const [payroll,setPayroll] = useState('');
+  const [admin,setAdmin]= useState('');
+  const [activeIndex, setActiveIndex] = useState(0);
+
   //states end
 
   const [fullViewEdit, setFullViewEdit] = useState(false);
@@ -86,7 +94,6 @@ export default function SixthPeriodInitiatorReportList() {
   const [subjectCode, setSubjectCodeList] = useState(null);
 
 
-  console.log('subjectCode:-', subjectCode)
 
   //------------
 
@@ -188,7 +195,6 @@ export default function SixthPeriodInitiatorReportList() {
   const [schoolList, setSchoolList] = useState('');
   const [schoolSelect, setSelectedSchool] = useState('');
 
-  console.log("schoolSelect:-", schoolSelect)
 
   //*List
   const [employeeList, setEmployeeList] = useState([]);
@@ -202,7 +208,6 @@ export default function SixthPeriodInitiatorReportList() {
   const [assighnmentTitle, setAssighnmentTitle] = useState('');
   const currentDateTime = moment();
 
-  console.log("startDate:-", typeof moment(startDate).format("YYYY-DD-MM"))
 
   const data = [
     {
@@ -242,7 +247,7 @@ export default function SixthPeriodInitiatorReportList() {
       />
     );
   };
-  const superAdminActions = (row) => {
+  const reportListActions = (row) => {
     return [
       <>
         <Link
@@ -370,7 +375,8 @@ export default function SixthPeriodInitiatorReportList() {
     },
 ];
   const statusBodyTemplate = (product) => {
-    return <Tag value={product.inventoryStatus} severity={getSeverityy(product)}></Tag>;
+    // return <Tag value={product.inventoryStatus} severity={getSeverityy(product)}></Tag>;
+    return <><Badge value="" severity={getSeverity(product)}> </Badge>&nbsp; {product.inventoryStatus}</>
 };
   const [statuses] = useState([
     "unqualified",
@@ -451,7 +457,6 @@ export default function SixthPeriodInitiatorReportList() {
   };
 
   const TaskStatusSLA = (product) => {
-    // console.log("product", product.status);
     return <Tag value={product.status} severity={TaskStatusSL(product)}></Tag>;
   };
   const alljobactionContent = (row) => {
@@ -555,7 +560,6 @@ export default function SixthPeriodInitiatorReportList() {
       //second add first report transaction entry in SixthPeriodReportTransactionCycle table
       if (newSixthPeriodAssignmentInitiateReport) {
 
-        console.log("newSixthPeriodAssignmentInitiateReport:-", newSixthPeriodAssignmentInitiateReport.id)
 
         toast.success('Data Added Successfully for pending.');
         BindList();
@@ -584,7 +588,6 @@ export default function SixthPeriodInitiatorReportList() {
       //second add first report transaction entry in SixthPeriodReportTransactionCycle table
       if (newSixthPeriodAssignmentInitiateReport) {
 
-        console.log("newSixthPeriodAssignmentInitiateReport:-", newSixthPeriodAssignmentInitiateReport.id)
 
 
         var newSixthPeriodReportTransactionCycle = await DataStore.save(new SixthPeriodReportTransactionCycle({
@@ -638,7 +641,6 @@ export default function SixthPeriodInitiatorReportList() {
     //   });
     //   if (sixPeriodInitiatorReportResponse) {
 
-    //     console.log("data is bbbbbbbbbb:-", sixPeriodInitiatorReportResponse);
     //     //change data format according to UI.
     //     // let submitCount = 0;
     //     // let approvedCount = 0;
@@ -652,7 +654,6 @@ export default function SixthPeriodInitiatorReportList() {
           
     //       let status='';
     //       if(sixthPeriodReportTransactionCycleResponse.length>0){
-    //         console.log("sixthPeriodReportTransactionCycleResponse " + i + " ", sixthPeriodReportTransactionCycleResponse);
     //         status="Submitted"
     //       }else{
     //         status="Pending"
@@ -704,7 +705,6 @@ export default function SixthPeriodInitiatorReportList() {
     //     setInitiatorReportList(finalData)
     //   }
     // } catch (error) {
-    //   console.log('Error for bindList', error);
     // }
 
 
@@ -739,9 +739,7 @@ export default function SixthPeriodInitiatorReportList() {
 //     };
 //     cognito.listUsers(params, (err, data) => {
 //       if (err) {
-//         console.log(err);
 //       } else {
-//         // console.log(data)
 //         SetUsersList(data.Users);
 //       }
 //     });
@@ -752,7 +750,6 @@ export default function SixthPeriodInitiatorReportList() {
   //initiate new report
   const initiateNewReport = async () => {
 
-    console.log('usersusersusers:-', users);
 
     var newRes = []
     let userRole = '', userName = '', userEmail = '', userCode = '',sub='';
@@ -777,7 +774,6 @@ export default function SixthPeriodInitiatorReportList() {
     //get only those users are without admin
     let usersWithoutAdmin = [];
     const loggedUserId = reactLocalStorage.get('loggedUserId');
-    console.log("loggedUserIdloggedUserId:-", loggedUserId)
 
     newRes.map((currentItem) => {
       if (currentItem.role !== 'Admin'
@@ -786,7 +782,6 @@ export default function SixthPeriodInitiatorReportList() {
       }
     })
 
-    console.log("usersWithoutAdminusersWithoutAdmin:-", usersWithoutAdmin)
     //set employee list
     let finalEmpList = [];
     usersWithoutAdmin.map((currentItem) => {
@@ -809,7 +804,6 @@ export default function SixthPeriodInitiatorReportList() {
 
     // }
     // } catch (error) {
-    // console.log('Error retrieving posts', error);
 
   }
 
@@ -892,12 +886,23 @@ export default function SixthPeriodInitiatorReportList() {
       }
     }
   }
+  
+  function loginPermission (){
+    let Initiator = window.localStorage.getItem('sixPeriodIsInitiator');
+    let Approver = window.localStorage.getItem('sixPeriodIsApprover');
+    let Payroll = window.localStorage.getItem('sixPeriodIsPayroll');
+    let Admin = window.localStorage.getItem('isSixPeriodSAdmin');
 
+
+    setInitiator(Initiator);
+    setApprover(Approver);
+    setPayroll(Payroll);
+    setAdmin(Admin);
+  }
   useEffect(() => {
+    loginPermission ();
     onLoad();
-    // BindList();
   }, []);
-
 
   return (
     <>
@@ -918,7 +923,13 @@ export default function SixthPeriodInitiatorReportList() {
                   <p className="text-[22px] xl:text-[0.938vw]  text-[#101828] font-medium">6th Period Teaching Assignment</p>
 
                   <div className="flex gap-2 xl:gap-[0.990vw] items-center">
-                    <Link href='/sixth_period_report/initiateNewReport' className="w-full text-center tableBtn blue radius8" onClick={() => initiateNewReport()}>
+                    <Link 
+                    style={{display: (initiator == 0 && approver == 0 && payroll == 1 && admin == 0 )||
+                                      (initiator == 0 && approver == 1 && payroll == 0 && admin == 0 ) ||
+                                      (initiator == 1 && approver == 1 && payroll == 0 && admin == 0 && activeIndex !== 0) ||
+                                        (initiator == 0 && approver == 0 && payroll == 0 && admin == 1 ) ? 'none':'Block'}}
+                    //style={{display:activeIndex == 0 && payroll !== 1 ? 'flex':'none'}} 
+                    href='/sixth_period_report/initiateNewReport' className="w-full text-center tableBtn blue radius8" onClick={() => initiateNewReport()}>
                       <i className="gusd-pluse-circle mx-1.5 "></i> Initiate New Report</Link>
                     <div className="relative dropcheck">
                       <Menu as="div">
@@ -960,8 +971,12 @@ export default function SixthPeriodInitiatorReportList() {
                     <Link href="" onClick={onToggle}> <i className="gusd-expand"></i></Link>
                   </div>
                 </div>
-                <TabView>
-              <TabPanel header="Initiate Reports">
+                <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
+
+              <TabPanel  
+              style={{display: (initiator == 1 && approver == 0 && payroll == 0 && admin == 0) ||
+                               (initiator == 1 && approver == 1 && payroll == 0 && admin == 0) ? 'flex':'none'}} 
+              header="Initiate Reports">
                 <div className="initiator  arrowshow">
                   <div className="xl:h-[37.760vw]  2xl:h-[37.760vw] lg:h-[37.760vw] h-[500px]">
                     <DataTable
@@ -1029,15 +1044,18 @@ export default function SixthPeriodInitiatorReportList() {
                         frozen
                         alignFrozen="right"
                         align="center"
-                        body={superAdminActions}
+                        body={reportListActions}
                         style={{ minWidth: "6rem" }}
                       ></Column>
                     </DataTable>
                   </div>
                 </div>
               </TabPanel>
-
-              <TabPanel header="Requested Reports">
+               
+              <TabPanel style={{display:(initiator == 0 && approver == 1 && payroll == 0 && admin == 0 ) ||
+                                        (initiator == 1 && approver == 1 && payroll == 0 && admin == 0 ) ||
+                                        // (initiator == 0 && approver == 0 && payroll == 0 && admin == 0 ) ||
+                                        (initiator == 0 && approver == 0 && payroll == 0 && admin == 1 )? 'Block':'none'}} header="Requested Reports">
                 <div className="initiator  arrowshow">
                   <div className="xl:h-[37.760vw]  2xl:h-[37.760vw] lg:h-[37.760vw] h-[500px]">
                     <DataTable
@@ -1103,13 +1121,89 @@ export default function SixthPeriodInitiatorReportList() {
                         frozen
                         alignFrozen="right"
                         align="center"
-                        body={superAdminActions}
+                        body={reportListActions}
                         style={{ minWidth: "6rem" }}
                       ></Column>
                     </DataTable>
                   </div>
                 </div>
               </TabPanel>
+
+              <TabPanel style={{display: (initiator == 0 && approver == 0 && payroll == 1 && admin == 0 ) ? 'Block':'none'}} 
+                  header="Payroll Reports">
+                <div className="initiator  arrowshow">
+                  <div className="xl:h-[37.760vw]  2xl:h-[37.760vw] lg:h-[37.760vw] h-[500px]">
+                    <DataTable
+                      className="custpaginator custIconsTable custmBtnTable custTable"
+                      scrollable
+                      filters={""}
+                      filterDisplay="row"
+                      value={tableData}
+                      paginator
+                      rowsPerPageOptions={[10, 20, 30]}
+                      responsiveLayout="scroll"
+                      paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                      rows={11}
+                      emptyMessage="No records found."
+                    >
+                      <Column
+                        header="SL#"
+                        field="sLNo"
+                        style={{ maxWidth: "3rem" }}
+                      ></Column>
+                      <Column
+                        field="submittedOn"
+                        header="Assignment Title"
+                        filter
+                        filterPlaceholder="Search"
+                        sortable
+                        style={{ minWidth: "5rem" }}
+                      ></Column>
+                      {/* <Column field="schoolOrDeptName" header="School or Department Name" filter filterPlaceholder="Search" sortable></Column> */}
+                      <Column
+                        field="assignmentTitle"
+                        header="Period"
+                        filter
+                        filterPlaceholder="Search"
+                        sortable
+                      ></Column>
+                      <Column
+                        field="noOfsubstitute"
+                        header="Submitted On"
+                        filter
+                        filterPlaceholder="Search"
+                        sortable
+                      ></Column>
+                      <Column
+                        header="Status"
+                        field="status"
+                        filter
+                        filterElement={statusRowFilterTemplate}
+                        body={statusBodyTemplate}
+                        sortable
+                        style={{ minWidth: "14rem" }}
+                      ></Column>
+                    
+                      <Column
+                        field="remark"
+                        header="Remarks"
+                        align="center"
+                        style={{ minWidth: "6rem" }}
+                      ></Column>
+                      <Column
+                        field="action"
+                        header="Action"
+                        frozen
+                        alignFrozen="right"
+                        align="center"
+                        body={reportListActions}
+                        style={{ minWidth: "6rem" }}
+                      ></Column>
+                    </DataTable>
+                  </div>
+                </div>
+              </TabPanel>
+              
             </TabView>
 
                 {/* <TabView>

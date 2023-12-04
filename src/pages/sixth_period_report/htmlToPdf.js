@@ -18,7 +18,7 @@ const HtmlToPdfSix = (props) => {
                     </div>
                     <div>
                         <div className='mt-2.5 leading-10'>
-                            It is requested that approval be granted to assign, on a voluntary basis, <span className='w-16 mx-8 text-[green] font-medium'>{props.data?.employeeName}</span> EID# <span className='w-16 mx-8 text-[green] font-medium'>{props.data.employeeId},</span> teacher, to a sixth period teaching assignment at <span className='w-16 mx-8 text-[green] font-medium'>{props.data?.schoolName}</span> for the period from <span className='w-16 mx-8 text-[green] font-medium'>07/31/2023</span> to <span className='w-16 mx-8 text-[green] font-medium'>07/31/2023.</span>
+                            It is requested that approval be granted to assign, on a voluntary basis, <span className='w-16 mx-8 text-[green] font-medium'>{props.data?.employeeName}</span> EID# <span className='w-16 mx-8 text-[green] font-medium'>{props.data?.employeeId},</span> teacher, to a sixth period teaching assignment at <span className='w-16 mx-8 text-[green] font-medium'>{props.data?.schoolName}</span> for the period from <span className='w-16 mx-8 text-[green] font-medium'>07/31/2023</span> to <span className='w-16 mx-8 text-[green] font-medium'>07/31/2023.</span>
                         </div>
                        
                         <div className='mt-2.5 border-b-4 border-[black]'></div>
@@ -63,8 +63,8 @@ const HtmlToPdfSix = (props) => {
                     </div>
                 </div>
             </div>
-                { props.print === true ?
-                <button class="w-[100%] bg-[#113699] hover:bg-[#0f296e] border border-[#113699] hover:border-[#0f296e] mt-10 shadow-[0px_1px_2px_rgba(16,24,40,0.05)] font-medium text-[#fff] flex items-center py-[10px] px-[8px] rounded-[8px] justify-center">Printt</button>
+                { props?.print === true ?
+                <button class="w-[100%] bg-[#113699] hover:bg-[#0f296e] border border-[#113699] hover:border-[#0f296e] mt-10 shadow-[0px_1px_2px_rgba(16,24,40,0.05)] font-medium text-[#fff] flex items-center py-[10px] px-[8px] rounded-[8px] justify-center">Print</button>
                     //  <button className=' bg-[#113699] border mt-10 border-[#D0D5DD] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] font-medium text-[#fff] flex items-center py-[10px] px-[8px] rounded-[8px] justify-center' >Print</button>
                     : null
                 }

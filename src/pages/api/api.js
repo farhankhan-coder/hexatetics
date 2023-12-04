@@ -8,7 +8,7 @@ export default async function handler(req, res, method, url) {
 
         var config = {
             method: method,
-            url: "http://localhost:8083/"+url, 
+            url: "http://3.14.164.218:8083/"+url, 
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${accessToken}`
@@ -19,18 +19,14 @@ export default async function handler(req, res, method, url) {
 
         await axios(config)
             .then(function (returnResponse) {
-                // console.log('returnResponse',returnResponse)
                 return res.status(200).json(returnResponse.data)
             })
             .catch(function (error) {
-                console.log(error.response,'error.response')
                 if (error.response) {
                     if (error.response.status === 401) {
-                      console.log('Caught Unauthorized');
                       return res.status(401).json("Unauthorized access"); 
                     }
                     else if (error.response.status === 409) {
-                        console.log('Employee already exist.');
                         return res.status(409).json("Employee already exist."); 
                       }
                     return res.status(error.response.status).json(error.response.data);

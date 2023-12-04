@@ -9,13 +9,15 @@ export default function InputComponent({datas,inputEventHandler}) {
   if(!inputEventHandler){
     return null;
   }
-  const { placeHolders,values,clasname,type} = datas;
+  const { placeHolders,values,clasname,type,isDisable,name} = datas;
   return (
     <>
       <InputText 
       value={values} type={type} 
       placeholder={placeHolders} 
       className={clasname} 
+      disabled={isDisable ?? false}
+      name={name ?? ''}
       onChange={inputEventHandler.handelChange}></InputText>
     </>
   )

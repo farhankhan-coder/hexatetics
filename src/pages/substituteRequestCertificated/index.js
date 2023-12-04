@@ -48,7 +48,7 @@ export default function SubstituteReportList() {
     },
   ];
 
-  const superAdminActions = (row) => {
+  const reportListActions = (row) => {
     return [
       <>
         <Link
@@ -293,7 +293,7 @@ export default function SubstituteReportList() {
                         frozen
                         alignFrozen="right"
                         align="center"
-                        body={superAdminActions}
+                        body={reportListActions}
                         style={{ minWidth: "6rem" }}
                       ></Column>
                     </DataTable>
@@ -372,7 +372,7 @@ export default function SubstituteReportList() {
                         frozen
                         alignFrozen="right"
                         align="center"
-                        body={superAdminActions}
+                        body={reportListActions}
                         style={{ minWidth: "6rem" }}
                       ></Column>
                     </DataTable>

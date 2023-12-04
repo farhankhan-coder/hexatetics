@@ -41,19 +41,15 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
   const [empCodeList, setEmpCodeList] = useState([]);
   const [editEmployee, seteditEmployee] = useState(false);
   const [editEmployeeArray, seteditEmployeeArray] = useState({});
-  console.log('editEmployeeArray --->', editEmployeeArray);
   const [exeSecreatary, setExeSecreatery] = useState(null);
   const [employee_Id, setEmployee_Id] = useState("");
-  console.log('employee_Id: ', employee_Id.userId);
   const [location, setLocation] = useState("");
   const [actiontobetaken, setActiontobetaken] = useState("");
   const [actionDate, setActionDate] = useState("");
   const [actionPage, setActionPage] = useState("");
   const [actionItem, setActionItem] = useState("");
-  console.log('actiontobetaken --->', actiontobetaken);
   const [formTitle, setFormTitle] = useState("");
   const [employeeName, setemployeeName] = useState();
-  console.log('employeeName --->', employeeName);
   const [personalNo, setPersonalNo] = useState("");
   const [allEmployeeDetails, setAllEmployeeDetails] = useState([]);
   const [selectedEmployeeDetails, setSelectedEmployeeDetails] = useState(null);
@@ -62,11 +58,9 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
   const [rejectCount, setRejectCount] = useState(0);
   const [EmpType, setEmpType] = useState('Certificated');
   const [startDate, setStartDate] = useState(null);
-  console.log('startDate: ', startDate);
   const [positionTo, setPositionTo] = useState("");
   const [positionFrom, setPositionFrom] = useState("");
   const [startEndDate, setStarEndDate] = useState(null);
-  console.log('startEndDate: ', startEndDate);
   const [salaryRate, setsalaryRate] = useState("");
   const [rateofPay, setrateofPay] = useState("");
   const [reason, setreason] = useState("");
@@ -76,7 +70,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
   const [budgetCodeName, setbudgetCodeName] = useState("");
   const [endDate, setEndDate] = useState(null);
   const [EmployeeArray, setEmployeeArray] = useState([]);
-  console.log('EmployeeArray: ', JSON.stringify(EmployeeArray[0]?.employeeName));
   const [users, SetUsersList] = useState([]);
   const [items, setItems] = useState([]);
   const [employeeList, setEmployeeList] = useState([]);
@@ -99,7 +92,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
 
   let EmployeeNameArray = employeeName?.split('\n').map(item => item.trim()) || [];
   let budgerCodeArray = budgetCode?.split('\n').map(item => item.trim()) || [];
-  console.log('EmployeeNameArray --->', EmployeeNameArray);
 
   const show = (position) => {
     setPosition(position);
@@ -114,7 +106,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
     exeSecreataryMgt: exeSecreataryMgt,
     hrTechnician: hrTechnician,
   };
-  console.log("routingData", routingData);
   useEffect(() => {
     setVisibleNewForm(showNewFormModal);
   }, [showNewFormModal]);
@@ -171,17 +162,14 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
       setAddNewForm(false);
 
     } else {
-      console.log("Object not found.");
       setAddNewForm(false);
     }
   }
   const handleDeleteRow = employeeId => {
-    console.log('rowData --->', employeeId);
     let newArray = EmployeeArray.filter(obj => obj.employee_Id !== employeeId);
     setEmployeeArray(newArray)
   };
   const deleteButton = rowData => {
-    console.log('rowData --->', rowData);
     return (
       <Button
         icon="pi pi-trash"
@@ -191,7 +179,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
     );
   };
   const requestedreportaction = row => {
-    console.log('rowdataa --->', row);
     return (
       <div className="flex justify-center w-full gap-2">
         <div>
@@ -309,7 +296,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
         1000,
         'listEmployees'
       );
-      console.log('employeeResponses --->', employeeResponses);
       // DataStore.query(Employee, (c) => c.role.eq(USER_TYPES.APPROVER),
       //   {
       //     sort: s => s.employee_name(SortDirection.ASCENDING),
@@ -365,11 +351,9 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
           setSixthApproverOption(finalEmployeeList)
           setEmployeeList(finalEmployeeList);
         }
-        console.log('finalEmployeeList', finalEmployeeList)
       }
     }
     catch (error) {
-      console.log(error)
     }
   };
 
@@ -451,11 +435,8 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
     return null;
   }
   async function fetchAllDetailsAndSetObjects(target_user_id, approver_id, next_approver_id, initiator_id) {
-    console.log('approver_id --->', approver_id);
     const targetPromise = fetchAndSetLoggedInUserData(target_user_id);
-    console.log('targetPromise --->', targetPromise);
     const approverPromise = fetchAndSetLoggedInUserData(approver_id);
-    console.log('approverPromise --->', approverPromise);
     const nextApproverPromise = fetchAndSetLoggedInUserData(next_approver_id);
     const initiatorPromise = fetchAndSetLoggedInUserData(initiator_id);
 
@@ -479,7 +460,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
     }
   }
   const buildReportDetails = async (personalActionTransactionCycle, title, status, initiator_id, target_user_id, approver_id, next_approver_id) => {
-    console.log('personalActionTransactionCycle: ', personalActionTransactionCycle);
     let reportDetails = {};
 
     try {
@@ -530,15 +510,11 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
     } catch (error) {
       console.error('Error building report details:', error);
     }
-    console.log('reportDetails --->', reportDetails);
     return reportDetails;
   };
   let [originalPersonnelActionInitiatorForm, setoriginalPersonnelActionInitiatorForm] = useState(null);
-  console.log('originalPersonnelActionInitiatorForm --->', originalPersonnelActionInitiatorForm);
   let [originalPersonnelActionEmployee, setoriginalPersonnelActionEmployee] = useState(null);
-  console.log('originalPersonnelActionEmployee --->', originalPersonnelActionEmployee);
   let [originalPersonnelActionTransactionCycle, setoriginalPersonnelActionTransactionCycle] = useState(null);
-  console.log('originalPersonnelActionTransactionCycle --->', originalPersonnelActionTransactionCycle);
 
   const saveBasicInfo = async (type, formTitleName) => {
     const loggedUserId = reactLocalStorage.get("loggedUserId");
@@ -578,7 +554,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
 
     if (type === 'save') {
       if (originalPersonnelActionInitiatorForm && originalPersonnelActionEmployee && originalPersonnelActionTransactionCycle) {
-        console.log('original --->', "111111111111");
         var newPersonalActionInitiatorFormReport = await API.graphql(
           graphqlOperation(mutations.updatePersonnelActionInitiatorForm,
             {
@@ -604,7 +579,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
               }
             })
         );
-        console.log('newPersonalActionInitiatorFormReport --->', newPersonalActionInitiatorFormReport);
         var newPersonalActionEmployeeReport = await Promise.all(EmployeeArray?.map(item => API.graphql(
           graphqlOperation(mutations.updatePersonnelActionEmployee,
             {
@@ -736,7 +710,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
                 }
               })
           );
-          console.log('newSixthPeriodReportTransactionCycle --->', newSixthPeriodReportTransactionCycle);
           setoriginalPersonnelActionTransactionCycle(await API.graphql(
             graphqlOperation(queries.getTransactionCyclePersonnel,
               { id: newSixthPeriodReportTransactionCycle?.data?.createTransactionCyclePersonnel?.id }
@@ -751,11 +724,8 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
     } else {
       //other wise status submit
       //first save report in PersonnelActionInitiatorForm table
-      console.log('original --->', originalPersonnelActionInitiatorForm);
-      console.log('original --->', originalPersonnelActionEmployee);
 
       if (originalPersonnelActionInitiatorForm && originalPersonnelActionEmployee && originalPersonnelActionTransactionCycle) {
-        console.log('original --->', "22222222222");
         var newPersonalActionInitiatorFormReport = await API.graphql(
           graphqlOperation(mutations.updatePersonnelActionInitiatorForm,
             {
@@ -782,7 +752,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
               }
             })
         );
-        console.log('newPersonalActionInitiatorFormReport --->', newPersonalActionInitiatorFormReport);
         var newPersonalActionEmployeeReport = await Promise.all(EmployeeArray?.map(item => API.graphql(
           graphqlOperation(mutations.updatePersonnelActionEmployee,
             {
@@ -840,7 +809,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
               })
 
             } catch (err) {
-              console.log("Error in onSendEmailNotification", err);
             }
             const reportDetails = await buildReportDetails(newPersonnelActionFormTransactionCycle?.data.updateTransactionCyclePersonnel, formTitle, "Open", loggedUserId, deptHead?.code, loggedUserId, deptHead?.code);
             handleNotificationsOnStatusChangeforPersonnelAction("Open", reportDetails, "PERSONNEL_ACTION_FORM");
@@ -928,7 +896,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
               })
 
             } catch (err) {
-              console.log("Error in onSendEmailNotification", err);
             }
             const reportDetails = await buildReportDetails(newPersonnelActionFormTransactionCycle?.data.createTransactionCyclePersonnel, formTitle, "Open", loggedUserId, deptHead?.code, loggedUserId, deptHead?.code);
             handleNotificationsOnStatusChangeforPersonnelAction("Open", reportDetails, "PERSONNEL_ACTION_FORM");
@@ -949,7 +916,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
       return null;
     }
     const onSendEmailNotification = async ({ id }) => {
-      console.log(users);
       if (!deptHead?.code) return;
       const empDetails = users.find(emp => emp.Username === deptHead?.code);
       if (!empDetails) return;
@@ -996,7 +962,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
 
   const initiateNewReport = async () => {
 
-    console.log('usersusersusers:-', users);
 
     var newRes = []
     let userRole = '', userName = '', userEmail = '', userCode = '', sub = '';
@@ -1021,7 +986,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
     //get only those users are without admin
     let usersWithoutAdmin = [];
     const loggedUserId = reactLocalStorage.get('loggedUserId');
-    console.log("loggedUserIdloggedUserId:-", loggedUserId)
 
     newRes.map((currentItem) => {
       if (currentItem.role !== 'Admin'
@@ -1036,7 +1000,6 @@ const NewFormModal = ({ HideShowNewFormModal, showNewFormModal, initiatorBindLis
       finalEmpList.push(obj);
     })
     setEmpCodeList(finalEmpList);
-    console.log("empCodeList:-", usersWithoutAdmin)
     setAllEmployeeDetails(usersWithoutAdmin);
     // setVisibleNewForm(false);
   }
@@ -1420,7 +1383,7 @@ const startYear = 1990;
                                       <div className='text-[#344054] font-medium text-xs xl:text-[0.729vw]'>Effective Dates <span className="text-[red] pl-0.2">*</span></div>
                                       <div className='grid grid-cols-2 gap-3'>
                                         <div className='relative mt-1'>
-                                          <div className='absolute z-10 top-3 left-3'>
+                                          <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'>
                                             {/* <Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /> */}
                                             </div>
                                           <DatePicker
@@ -1437,7 +1400,7 @@ const startYear = 1990;
                                           {/* <Calendar value={startEndDate} onChange={(e) => setStarEndDate(e.value)} dateFormat="mm/dd/yy" placeholder='From' className='w-full placeholder:text-[#667085] custm_calender md:h-[2.292vw] h-[40px]' /> */}
                                         </div>
                                         <div className='relative mt-1'>
-                                          <div className='absolute z-10 top-3 left-3'>
+                                          <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'>
                                             {/* <Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /> */}
                                             </div>
                                           <DatePicker
@@ -2034,7 +1997,7 @@ const startYear = 1990;
               <div className='text-[#344054] font-medium text-xs xl:text-[0.729vw]'>Effective Dates <span className="text-[red] pl-0.2">*</span></div>
               <div className='grid grid-cols-2 gap-3'>
                 <div className='relative mt-1'>
-                  <div className='absolute z-10 top-3 left-3'>
+                  <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'>
                    {/* <Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /> */}
                     </div>
                   <DatePicker
@@ -2051,7 +2014,7 @@ const startYear = 1990;
                   {/* <Calendar value={startEndDate} onChange={(e) => setStarEndDate(e.value)} dateFormat="mm/dd/yy" placeholder='From' className='w-full placeholder:text-[#667085] custm_calender md:h-[2.292vw] h-[40px]' /> */}
                 </div>
                 <div className='relative mt-1'>
-                  <div className='absolute z-10 top-3 left-3'>
+                  <div className='gusd-calendar text-[#667085] absolute left-[10px] top-1/2 -translate-y-1/2 z-10'>
                     {/* <Image src={CalendarIcon} width={"16"} height={"16"} alt='CalendarIcon' /> */}
                     </div>
                   <DatePicker

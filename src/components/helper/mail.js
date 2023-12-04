@@ -69,7 +69,6 @@ function SendLoginUsernameAndPassword(name,email, password) {
     .sendEmail(params)
     .promise()
     .then(res => {
-      console.log(res);
     });
 }
 
@@ -113,7 +112,6 @@ function SendWelcomeEmailToUser(role, newUserFirstName, newUserEmail, newUserPas
     .sendEmail(params)
     .promise()
     .then(res => {
-      console.log(res);
     });
 }
 
@@ -146,7 +144,6 @@ function SendNotificationEmail(email, subject, content) {
     .sendEmail(params)
     .promise()
     .then(res => {
-      console.log(res);
     });
 }
 
@@ -181,7 +178,6 @@ function SendHandbookNotification({ to = [], from, username, subject }) {
     .sendEmail(params)
     .promise()
     .then(res => {
-      console.log(res);
     });
 }
 

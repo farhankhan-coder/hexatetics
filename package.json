@@ -15,6 +15,7 @@
     "@mui/material": "^5.11.10",
     "@next/font": "13.1.6",
     "@reduxjs/toolkit": "^1.9.3",
+    "@swc/helpers": "^0.5.3",
     "axios": "^1.6.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

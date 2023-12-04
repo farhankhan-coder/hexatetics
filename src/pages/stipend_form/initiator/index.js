@@ -58,11 +58,69 @@ import { Request_Stipend_Status, stipend_Type, Request_Stipend_Status_Name, desi
 import handleDateSelect from "@/components/helper/convertDateIntoPSTFormat";
 import capitalizeFirstChar from "@/components/common/capitalizeFirstChar";
 import EmployeePopup from "@/components/common/EmployeePopup";
-// import { approvalStatus } from "./Misc";
-import ReportTable from "./Components/ReportTable";
+import ReportTable from "../Components/ReportTable";
 import axios from "axios";
 import { useRouter } from "next/router";
+import EmployeeAdd from "../Components/EmployeeAdd";
+// import { approvalStatusList } from "../Misc";
 // import EditPopups from "@/pages/stipend_form/EditPopups";
+
+
+const approvalStatusList = [
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending.- (step 1)"
+    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending for Approval Employee- (step 2)",    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending for Prior Approval Principal- (step 3)",
+    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending for Prior Approval HR technician- (step 4)",
+    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending for Approval Excecutive Management- (step 5)",
+    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending for Assignment Completion HR Technician- (step 6)",
+    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending for Final Approval Principal- (step 7)",
+    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Pending for Completion HR Technician- (step 8)",
+    },
+    {
+        empName:"pooja",
+        empCode:"323344",
+        approvedDate:"21/12/2023",
+        status: "Completed-(step 9)",
+    },
+]
 
 export default function StipendInitiatorReportList() {
 
@@ -70,6 +128,117 @@ export default function StipendInitiatorReportList() {
     // let navigateTo = useNavigate();
     const CCEmail = process.env.REACT_APP_CC_Email;
     const HREmail = process.env.REACT_APP_HR_Email;
+
+    const approvalStatusList = [
+        {
+            sLNo: "1",
+            assignmentTitle: "Test 1 ",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "09",
+            inventoryStatus: "Pending",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Rejected",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Submitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Reviewed & Resubmitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Approved",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Rejected",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Submitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Reviewed & Resubmitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Approved",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+    ];
 
     const currentDateTime = moment();
     const router = useRouter();
@@ -189,6 +358,9 @@ export default function StipendInitiatorReportList() {
     const [isApproveButtonDisable, setIsApproveButtonDisable] = useState(false);
 
     let [submittedBy, setSubmittedBy] = useState({});
+
+    const [editStipend, setEditStipend] = useState(false);
+    const [rowData, setRowData] = useState(null);
 
     //states end
 
@@ -1560,28 +1732,39 @@ export default function StipendInitiatorReportList() {
     };
 
     const approveStatusOptions = (product) => {
+
         switch (product.status) {
-            case "Rejected":
-                return "danger";
+            case Request_Stipend_Status.REJECT:
+                return 'danger';
 
-            case "Pending for Budget Approver":
-                return "success";
-
-            case "Completed":
-                return "info";
-
-            case "SUBMITTED":
-                return "success";
-
-            case "Pending for Principal/Department Head":
-                return "info";
-
-            case "Pending":
-                return "warning";
-
-            case "renewal":
-                return null;
-
+            case Request_Stipend_Status.PENDING_FOR_APPROVAL_EMPLOYEE:
+                return 'warning';
+            case Request_Stipend_Status.PENDING_FOR_APPROVAL_PRINCIPAL:
+                return 'warning';
+            case Request_Stipend_Status.PENDING_FOR_APPROVAL_HR_TECHNICIAN:
+                return 'warning';
+            case Request_Stipend_Status.PENDING_FOR_APPROVAL_EXCECUTIVE_MANAGEMENT:
+                return 'warning';
+            case Request_Stipend_Status.PENDING_FOR_APPROVAL_ASSIGNMENT_COMPLETION_HR_TECHNICIAN:
+                return 'warning';
+            case Request_Stipend_Status.PENDING_FOR_APPROVAL_FINAL_APPROVAL:
+                return 'warning';
+            case Request_Stipend_Status.PENDING_FOR_ACKNOWLEDGMENT_HR_TECHNICIAN:
+                return 'warning';
+            case Request_Stipend_Status.PENDING:
+                return 'warning';
+            case "Approved":
+                return 'success';
+            case Request_Stipend_Status.ACKNOWLEDGMENT_HR_TECHNICIAN:
+               return 'success';
+                case Request_Stipend_Status.SUBMITTED:
+                return 'info';
+                case 'Completed':
+                    return 'success';
+                case 'Completed-(step 9)':
+                    return 'success';
+                case Request_Stipend_Status_Name[8]:
+                    return 'success'; 
             default:
                 return null;
         }
@@ -3051,11 +3234,11 @@ export default function StipendInitiatorReportList() {
                                                 <Link href='#' className="lg:w-full text-center tableBtn blue radius8" onClick={() => initiateNewReport()}>
                                                     <i className="gusd-pluse-circle mx-1.5"></i> Initiate New Report</Link>
 
-                                                <Link href="#" onClick={() => { exportFilteredDataToCSV("StipendInitiatorReport.csv") }} className=" " > <i className="pi pi-download "></i></Link>
+                                                <Link href="#" onClick={() => { exportFilteredDataToCSV("StipendInitiatorReport.csv") }} className=" " > <i className="pi pi-download text-black"></i></Link>
 
 
 
-                                                <Link href="" onClick={onToggle}> <i className="gusd-expand"></i></Link>
+                                                <Link href="" onClick={onToggle}> <i className="gusd-expand text-black"></i></Link>
                                             </div>
 
                                         </div>
@@ -3063,251 +3246,11 @@ export default function StipendInitiatorReportList() {
                                             <TabPanel header="Initiate Reports">
                                                 <div className="initiator  arrowshow">
                                                     <div className="xl:h-[28.646vw] h-[500px] overflow-auto">
-                                                        {/* <DataTable
-                                                            className="custpaginator custIconsTable custmBtnTable custTable"
-                                                            scrollable
-                                                            filters={""}
-                                                            filterDisplay="row"
-                                                            value={tableData}
-                                                            paginator
-                                                            rowsPerPageOptions={[10, 20, 30]}
-                                                            responsiveLayout="scroll"
-                                                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                                                            rows={11}
-                                                            emptyMessage="No records found."
-                                                        >
-
-                                                            <Column
-                                                                header="SL#"
-                                                                field="sLNo"
-                                                                style={{ maxWidth: "3rem" }}
-                                                            ></Column>
-                                                            <Column
-                                                                field="submittedOn"
-                                                                header="Title"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                                style={{ minWidth: "5rem" }}
-                                                            ></Column> */}
-                                                        {/* <Column field="schoolOrDeptName" header="School or Department Name" filter filterPlaceholder="Search" sortable></Column> */}
-                                                        {/* <Column
-                                                                field="assignmentTitle"
-                                                                header="Employee Name"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                            ></Column>
-                                                            <Column
-                                                                field="noOfsubstitute"
-                                                                header="School"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                            ></Column>
-
-                                                            <Column
-                                                                field="asignee"
-                                                                header="Year"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                            ></Column>
-                                                            <Column
-                                                                header="Semester"
-                                                                field="remark"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                                style={{ minWidth: "14rem" }}
-                                                            ></Column>
-
-                                                            <Column
-                                                                header="Status"
-                                                                field="status"
-                                                                filter
-                                                                filterElement={statusRowFilterTemplate}
-                                                                body={statusBodyTemplate}
-                                                                sortable
-                                                                style={{ minWidth: "14rem" }}
-                                                            ></Column>
-                                                            <Column
-                                                                field="remark"
-                                                                header="Remarks"
-                                                                align="center"
-                                                                style={{ minWidth: "6rem" }}
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                            ></Column>
-                                                            <Column
-                                                                field="action"
-                                                                header="Action"
-                                                                frozen
-                                                                alignFrozen="right"
-                                                                align="center"
-                                                                body={reportListActions}
-                                                                style={{ minWidth: "6rem" }}
-                                                            ></Column>
-                                                        </DataTable> */}
-                                                        <ReportTable isListLoaded={true} view={setShowNextPopUp} edit={setVisibleApprovalRequestedReportEdit} />
-                                                    </div>
-                                                </div>
-                                            </TabPanel>
-
-                                            <TabPanel header="Requested Reports">
-                                                <div className="initiator  arrowshow">
-                                                    <div className="xl:h-[28.646vw] h-[500px] overflow-auto">
-                                                        {/* <DataTable
-                                                            className="custpaginator custIconsTable custmBtnTable custTable"
-                                                            scrollable
-                                                            filters={""}
-                                                            filterDisplay="row"
-                                                            value={tableData}
-                                                            paginator
-                                                            rowsPerPageOptions={[10, 20, 30]}
-                                                            responsiveLayout="scroll"
-                                                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                                                            rows={11}
-                                                            emptyMessage="No records found."
-                                                        >
-                                                            <Column
-                                                                header="SL#"
-                                                                field="sLNo"
-                                                                style={{ maxWidth: "3rem" }}
-                                                            ></Column>
-                                                            <Column
-                                                                field="submittedOn"
-                                                                header="Submitted On"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                                style={{ minWidth: "5rem" }}
-                                                            ></Column> */}
-                                                        {/* <Column field="schoolOrDeptName" header="School or Department Name" filter filterPlaceholder="Search" sortable></Column> */}
-                                                        {/* <Column
-                                                                field="assignmentTitle"
-                                                                header="Assignment title"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                            ></Column>
-                                                            <Column
-                                                                field="noOfsubstitute"
-                                                                header="No of Substitutes"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                            ></Column>
-                                                            <Column
-                                                                header="Status"
-                                                                field="status"
-                                                                filter
-                                                                filterElement={statusRowFilterTemplate}
-                                                                body={statusBodyTemplate}
-                                                                sortable
-                                                                style={{ minWidth: "14rem" }}
-                                                            ></Column>
-                                                            <Column
-                                                                field="asignee"
-                                                                header="Assignee"
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                                sortable
-                                                            ></Column>
-                                                            <Column
-                                                                field="remark"
-                                                                header="Remarks"
-                                                                align="center"
-                                                                style={{ minWidth: "6rem" }}
-                                                                filter
-                                                                filterPlaceholder="Search"
-                                                            ></Column>
-                                                            <Column
-                                                                field="action"
-                                                                header="Action"
-                                                                frozen
-                                                                alignFrozen="right"
-                                                                align="center"
-                                                                body={reportListActions}
-                                                                style={{ minWidth: "6rem" }}
-                                                            ></Column>
-                                                        </DataTable> */}
-                                                        <ReportTable isListLoaded={true} />
+                                                        <ReportTable isListLoaded={true} view={setVisibleApprovalRequestedReportEdit} edit={setShowNextPopUp} setEditStipend={setEditStipend} setRowData={setRowData} />
                                                     </div>
                                                 </div>
                                             </TabPanel>
                                         </TabView>
-                                        {
-                                            // (loggedStipendInitiator === '1' || loggedStipendApprover === '1') ?
-                                            // <>
-                                            //     <TabView 
-                                            //     // activeIndex={loggedStipendInitiator == 1 ? activeIndex : 1}
-                                            //      onTabChange={(e) => setActiveIndex(e.index)}>
-                                            //         {
-                                            //             // (loggedStipendInitiator === '1') ?
-                                            //                 <TabPanel header="Initiate Reports">
-                                            //                     <div className="initiator arrowshow">
-                                            //                         <DataTable
-                                            //                             className="custpaginator custIcons custmBtnTable custTable"
-                                            //                             scrollable
-                                            //                             filter={filters}
-                                            //                             filterDisplay="row"
-                                            //                             value={stipendMasterData}
-                                            //                             paginator rowsPerPageOptions={[10, 20, 30]} responsiveLayout="scroll" paginatorTemplate="PrevPageLink PageLinks NextPageLink" rows={11}
-                                            //                             emptyMessage="No records found.">
-
-                                            //                             <Column header="SL#" body={CounterAction} style={{ minWidth: '3rem' }}></Column>
-                                            //                             <Column header="Title" field="title" filter filterPlaceholder="Search" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="employee" filter filterPlaceholder='Search' header="Employee Name" sortable style={{ width: '10rem' }}></Column>
-                                            //                             <Column field="school" filterPlaceholder='Search' filter header="School" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="schoolYear" filterPlaceholder='Search' filter header="Year" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="semister" filterPlaceholder='Search' filter header="Semester" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="statusStipend" filter filterElement={statusRowFilterInitiateTemplate} body={TaskStatusInitiate} header="Status" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="remark" header="Remarks" filter align='center' filterPlaceholder="Search" style={{ minWidth: '6rem' }}></Column>
-                                            //                             <Column field="action" header="Action" frozen alignFrozen="right" align='center' body={initiateReportAction} style={{ minWidth: '6rem' }}></Column>
-
-                                            //                         </DataTable>
-                                            //                     </div>
-                                            //                 </TabPanel>
-                                            //                 // : null
-                                            //         }
-
-                                            //         {
-                                            //             // (loggedStipendApprover === '1') ?
-                                            //                 <TabPanel header="Requested Reports">
-                                            //                     <div className={stipendApproveReportListInitiator.length === 0 ? "datatableemptymessage arrowhide" : "initiator  arrowshow"}>
-                                            //                         <DataTable
-                                            //                             className="custpaginator custIcons custmBtnTable custTable"
-                                            //                             scrollable
-                                            //                             filters={filterRequestedReports}
-                                            //                             filterDisplay="row"
-                                            //                             value={stipendApproveReportListInitiator}
-                                            //                             paginator rowsPerPageOptions={[10, 20, 30]} responsiveLayout="scroll" paginatorTemplate="PrevPageLink PageLinks NextPageLink" rows={11}
-                                            //                             emptyMessage="No records found."
-                                            //                         >
-                                            //                             <Column header="SL#" body={CounterAction} style={{ minWidth: '3rem' }}></Column>
-                                            //                             <Column header="Title" field="title" filter filterPlaceholder="Search" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="employee" filter filterPlaceholder='Search' header="Employee Name" sortable style={{ width: '13rem' }}></Column>
-                                            //                             <Column field="school" filterPlaceholder='Search' filter header="School" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="schoolYear" filterPlaceholder='Search' filter header="Year" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             <Column field="semesterTitle" header="Semester" filter filterPlaceholder="Search" sortable style={{ minWidth: '5rem' }}></Column>
-                                            //                             {/* <Column field="dates" filter filterPlaceholder="Search" header="Created Date" sortable></Column> */}
-                                            //                             <Column field="submittedOn" header="Submitted On" sortable filter filterPlaceholder="Search" style={{ width: '10rem' }}></Column>
-                                            //                             <Column header="Status" field="status" filter filterElement={statusRowFilterTemplate} body={TaskStatusSLA} sortable style={{ minWidth: '8rem' }}></Column>
-                                            //                             <Column field="remark" header="Remarks" filter align='center' filterPlaceholder="Search" style={{ minWidth: '6rem' }}></Column>
-                                            //                             <Column field="action" header="Action" frozen alignFrozen="right" align='center' body={initiateApproverReportAction} style={{ minWidth: '6rem' }}></Column>
-                                            //                         </DataTable>
-                                            //                     </div>
-                                            //                 </TabPanel>
-                                            //                 // : null
-                                            //         }
-                                            //     </TabView>
-                                            // </>
-                                            // : <div className="text-[#113699] text-md md:text-[0.833vw] font-bold mt-3 text-center p-5">No access found. Please contact with Administrator...</div>
-                                        }
-
-
-
 
                                         {/* edit popup for requested report start */}
 
@@ -3350,7 +3293,7 @@ export default function StipendInitiatorReportList() {
                                                                             <div className="py-3 emp-simple-tbl">
                                                                                 <DataTable
                                                                                     className="custpaginator custIcons custmBtnTable custTable"
-                                                                                    value={"test"}
+                                                                                    value={approvalStatusList}
                                                                                 >
                                                                                     <Column field="empCode" header="Employee Id"></Column>
                                                                                     <Column field="empName" header="Name"></Column>
@@ -3400,7 +3343,7 @@ export default function StipendInitiatorReportList() {
                                                                                         'assignmentArray': assignmentArray,
                                                                                         'stipendTypes': confirmed,
                                                                                         'previewAndEdit': previewAndEdit,
-                                                                                        'approvalFinalData': approvalCompleteData,
+                                                                                        'approvalFinalData': approvalStatusList,
                                                                                         'selectedConfirmation': selectedConfirmation,
                                                                                     }}
                                                                                 />
@@ -3533,7 +3476,7 @@ export default function StipendInitiatorReportList() {
                                     <div className="relative overflow-hidden transform transition-all w-full h-full">
                                         <div className="grid grid-cols-12 custmCols">
                                             <div className="col-span-12 md:col-span-3 h-full sideBarLeft openSideDiv">
-                                                <button onClick={() => { setShowPreviewPopUp(false); SetPreviewAndEdit(false); setShowNextPopUp(false); }} type="button" className="inline-flex justify-center py-[12px] xl:py-[0.625vw] px-[16px] xl:px-[0.833vw] text-[#2D5BE5] text-[14px] xl:text-[0.729vw] font-medium bg-[#EFF8FF] border border-[#EFF8FF] rounded-md" id="add-family-cancel-btn"><i className="gusd-arrow-line-right mr-[14px] xl:mr-[0.729vw]"></i> Back Home</button>
+                                                <button onClick={() => { setShowPreviewPopUp(false); SetPreviewAndEdit(false); setShowNextPopUp(false); setEditStipend(false); }} type="button" className="inline-flex justify-center py-[12px] xl:py-[0.625vw] px-[16px] xl:px-[0.833vw] text-[#2D5BE5] text-[14px] xl:text-[0.729vw] font-medium bg-[#EFF8FF] border border-[#EFF8FF] rounded-md" id="add-family-cancel-btn"><i className="gusd-arrow-line-right mr-[14px] xl:mr-[0.729vw]"></i> Back Home</button>
                                                 <div className="mt-[10px] xl:mt-[0.533vw] text-[#101828] text-[20px] xl:text-[0.833vw] font-medium">Stipend Form</div>
                                                 {/* <div className="mt-[10px] xl:mt-[0.533vw] text-[#101828] text-[20px] xl:text-[0.833vw] font-medium">Assignment 10102</div> */}
                                                 <div className="mt-[32px] xl:[1.667vw]">
@@ -3681,7 +3624,7 @@ export default function StipendInitiatorReportList() {
 
                                                                                 </div>
                                                                                 {/* Add New Employee Popup */}
-                                                                                <EmployeePopup
+                                                                                <EmployeeAdd
                                                                                     visible={openNewEmployee}
                                                                                     onHide={() => {
                                                                                         setOpenNewEmployee(false);
@@ -3983,12 +3926,25 @@ export default function StipendInitiatorReportList() {
                                                         <div className='mt-[24px] xl:mt-[1.250vw] pb-[40px] xl:pb-[2.083vw]'>
                                                             {/* <img src={pdfImageReport} alt='pdfImageReport' /> */}
                                                             <StipendFormPdf ref={componentRef}
+                                                                // data={{
+                                                                //     'schoolName': location.name,
+                                                                //     'schoolYear': schoolYearId.name,
+                                                                //     'schoolSemister': semisterId.name,
+                                                                //     'employeeName': employeeId.name,
+                                                                //     'departmentTypeName': departmentId.name,
+                                                                //     'departmentCount': departmentPeopleCount,
+                                                                //     'assignmentArray': assignmentArray,
+                                                                //     'stipendTypes': confirmed,
+                                                                //     'previewAndEdit': previewAndEdit,
+                                                                //     'approvalFinalData': approvalCompleteData,
+                                                                //     'selectedConfirmation': selectedConfirmation,
+                                                                // }}
                                                                 data={{
-                                                                    'schoolName': location.name,
-                                                                    'schoolYear': schoolYearId.name,
-                                                                    'schoolSemister': semisterId.name,
-                                                                    'employeeName': employeeId.name,
-                                                                    'departmentTypeName': departmentId.name,
+                                                                    'schoolName': location,
+                                                                    'schoolYear': schoolYearId,
+                                                                    'schoolSemister': semisterId,
+                                                                    'employeeName': employeeId,
+                                                                    'departmentTypeName': departmentId,
                                                                     'departmentCount': departmentPeopleCount,
                                                                     'assignmentArray': assignmentArray,
                                                                     'stipendTypes': confirmed,

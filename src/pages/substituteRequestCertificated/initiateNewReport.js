@@ -42,7 +42,6 @@ export default function InitiateNewReports() {
   const eventHandlersofCalender = {
     calenderchangeHandler: (e) => {
       setDate(e.value);
-      console.log("Selected Value:", e.value);
     },
   };
 
@@ -58,7 +57,6 @@ export default function InitiateNewReports() {
   const eventHandlersDateNeeded = {
     calenderchangeHandler: (e) => {
       setDate(e.value);
-      console.log("Selected Value:", e.value);
     },
   };
 
@@ -75,7 +73,6 @@ export default function InitiateNewReports() {
   const SchoolDeptNameEvent = {
     onChange: (e) => {
       setSelectedSchoolDeptName(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedSchoolDeptname,
   };
@@ -93,7 +90,6 @@ export default function InitiateNewReports() {
   const FirstApprovalEvent = {
     onChange: (e) => {
       setSelectedFirstApproval(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedFirstApproval,
   };
@@ -111,7 +107,6 @@ export default function InitiateNewReports() {
   const SecondApprovalEvent = {
     onChange: (e) => {
       setSelectedSecondApproval(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedSecondApproval,
   };
@@ -129,7 +124,6 @@ export default function InitiateNewReports() {
   const ThirdApprovalEvent = {
     onChange: (e) => {
       setSelectedThirdApproval(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedThirdApproval,
   };
@@ -146,7 +140,6 @@ export default function InitiateNewReports() {
   const TeacherNameEvent = {
     onChange: (e) => {
       setSelectedTeacherName(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedTeacherName,
   };
@@ -165,7 +158,6 @@ export default function InitiateNewReports() {
   const IndicateEvent = {
     onChange: (e) => {
       setSelectedIndicate(e.target.value);
-      console.log("Selected Value:", e.value);
     },
     selectedValue: selectedIndicate,
   };

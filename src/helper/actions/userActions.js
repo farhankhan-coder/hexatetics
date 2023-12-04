@@ -16,7 +16,6 @@ export const getUserPermissions = async (userId,accessToken) => {
         // }
     }
     catch (err) {
-        console.log("err----" + err)
         return err.response;
     }
 }

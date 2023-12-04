@@ -2310,6 +2310,13 @@ font-weight: 400;
 line-height: normal;
 }
 
+.custHeight { height:calc(100vh - 240px); }
+.custHeightTermsAndConditions { height:calc(100vh - 80px); }
+.custom_tabs .p-tabview .p-tabview-nav li .p-tabview-nav-link { border-bottom-width: 1px; }
+.pdfheiht {
+  height: 500px;
+  overflow: auto;
+}
 
 @media only screen and (max-width: 1280px) {
   .listIcon {
@@ -2353,6 +2360,12 @@ line-height: normal;
   
 }
 
+
+
+@media only screen and (max-width: 1024px) {
+  .custHeight { height: 100%; }
+}
+
 @media only screen and (max-width: 767px) {
     .sideTabs li a i {
     width: 40px;
@@ -2385,6 +2398,8 @@ line-height: normal;
     height: auto;
     padding: 8px 14px;
   }
+
+  
 
 }
 /**************************SRK CSS**************************/

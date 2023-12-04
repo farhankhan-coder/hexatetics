@@ -97,8 +97,8 @@ const HtmlToPdfSix = (props) => {
                                                 </thead>
                                                 <tbody>
                                                    
-                                                    {
-                                                        (props.data.approvalFinalData).map((item) => {
+                                                    {/* {
+                                                        (props.data?.approvalFinalData).map((item) => {
 
                                                             if (item.status !== 'Pending For Approval') {
                                                                 return (
@@ -111,7 +111,7 @@ const HtmlToPdfSix = (props) => {
                                                             }
 
                                                         })
-                                                    }
+                                                    } */}
 
                                                 </tbody>
                                             </table>

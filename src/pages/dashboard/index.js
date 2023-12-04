@@ -1,20 +1,10 @@
-// import landing_logo from "../../assets/images/landing_logo.png";
 import AccountSettings from "@/components/AccountSettings";
-// import landing_logo from "../../../public/assets/images/landing_logo.png";
 import React, { useState, useEffect, useRef } from "react";
-import { Routes, Link } from 'react-router-dom';
-// import AccountSettings from "../../Component/AccountSettings";
-// import Forms from "../../Component/forms";
-// import arrowcircleright from "../../../public/assets/images/arrowcircleright.svg";
-// import arrowcircleright from "../../../public/assets/images/arrowcircleright";
 import { getUserPermissions } from "../../helper/actions/userActions";
-// import { get_all_notifications } from "../../components/actions/notificationsGraphQLActions";
-import { reactLocalStorage } from "reactjs-localstorage";
 import PageHeader from '@/components/common/nav/admin/PageHeaderComponent';
 import { useRouter } from "next/router";
 import {API_STATUS} from '../../helper/enum'
 import { toast } from 'react-toastify';
-
 
 const AllApplicationDashboard = () => {
   const router = useRouter();
@@ -42,15 +32,15 @@ const AllApplicationDashboard = () => {
     if (loggedUserRole === "I") {
       weeklyAbsenceRoute = '/war_classified'; //"/initiator/weekly_absence_report";
       employeeHandbookRoute = "/employee-handbook";
-      stipendRoute = "/initiator/stipend_form";
+      stipendRoute = "/stipend_form/initiator";
 
     } else if (loggedUserRole === "AP") {
       weeklyAbsenceRoute = '/war_classified'; //"/approver/weekly_absence_report";
       //psaServiceRoute = "/approver/personalserviceagreement";
-      stipendRoute = "/initiator/stipend_form";
+      stipendRoute = "/stipend_form/approver";
     } else if (loggedUserRole === "P") {
       weeklyAbsenceRoute = '/war_classified'; //"/payroll/weekly_absence_report";
-      stipendRoute = "/payroll/stipend_list";
+      stipendRoute = "/stipend_form/payroll";
       //psaServiceRoute = "/payroll/personalserviceagreement";
     }
 
@@ -63,7 +53,6 @@ const AllApplicationDashboard = () => {
     let weeklyAbsenceCertifiedAdminRoute = "";
 
     if (loggedUserRole === "I") {
-      console.log('loggedUserRole', loggedUserRole)
       weeklyAbsenceCertifiedAdminRoute = "/war_certificated";//"/initiator/weekly_absent_report_certificated_admin";
     } else if (loggedUserRole === "AP") {
       weeklyAbsenceCertifiedAdminRoute = "/war_certificated";//"/approver/weekly_absent_report_certificated_admin";
@@ -108,7 +97,7 @@ const AllApplicationDashboard = () => {
     SUBSTITUTE_REQUEST_CERTIFICATED: { link: '#', title: 'Substitute Request Certificated' },
     PERSONNEL_ACTION_FORM: { link: '#', title: 'Personnel Action' },
     PERSONAL_SERVICE_AGREEMENT: { link: '#', title: 'Personal Services Agreement' },
-    STIPENDS_FORM: { link: '/stipend_form', title: 'Stipends Form' }
+    STIPENDS_FORM: { link: stipendReportRoute, title: 'Stipends Form' }
   }
 
   const getUserAppsPermission = async (userId, accessToken) => {
@@ -140,7 +129,6 @@ const AllApplicationDashboard = () => {
         }
         
       } catch (e) {
-        console.log('errrrrrrrrrrrrr', e);
       }
 
       let filteredArray = permissions[0].userAppsPermissionData.filter(item => {

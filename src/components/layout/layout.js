@@ -3,7 +3,6 @@ import Left from "./left";
 import Head from "next/head";
 
 export default function Layout({ children, ...pageProps }) {
-  console.log("pagePropsData",pageProps);
   return (
     <>
       <Head>

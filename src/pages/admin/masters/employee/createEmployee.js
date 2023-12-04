@@ -67,8 +67,6 @@ export default function createEmployee() {
 
     const [newEmpSelectedDesignation, setNewEmpSelectedDesignation] = useState("");
 
-    console.log("newEmpSelectedDesignation",newEmpSelectedDesignation);
-
     const SaveUserToCognito = async () => {
         try {
             const userPoolId = awsmobile.aws_user_pools_id;
@@ -123,7 +121,6 @@ export default function createEmployee() {
                 },
 
             ];
-            console.log("attributes", attributes)
             const params = {
                 UserPoolId: userPoolId,
                 Username: username,
@@ -144,9 +141,7 @@ export default function createEmployee() {
             // User Confirmation 
             cognito.adminSetUserPassword(params2, (err, data) => {
                 if (err) {
-                    console.log('Error confirming user:', err);
                 } else {
-                    console.log('User confirmed successfully:', data);
                 }
             });
             return userSub;
@@ -157,10 +152,7 @@ export default function createEmployee() {
     }
 
     const UpdateCognito = async (userId, empId, empName) => {
-        console.log(userId, 'userId')
-        console.log(empId, 'empId')
-        console.log(empName, 'empName')
-
+        
         const cognito = new AWS.CognitoIdentityServiceProvider();
 
         try {
@@ -195,12 +187,13 @@ export default function createEmployee() {
 
             try {
                 cognito.adminUpdateUserAttributes(params, function (err, data) {
-                    if (err)
+                    if (err){
                         console.log("Errr rr", err, err.stack);
-                    else
+                    }
+                    else{
                         console.log(data);
+                    }
                 });
-                console.log('User attribute updated successfully in cognito.');
             } catch (error) {
                 console.error('Error updating cognito user attribute:', error);
             }
@@ -252,7 +245,6 @@ export default function createEmployee() {
 
 
             if (original.id !== null && original.user_Id !== null) {
-                console.log(original.user_Id, 'update only')
                 //update Cognito User
                 await UpdateCognito(original.user_Id, original.id, original.employee_name);
             }
@@ -264,15 +256,8 @@ export default function createEmployee() {
 
             //Save Cognito User
             const cognitoSubId = await SaveUserToCognito();
-            console.log(cognitoSubId, 'createUserResponse')
             if (cognitoSubId) {
                 //Update in current table
-
-                
-                console.log('userSub', cognitoSubId)
-                console.log('createUserResponse', cognitoSubId)
-                console.log('Employee confirmed and saved successfully');
-                console.log("EMP_Name", employeeFirstName + ', ' + employeeLastName);
                 setEmployeeName(employeeFirstName + ', ' + employeeLastName);
                 //Save Employee
                 var newEmployeeResponse = await DataStore.save(
@@ -300,9 +285,7 @@ export default function createEmployee() {
                     })
                 );
 
-                console.log("newEmployeeId", newEmployeeResponse);
                 if (newEmployeeResponse.id !== null && newEmployeeResponse.user_Id !== null) {
-                    console.log(newEmployeeResponse.user_Id, 'save and then udapte')
                     //update Cognito User
                     await UpdateCognito(newEmployeeResponse.user_Id, newEmployeeResponse.id, newEmployeeResponse.employee_name);
                     toast.success("Employee confirmed and saved successfully")
@@ -330,7 +313,6 @@ export default function createEmployee() {
 
             // const original = await DataStore.query(Employee, editEmployeeId);
 
-            // console.log("originaloriginal",original);
 
             if (original != null) {
 
@@ -343,7 +325,6 @@ export default function createEmployee() {
                 else {
                     if (original.employee_name) {
                         let empName = original.employee_name.split(" ");
-                        console.log("empName", empName)
                         setEmployeeFirstName(empName[1] || '');
                         setEmployeeLastName(empName[0] || '');
                     }

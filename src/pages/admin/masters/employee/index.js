@@ -34,7 +34,6 @@ function employee() {
         {
             name: 'Employees',
             // selector: row =>  row.employee_name ,
-            // console.log("row",row),
 
             // !== "" ? row.employee_name : `${row.firstName} ${row.lastName}`,
 
@@ -1322,7 +1321,6 @@ function employee() {
         } else {
             ExcelRenderer(fileObj, async (err, resp) => {
                 if (err) {
-                    console.log(err);
                 }
                 else {
 
@@ -1413,17 +1411,14 @@ function employee() {
                             if (existingEmployee.length > 0) { 
                                 strike = 2;
                             }
-                            console.log("strike", csvEmail)
                         }
 
                         if (existingEmployee.length > 0 && userPermission === 1) {
 
-                            console.log(`${existingEmployee[0].user_Id} found in our database`)
 
                             const cognito = new AWS.CognitoIdentityServiceProvider();
 
                             if (existingEmployee[0].user_Id) {
-                                console.log(`${existingEmployee[0].user_Id} cognito ID in our database`)
                                 const params = {
                                     UserPoolId: awsmobile.aws_user_pools_id,
                                     Username: existingEmployee[0].user_Id,
@@ -1526,22 +1521,21 @@ function employee() {
                                         },
                                     ],
                                 };
-                                console.log('cognitoparams --->', params);
                                 try {
                                     cognito.adminUpdateUserAttributes(params, function (err, data) {
-                                        if (err)
+                                        if (err){
                                             console.log("Errr rr", err, err.stack);
-                                        else
-                                            console.log('cognitoparamsdata', data);
+                                        }
+                                        else{
+                                            console.log(data);
+                                        }
                                     });
-                                    console.log('User attribute updated successfully in cognito.');
                                 } catch (error) {
                                     console.error('Error updating cognito user attribute:', error);
                                 }
                             }
                             else {
 
-                                console.log(`${existingEmployee[0].email} cognito ID is blank`)
 
                                 // Find cognito user by email and get sub to update employee user_Id
 
@@ -1564,7 +1558,6 @@ function employee() {
                                             data.Users.forEach(async (user, i) => {
                                                 sub = user.Attributes.find(attr => attr.Name === "sub")?.Value;
 
-                                                console.log(`cognito ID updating in our databse for user ${existingEmployee[0].email}`)
                                                 await updateUserSUB(sub, existingEmployee[0].id,csvRole)
 
                                                 // Update Cognito
@@ -1697,22 +1690,21 @@ function employee() {
 
                                                 try {
                                                     cognito.adminUpdateUserAttributes(params, function (err, data) {
-                                                        if (err)
+                                                        if (err){
                                                             console.log("Errr rr", err, err.stack);
-                                                        else
-                                                            console.log("User attribute", data);
+                                                        }
+                                                        else{
+                                                            console.log(data);
+                                                        }
                                                     });
-                                                    console.log('User attribute updated successfully.');
                                                 } catch (error) {
                                                     console.error('Error updating user attribute:', error);
                                                 }
                                             })
                                         }
 
-                                        console.log("data.Users.length", data.Users.length)
                                         if (!data.Users.length) {
 
-                                            console.log(`creating cognito user ${csvEmail}`)
                                             // Create cognitouser
                                             let userCreated = await Auth.signUp({
                                                 username: csvEmail,
@@ -1759,7 +1751,6 @@ function employee() {
                                                 getEmployeeDetails = getEmployeeDetails.data ? getEmployeeDetails.data.getEmployee : []
                                             }
 
-                                            console.log("updating user_ID in our databse for user ", existingEmployee[0].email)
                                             if (getEmployeeDetails) {
                                                 await API.graphql({
                                                     query: mutations.updateEmployee,
@@ -1776,7 +1767,6 @@ function employee() {
                                         }
                                     });
 
-                                    console.log("cognitoUserList", cognitoUserList)
 
                                 } catch (e) {
                                     //toast.error(e.message);
@@ -1788,7 +1778,6 @@ function employee() {
                                 getEmployeeDetails = await API.graphql({ query: queries.getEmployee, variables: { id: existingEmployee[0].id } });
                                 getEmployeeDetails = getEmployeeDetails.data ? getEmployeeDetails.data.getEmployee : []
                             }
-                            console.log("updating firstName, lastName of ", existingEmployee[0].email)
                             if (getEmployeeDetails) {
                                 await API.graphql({
                                     query: mutations.updateEmployee,
@@ -1830,7 +1819,6 @@ function employee() {
                             response = listUserAdditionalSettingsData.data.listUserAdditionalSettings.items.filter(item => item._deleted !== true);
                             response = listUserAdditionalSettingsData.data.listUserAdditionalSettings.items.filter(item => item.userId == existingEmployee[0].user_Id);
 
-                            console.log("updating additional for ", existingEmployee[0].email)
 
                             if (response.length > 0) {
                                 // Update record
@@ -1854,7 +1842,6 @@ function employee() {
                                     }
                                 });
 
-                                console.log("updated additional settings ", originalUpdated)
                             }
                             else {
                                 let saveUserAdditionalData = await API.graphql(
@@ -1877,7 +1864,6 @@ function employee() {
                         }
 
                         if (strike === 0) {
-                            console.log('storing in our db', csvEmail);
                             await DataStore.save(
                                 new Employee({
                                     "employee_name": csvEmployeeName,
@@ -1942,7 +1928,6 @@ function employee() {
 
                                 if (userPermission === 1) {
                                     try {
-                                        console.log("creating cognito user ", csvEmail)
                                         let userCreated = await Auth.signUp({
                                             username: csvEmail,
                                             password: 'Gusd@2023',
@@ -2022,9 +2007,7 @@ function employee() {
                                         );
                                     }
                                     catch (error) {
-                                        console.log("cognito getting error", error)
 
-                                        // Console.log("checking cognito user if found we will update")
                                         try {
                                             const cognito = new AWS.CognitoIdentityServiceProvider();
 
@@ -2085,12 +2068,13 @@ function employee() {
 
                                                         try {
                                                             cognito.adminUpdateUserAttributes(params, function (err, data) {
-                                                                if (err)
+                                                                if (err){
                                                                     console.log("Errr rr", err, err.stack);
-                                                                else
+                                                                }
+                                                                else{
                                                                     console.log(data);
+                                                                }
                                                             });
-                                                            console.log('User attribute updated successfully.');
                                                         } catch (error) {
                                                             console.error('Error updating user attribute:', error);
                                                         }
@@ -2098,7 +2082,6 @@ function employee() {
                                                 }
                                             });
 
-                                            console.log("cognitoUserList", cognitoUserList)
 
                                         } catch (e) {
                                             //toast.error(e.message);

@@ -79,7 +79,6 @@ const AccountSettings = () => {
   }
 
   useEffect(() => {
-    // console.log(profilePicture);
     getProfilePictureUrl();
   }, [profilePicture]);
 

@@ -6,14 +6,12 @@ import moment from "moment";
 
 const SubstituteRequestClassifiedHtmlToPdfSix = (props) => {
 
-    console.log("props",props);
 
     let { accountNoArray = [], approvalFinalData = [] } = props.data;
 
 
     let rejectedData = approvalFinalData.filter(item => item.status === 'Rejected')
 
-    //console.log("finaldata--", props.data?.approvalFinalData);
     const [approvedBy, setApprovedBy] = useState("");
     const [payrollBy, setPayrollBy] = useState("");
     const [approverDate, setApproverDate] = useState('');

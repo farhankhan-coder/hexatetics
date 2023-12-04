@@ -2879,9 +2879,10 @@ export default function WARInitiator() {
             </div>
         );
     };
+    
     const statusBodyTemplate = (rowData) => {
         return (
-            <Tag value={rowData.status} severity={getSeverity(rowData.status)} />
+            <><Badge value="" severity={getSeverity(rowData.status)}></Badge> &nbsp; {rowData.status}</>
         );
     };
     const buildReportDetails = async (personnelActionTransactionCycle, title, status, initiator_id, target_user_id, approver_id, next_approver_id) => {
@@ -3802,8 +3803,8 @@ export default function WARInitiator() {
                                                         <Column
                                                             field="id"
                                                             header="SI#"
-                                                            headerStyle={{ width: "3rem" }}
-
+                                                            headerStyle={{ width: "1rem" }}
+                                                            style={{ minWidth: "4rem", maxWidth: "4rem" }}
                                                         />
                                                         <Column
                                                             field="reportno"
@@ -3843,6 +3844,7 @@ export default function WARInitiator() {
                                                             field="type"
                                                             sortable
                                                             filter
+                                                            align="center"
                                                             header="Type"
                                                             filterPlaceholder="Search"
                                                             style={{ minWidth: "16rem" }}
@@ -3851,7 +3853,7 @@ export default function WARInitiator() {
                                                             field="date"
                                                             sortable
                                                             filter
-                                                            header="Bord Meeting Date"
+                                                            header="Board Meeting Date"
                                                             filterPlaceholder="Search"
                                                             style={{ minWidth: "15rem" }}
                                                         />
@@ -3863,12 +3865,14 @@ export default function WARInitiator() {
                                                             showFilterMenu={false}
                                                             style={{ minWidth: "12rem" }}
                                                             body={statusBodyTemplate}
+                                                            filterElement={statusRowFilterTemplatePayroll}
                                                         />
                                                            
                                                            <Column
                                                             field="remark"
                                                             sortable
                                                             filter
+                                                            align="center"
                                                             header="Assignee"
                                                             filterPlaceholder="Search"
                                                             style={{ minWidth: "10rem" }}
@@ -3877,6 +3881,7 @@ export default function WARInitiator() {
                                                             field="remark"
                                                             sortable
                                                             filter
+                                                            align="center"
                                                             header="Remark"
                                                             filterPlaceholder="Search"
                                                             style={{ minWidth: "10rem" }}
@@ -3884,6 +3889,7 @@ export default function WARInitiator() {
                                                         <Column
                                                             field=""
                                                             body={iconHandler}
+                                                            align="center"
                                                             header="Action"
                                                             alignFrozen="right"
                                                             frozen style={{ width: '250px' }}
@@ -3907,8 +3913,7 @@ export default function WARInitiator() {
                                                         <Column
                                                             field="id"
                                                             header="SI#"
-                                                            headerStyle={{ width: "3rem" }}
-
+                                                            style={{ minWidth: "4rem", maxWidth: "4rem" }}
                                                         />
                                                         <Column
                                                             field="reportno"
@@ -3948,6 +3953,7 @@ export default function WARInitiator() {
                                                             field="type"
                                                             sortable
                                                             filter
+                                                            align="center"
                                                             header="Type"
                                                             filterPlaceholder="Search"
                                                             style={{ minWidth: "16rem" }}
@@ -3956,7 +3962,7 @@ export default function WARInitiator() {
                                                             field="date"
                                                             sortable
                                                             filter
-                                                            header="Bord Meeting Date"
+                                                            header="Board Meeting Date"
                                                             filterPlaceholder="Search"
                                                             style={{ minWidth: "15rem" }}
                                                         />
@@ -3968,6 +3974,7 @@ export default function WARInitiator() {
                                                             showFilterMenu={false}
                                                             style={{ minWidth: "12rem" }}
                                                             body={statusBodyTemplate}
+                                                            filterElement={statusRowFilterTemplatePayroll}
                                                         />
 
                                                         <Column
@@ -3975,6 +3982,7 @@ export default function WARInitiator() {
                                                             sortable
                                                             filter
                                                             header="Remark"
+                                                            align="center"
                                                             filterPlaceholder="Search"
                                                             style={{ minWidth: "10rem" }}
                                                         />
@@ -3982,6 +3990,7 @@ export default function WARInitiator() {
                                                             field=""
                                                             body={iconHandler}
                                                             header="Action"
+                                                            align="center"
                                                             alignFrozen="right"
                                                             frozen style={{ width: '250px' }}
                                                         ></Column>

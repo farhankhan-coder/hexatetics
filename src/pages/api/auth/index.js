@@ -5,10 +5,9 @@ export default async function handler(req, res) {
   const { requestData } = req.body;
 
   try {
-    console.log('req',req.body);
     var config = {
       method: 'post',
-      url: "http://localhost:8083/employee/auth",
+      url: "http://3.14.164.218:8083/employee/auth",
       headers: {
         'Content-Type': 'application/json'
       },
@@ -20,7 +19,6 @@ export default async function handler(req, res) {
         return res.status(200).json(returnResponse.data)
       })
       .catch(function (error) {
-        // console.log("error------"+ error)
         if (error.response) {
           return res.status(error.response.status).json(error.response.data)
         }

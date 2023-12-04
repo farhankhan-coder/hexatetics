@@ -16,6 +16,5 @@ export const getSchoolById = async (id,accessToken) => {
         // }
     }
     catch (err) {
-        console.log("err----" + err)
     }
 }

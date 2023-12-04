@@ -44,7 +44,7 @@ export default function SubstituteReportList() {
     },
   ];
 
-  const superAdminActions = (row) => {
+  const reportListActions = (row) => {
     return [
       <>
         <Link
@@ -280,7 +280,7 @@ export default function SubstituteReportList() {
                         field="action"
                         header="Actions"
                         align="center"
-                        body={superAdminActions}
+                        body={reportListActions}
                         style={{ minWidth: "12rem" }}
                         exportable={false}
                       ></Column>
@@ -354,7 +354,7 @@ export default function SubstituteReportList() {
                         field="action"
                         header="Actions"
                         align="center"
-                        body={superAdminActions}
+                        body={reportListActions}
                         style={{ minWidth: "12rem" }}
                         exportable={false}
                       ></Column>

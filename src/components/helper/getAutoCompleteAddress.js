@@ -41,20 +41,16 @@ const getArea = (addressArray) => {
 
                 // if ('sublocality_level_1' === addressArray[i].types[j] || 'sublocality' === addressArray[i].types[j] || 'political' === addressArray[i].types[j] ) {
                 //     area = addressArray[i].long_name;
-                //     console.log("sub-----")
                 // }
                 // if ('route' === addressArray[i].types[j]) {
                 //     area2 = addressArray[i].long_name;
-                //     console.log("route-----")
                 // }
                 if ('plus_code' === addressArray[i].types[j]) {
                     area2 = addressArray[i].long_name;
                     
-                    console.log("route-----"+ area2)
                 }
 
                 // let finalString = area + " " + area2
-                // console.log(finalString)
             }
         }
     }

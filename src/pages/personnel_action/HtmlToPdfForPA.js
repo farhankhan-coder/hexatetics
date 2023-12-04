@@ -10,7 +10,6 @@ import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 
 const HtmlToPdf = props => {
-  console.log('props: ', props);
 
   let componentRef = useRef();
   const [display, setDisplay] = useState(false);
@@ -87,7 +86,6 @@ const HtmlToPdf = props => {
     </ColumnGroup>
   );
   const detailsColumn=(rowData)=>{
-    console.log('rowData: ', rowData);
 
     return <span>{moment(rowData.startEndDate).format("MM/DD/yyyy") ||moment(rowData.effectiveDatesFrom).format("MM/DD/yyyy")  || ""} through {moment(rowData.endDate).format("MM/DD/yyyy") ||moment(rowData.effectiveDatesTo).format("MM/DD/yyyy")|| ""}<br/>
     {rowData.salaryRate||"-"} <br/>

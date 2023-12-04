@@ -68,26 +68,19 @@ export default function reportId() {
   const [administratorData, setAdministratorData] = useState([]);
   const [CertificatedDatas, setCertificatedDatas] = useState([]);
   const existingResultsAdministrator = mappedData.filter(item => (item.employeeType === 'Administrator'));
-  console.log("editStatus", editStatus);
 
-  console.log("existingResultsAdministrator", selectedApprover);
 
   const existingResultsCertifiedCertificated = mappedData.filter(item => item.employeeType === 'Certificated');
 
-  console.log("existingResultsCertifiedCertificated", existingResultsCertifiedCertificated);
 
   //set employee type list
   const employeeTypeList = [{ name: "Administrator", code: "Administrator" }, { name: "Certificated", code: "Certificated" }]
-  const [employeeTypeField, setEmployeeTypeField] = useState("");
 
   const [isDataLoaded, setDataLoaded] = useState(false);
-  const [SPUsersWithoutAdmin, setSPUsersWithoutAdmin] = useState([]);
   const [users, SetUsersList] = useState([]);
-  const [payrollUser, setPayrollUserList] = useState([]);
   const [indexEdit, setIndexEdit] = useState('');
   const [detailIndexEdit, setDetailIndexEdit] = useState('');
   const [employeeWiseMapp, setEmployeeWiseMapp] = useState('');
-  const [buttonClicked, setButtonClicked] = useState(false);
   const [mapDataIndex, setMapDataIndex] = useState(0);
   const [selectedDateRecordNew, setSelectedDateRecordNew] = useState([]);
 
@@ -189,8 +182,6 @@ export default function reportId() {
       // }
     }
     catch (err) {
-      console.log("err----" + err)
-      console.log('error', err.response.status);
       if (err.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push('/')
@@ -228,7 +219,7 @@ export default function reportId() {
               let name = item.employee_code ? `${item.employee_name} (${item.employee_code})` : item.employee_name;
               let obj = {
                 name: name,
-                code: item.user_Id,
+                code: item.id,
                 employeeType: item.employeeType
               }
               employee.push(obj);
@@ -238,7 +229,6 @@ export default function reportId() {
           }
         }
         catch (error) {
-          console.log(error)
           if (error.response.status === API_STATUS.UNAUTHORIZED) {
             toast.error("Session Expired");
             router.push('/')
@@ -301,7 +291,7 @@ export default function reportId() {
           let name = item.employee_code ? `${item.employee_name} (${item.employee_code})` : item.employee_name;
           let obj = {
             name: name,
-            code: item.user_Id,
+            code: item.id,
             employeeType: item.employeeType
           }
           employee.push(obj);
@@ -311,7 +301,6 @@ export default function reportId() {
       }
     }
     catch (error) {
-      console.log(error)
       if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push('/')
@@ -339,7 +328,6 @@ export default function reportId() {
         var getAbsenceReport = await axios.post("/api/war_certificated/getReportById", { requestedData });
 
       } catch (e) {
-        console.log("error", e)
       }
 
 
@@ -363,24 +351,23 @@ export default function reportId() {
           let employeeResponseTest = getAbsenceReportOfEmployee[i].employeeCalendarDetails;
 
           // for(var j=0; j<getAbsenceReportOfEmployee[i].employeeCalendarDetails.length; j++){
-          //   console.log("THIS IS", getAbsenceReportOfEmployee[i].employeeCalendarDetails[j])
           // }
 
 
           // let employeeResponse = await getEmployeeDetails(getAbsenceReportOfEmployee[i].id, getAbsenceReportOfEmployee[i].employee_id);
-          let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
+          // let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
 
-          if (empName) {
-            let obj1 = {
-              "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
-              "code": empName.user_Id,
-              "employeeType": empName.employeeType
-            }
+          // if (empName) {
+          //   // let obj1 = {
+          //   //   "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
+          //   //   "code": empName.user_Id,
+          //   //   "employeeType": empName.employeeType
+          //   // }
 
-            // setSelectedEmployee(obj1);
-            newEmp = empName.id;
+          //   // setSelectedEmployee(obj1);
+          //   newEmp = empName.id;
 
-          }
+          // }
 
           // let substituteResponse = allEmployeeList.find(o => o.id === getAbsenceReportOfEmployeeDetails[i].substitute_emp_id)
 
@@ -662,8 +649,6 @@ export default function reportId() {
       }
     }
     catch (error) {
-      console.log(error)
-      console.log('error', error.response.status);
       if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push('/')
@@ -767,8 +752,7 @@ export default function reportId() {
 
     // let empName = await DataStore.query(Employee, (c) => c.id.eq(selectedEmployee.code));
     let accessToken = window.localStorage.getItem('accessToken');
-    let empName = await employeeByCognitoIdActions(selectedEmployee.code, accessToken);
-    // console.log('empName', empName)
+    let empName = await getEmployeeById(selectedEmployee.code, accessToken);
     if (reportId) {
       for (let i = 0; i < date.length; i++) {
         selEmpDate[i] = date[i]
@@ -834,7 +818,6 @@ export default function reportId() {
   //Create  Initiate New Report
   const applyReport = async () => {
     setDisabled(true)
-    console.log("myArray - mapped data", mappedData);
 
     setIndexEditMode(false)
     for (var vl = 0; vl < selectedDateRecord.length; vl++) {
@@ -855,11 +838,8 @@ export default function reportId() {
 
     if (selectedSchool !== null && selectedEmployee !== null && periodDates.length > 0 && selectedDateRecord[0].partialHour !== null) {
 
-      console.log('mappedData___________________', mappedData)
       //*set data to table
       if (mappedData.length > 0) {
-        console.log('Reaching in If length 1');
-        console.log('mappedData___________________', mappedData)
         let data = selectedDateRecord
         let getEmployeeNames = data.map((item) => item.employeeName)
         let removeDuplicateArray = checkDuplicates(getEmployeeNames)
@@ -868,22 +848,17 @@ export default function reportId() {
         let object = getResponse[0];
 
         let innerObj = getResponse[0].employeeResponse;
-        console.log('innerObj', innerObj)
         let uniqueId = generateUniqueId()
         innerObj = { ...innerObj[0], "detailId": uniqueId }
 
         object = { ...object, "employeeResponse": [innerObj] }
 
-        console.log('innerObj', innerObj)
 
         let myArray = [...mappedData, object];
-        console.log("myArray - mapped data 1 object", object);
-        console.log("myArray - mapped data 1", myArray);
 
         if (reportId) {
           // let updatedData = mappedData.filter(item => item.employeeId !== selectedEmployee.code);
           let updatedData = mappedData;
-          console.log("myArray - mapped data updatedData 2", updatedData);
 
           let object2 = []
 
@@ -894,22 +869,33 @@ export default function reportId() {
             return dateA - dateB;
           });
 
-          object2 = getResponse;
+          let modifiedGetResponse=[]
+
+          for (var i = 0; i < getResponse.length; i++) {
+            let object = getResponse[i];
+  
+            let innerObj = getResponse[i].employeeResponse;
+            let uniqueId = generateUniqueId()
+            innerObj = { ...innerObj[i], "detailId": uniqueId }
+  
+            object = { ...object, "employeeResponse": [innerObj] }
+  
+            modifiedGetResponse.push(object) 
+          }
+          
+          object2 = modifiedGetResponse;
+
           myArray = [...updatedData, ...object2];
-          console.log("myArray - mapped data updatedData 3", myArray);
-          console.log("myArray - mapped data updatedData 3 object2", object2);
 
           //apply hide
           setApply(false)
         }
-console.log("myarry",myArray)
         myArray = myArray.sort((a, b) => {
           const dateA = new Date(a.employeeResponse[0].selectedDate);
           const dateB = new Date(b.employeeResponse[0].selectedDate);
           return dateA - dateB;
         });
 
-        console.log("myArray - mapped data updatedData 4", myArray);
 
         const groupedData = myArray.reduce((acc, obj) => {
           const existingObj = acc.find(item => item.employeeId === obj.employeeId);
@@ -918,7 +904,6 @@ console.log("myarry",myArray)
           return acc;
         }, []);
 
-        console.log("myArray - mapped data updatedData 5", groupedData);
 
         //sort by the employeename
         const sortedArray = groupedData.slice().sort((a, b) => {
@@ -934,7 +919,6 @@ console.log("myarry",myArray)
         });
 
 
-        console.log("myArray - mapped data updatedData 6", sortedArray);
         // let newDataGetting = [];
         // for (let p = 0; p < sortedArray.length; p++) {
         //   for (let q = 0; q < sortedArray[p].employeeResponse.length; q++) {
@@ -962,12 +946,9 @@ console.log("myarry",myArray)
         let administratorData = sortedArray.filter(item => item.employeeType === 'Administrator');
         let certificatedData = sortedArray.filter(item => item.employeeType === 'Certificated');
 
-        console.log('administratorData', administratorData);
-        console.log('certificatedData', certificatedData);
         setAdministratorData(administratorData)
         setCertificatedDatas(certificatedData)
 
-        console.log("getting final", sortedArray);
         setMappedData(sortedArray);
 
         //setMappcount
@@ -989,12 +970,9 @@ console.log("myarry",myArray)
         let data = selectedDateRecord
 
         let getEmployeeNames = data.map((item) => item.employeeName)
-        console.log('getEmployeeNames', getEmployeeNames);
         let removeDuplicateArray = checkDuplicates(getEmployeeNames)
-        console.log('removeDuplicateArray', removeDuplicateArray)
         const getResponse = await getResponseFromKeyCertifiedAdmin(data, removeDuplicateArray, selectedEmployee.code, selectedDateRecord[0].employeeType)
 
-        console.log('getResponse', getResponse);
 
 
         // const groupedData = getResponse.reduce((acc, obj) => {
@@ -1018,22 +996,17 @@ console.log("myarry",myArray)
           return 0;
         });
 
-        console.log("Final Array", sortedArray);
 
         let modifiedSortedArray = [];
-         for (var i = 0; i < sortedArray.length; i++) {
-          console.log('sortedArray[i]', sortedArray[i])
+        for (var i = 0; i < sortedArray.length; i++) {
           let object = sortedArray[i];
 
           let innerObj = sortedArray[i].employeeResponse;
-          console.log('innerObj', innerObj)
           let uniqueId = generateUniqueId()
           innerObj = { ...innerObj[i], "detailId": uniqueId }
 
           object = { ...object, "employeeResponse": [innerObj] }
 
-          console.log('innerObj', innerObj)
-          console.log('object',object)
           modifiedSortedArray.push(object)
 
         }
@@ -1045,18 +1018,14 @@ console.log("myarry",myArray)
 
         // const modifiedAdminData = [];
         // for (var i = 0; i < administratorData.length; i++) {
-        //   console.log('administratorData[i]', administratorData[i])
 
         //   let object = administratorData[i];
 
         //   let innerObj = administratorData[i].employeeResponse;
-        //   console.log('innerObj', innerObj)
         //   innerObj = { ...innerObj[i], "detailId": createDetailId }
 
         //   object = { ...object, "employeeResponse": [innerObj] }
 
-        //   console.log('innerObj', innerObj)
-        //   console.log('object',object)
         //   modifiedAdminData.push(object)
 
         // }
@@ -1067,18 +1036,13 @@ console.log("myarry",myArray)
         //   let object = certificatedData[i];
 
         //   let innerObj = certificatedData[i].employeeResponse;
-        //   console.log('innerObj', innerObj)
         //   innerObj = { ...innerObj[i], "detailId": createDetailId }
 
         //   object = { ...object, "employeeResponse": [innerObj] }
 
-        //   console.log('innerObj', innerObj)
-        //   console.log('object',object)
         //   modifiedCertiData.push(object)
         // }
 
-        console.log('administratorData', administratorData);
-        console.log('certificatedData', certificatedData)
 
         setAdministratorData(administratorData)
         setCertificatedDatas(certificatedData)
@@ -1292,7 +1256,6 @@ console.log("myarry",myArray)
 
       var getAbsenceReport = await axios.post("/api/war_certificated/getReportById", { requestedData });
       if (getAbsenceReport.data) {
-        console.log("cognito", getAbsenceReport.data.l1Authority)
         let approverEmployee = await employeeByCognitoIdActions(getAbsenceReport.data.l1Authority, accessToken);
         let empObj = {
           name: (approverEmployee.employee_name.toString() + " (" + approverEmployee.employee_code + ")").toString(),
@@ -1335,7 +1298,6 @@ console.log("myarry",myArray)
 
 
         var getAbsenceReportOfEmployee = getAbsenceReport.data.formEmployeeDetails;
-        console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
 
         let newResponse = [];
         let dataRec = [];
@@ -1358,30 +1320,25 @@ console.log("myarry",myArray)
 
 
 
-        console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
         for (var i = 0; i < getAbsenceReportOfEmployee.length; i++) {
 
           let employeeResponseTest = getAbsenceReportOfEmployee[i].employeeCalendarDetails;
 
-          console.log("employeeResponseTest", employeeResponseTest)
           // for(var j=0; j<getAbsenceReportOfEmployee[i].employeeCalendarDetails.length; j++){
-          //   console.log("THIS IS", getAbsenceReportOfEmployee[i].employeeCalendarDetails[j])
           // }
 
 
           // let employeeResponse = await getEmployeeDetails(getAbsenceReportOfEmployee[i].id, getAbsenceReportOfEmployee[i].employee_id);
-          let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
+          let empName = await getEmployeeById(getAbsenceReportOfEmployee[i].employeeId, accessToken);
 
           if (empName) {
             let obj1 = {
               "name": (empName.employee_name + ' ' + '(' + empName.employee_code + ')'),
-              "code": empName.user_Id,
+              "code": empName.id,
               "employeeType": empName.employeeType
             }
 
 
-            console.log("empName", empName)
-            console.log("setSelectedEmployee", obj1)
             setSelectedEmployee(obj1);
             newEmp = empName.user_Id;
 
@@ -1421,7 +1378,6 @@ console.log("myarry",myArray)
 
 
 
-          console.log("employeeResponse", employeeResponse)
 
           employeeResponse.map((item) => item.selectedDate = new Date(moment(item.selectedDate).format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")))
 
@@ -1434,7 +1390,6 @@ console.log("myarry",myArray)
             }
           }
 
-          console.log("employeeResponse", employeeResponse);
 
 
 
@@ -1508,8 +1463,6 @@ console.log("myarry",myArray)
             let certificatedData = sortedArray.filter(item => item.employeeType === 'Certificated');
 
 
-            console.log('administratorData', administratorData);
-            console.log('certificatedData', certificatedData)
 
             setAdministratorData(administratorData)
             setCertificatedDatas(certificatedData)
@@ -1529,7 +1482,6 @@ console.log("myarry",myArray)
         setSelectedEmpDate(updatedList)
       }
     } catch (e) {
-      console.log("error", e)
     }
   }
 
@@ -1552,7 +1504,6 @@ console.log("myarry",myArray)
     if (isDataLoaded === true) {
       if (reportId) {
         // getEditData()
-        console.log("getting", reportId)
         getData()
       }
       // getModuleId(topicId, categoryId, requestReceiveFromList[0].name)
@@ -1578,7 +1529,6 @@ console.log("myarry",myArray)
 
 
   // }
-  console.log(" ", mappedData);
 
   //onclick remove container details
   const onClickRemove = (index, detailIndex, detail, item) => {
@@ -1587,7 +1537,6 @@ console.log("myarry",myArray)
     setIndexEditMode(false)
 
 
-    console.log("updatedMappedData", updatedMappedData);
     // const resp =data.map((elm)=>{
     //   elm.employeeResponse.map((jjj)=>{
     //     return jjj.detailId === detail.detailId
@@ -1599,7 +1548,6 @@ console.log("myarry",myArray)
 
     setSelectedDateRecordNew([])
     //set disabledates
-    // console.log("maindata",updatedEmployeeResponse);
     const dynamicKey = item.employeeId;
     // const arrayForDynamicKey = dynamicKey;
     const arrayForDynamicKey = disabledDates[dynamicKey];
@@ -1641,7 +1589,6 @@ console.log("myarry",myArray)
 
     let administratorData = data.filter(item => item.employeeType === 'Administrator');
     let certificatedData = data.filter(item => item.employeeType === 'Certificated');
-    console.log("administratorData", administratorData);
     setAdministratorData(administratorData)
     setCertificatedDatas(certificatedData)
 
@@ -1668,7 +1615,6 @@ console.log("myarry",myArray)
     // setIndexEditMode(false)
 
 
-    // console.log("updatedMappedData",updatedMappedData);
     // // const resp =data.map((elm)=>{
     // //   elm.employeeResponse.map((jjj)=>{
     // //     return jjj.detailId === detail.detailId
@@ -1680,7 +1626,6 @@ console.log("myarry",myArray)
 
     // setSelectedDateRecordNew([])
     // //set disabledates
-    // // console.log("maindata",updatedEmployeeResponse);
     // const dynamicKey = item.employeeId;
     // // const arrayForDynamicKey = dynamicKey;
     // const arrayForDynamicKey = disabledDates[dynamicKey];
@@ -1820,6 +1765,12 @@ console.log("myarry",myArray)
                   setEmployeeList={setEmployeeList}
                   setSelectedEmployee={setSelectedEmployee}
                   onHide={() => { setOpenNewEmployee(false) }}
+                  employeeTypeList=
+                  {[
+                    { name: "Administrator", code: "Administrator" },
+                    { name: "Certificated", code: "Certificated" },
+                  ]
+                  }
                 />
                 <div className="w-full">
                   <label
@@ -2221,7 +2172,7 @@ console.log("myarry",myArray)
                         <button className="font-medium inline-block text-[#FFFFFF] text-xs xl:text-[0.938vw] py-[0.833vw] px-[2.448vw] box-shadow-2 rounded xl:rounded-lg bg-[#113699] border border-[#F2F4F7]">
                           <i className="mr-3 gusd-print-outline"></i>Print
                         </button>
-                        {(reportId == '' || status === AllStatusData.PENDING) && <Link
+                        {(reportId == '') && <Link
                           className="font-medium inline-block text-[#2D5BE5] text-xs xl:text-[0.938vw] py-[0.833vw] px-[2.448vw] box-shadow-2 rounded xl:rounded-lg bg-[#EFF8FF] border border-[#D0D5DD]"
                           href="#"
                           onClick={() => { submitForm("PENDING"); }}

@@ -27,7 +27,6 @@ const createNotification = async (userId, type, sourceId, sourceType, subject, m
 
 
     } catch (e) {
-        console.log("notification error ", e);
     }
 }
 
@@ -36,9 +35,7 @@ const removeBrTags = (text) => {
 }
 
 const createEmailNotifications = async (user_email, user_id, type, sourceId, sourceType, subject, message, appId, ccEmail = []) => {
-    console.log('createEmailNotifications->ccEmail', ccEmail)
     // below console is for checking mail of receiver
-    console.log("toemail-->", user_email)
     let emailAddresses = [];
     if (ccEmail.length > 0) {
         emailAddresses = {
@@ -70,10 +67,7 @@ const createEmailNotifications = async (user_email, user_id, type, sourceId, sou
 
     try {
         const mail = await new AWS.SES(SESConfig).sendEmail(params).promise();
-        // Please do not remove this console.log
-        console.log("sent mail ", mail);
     } catch (e) {
-        console.log("Error while sending emails ", e);
     }
 
     if (user_id) {
@@ -351,9 +345,7 @@ const handleNotificationsOnStatusChange = async (status, reportDetails, appId) =
 };
 
 const handleNotificationsOnStatusChangeforPersonnelAction = async (status, reportDetails, appId) => {
-    console.log('reportDetails status--->', status);
     let reportDetailsdata = reportDetails;
-    console.log('reportDetailsdata --->', reportDetailsdata);
     // const response = await reportDetails?.then((e) => { 
     //     reportDetailsdata = e
     // }) 
@@ -364,7 +356,6 @@ const handleNotificationsOnStatusChangeforPersonnelAction = async (status, repor
     const { next_approver_id, next_approver_name, next_approver_email, next_approver_code } = nextApproverDetails;
 
     let reportUrl = window.location.origin + `?${specialRoutes.personal_action_report_approval_request}=${id}`;
-    console.log('reportUrl --->', reportUrl);
 
     let notificationMessageList;
     let emailMessageList;
@@ -693,7 +684,6 @@ const handleNotificationsOnStatusChangeforPersonnelAction = async (status, repor
     }
 };
 const handleNotificationsOnStatusChangeforWAP_Classified = async (status, reportDetails, appId) => {
-    console.log('reportDetails --->', reportDetails);
     let reportDetailsdata = reportDetails;
     // const response = await reportDetails?.then((e) => { 
     //     reportDetailsdata = e
@@ -705,7 +695,6 @@ const handleNotificationsOnStatusChangeforWAP_Classified = async (status, report
     const { next_approver_id, next_approver_name, next_approver_email, next_approver_code } = nextApproverDetails;
 
     let reportUrl = window.location.origin + `?${specialRoutes.personal_action_report_approval_request}=${id}`;
-    console.log('reportUrl --->', reportUrl);
 
     let notificationMessageList;
     let emailMessageList;
@@ -980,9 +969,7 @@ const handleNotificationsOnStatusChangeforStipendForm = async (status, id, appId
     if (loggedUserId) {
         try {
             intiaterManagement = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: loggedUserId }).promise();
-            console.log(intiaterManagement + 'intiaterManagement')
         } catch (e) {
-            //console.log(e)
         }
         // var firstName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:firstName")
         // var lastName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:lastName")
@@ -1259,7 +1246,6 @@ const handleNotificationsOnStatusChangeforStipendForm = async (status, id, appId
 
         emailMessageList?.map((email) => {
             if (email) {
-                console.log("email.cc", email.cc)
                 createEmailNotifications(email.to, email.user_id, email.type, id, 'STIPEND_FORM', email.emailSubject, email.emailMessage, appId, email.cc ? email.cc : []);
             }
 
@@ -1314,9 +1300,7 @@ const handleNotificationsOnStatusChangeforWeeklyAbsenceReportClassified = async 
     if (loggedUserId) {
         try {
             intiaterManagement = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: loggedUserId }).promise();
-            console.log(intiaterManagement + 'intiaterManagement')
         } catch (e) {
-            //console.log(e)
         }
         // var firstName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:firstName")
         // var lastName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:lastName")
@@ -1508,9 +1492,7 @@ const handleNotificationsOnStatusChangeforSubstituteRequestCertificated = async 
     if (loggedUserId) {
         try {
             intiaterManagement = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: loggedUserId }).promise();
-            console.log(intiaterManagement + 'intiaterManagement')
         } catch (e) {
-            //console.log(e)
         }
         // var firstName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:firstName")
         // var lastName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:lastName")
@@ -1520,7 +1502,6 @@ const handleNotificationsOnStatusChangeforSubstituteRequestCertificated = async 
         var fullNameApprovedBy = fullName
     }
 
-    console.log("fullNameApprovedBy",fullNameApprovedBy);
     
     let notificationMessageList;
     let emailMessageList;
@@ -1741,9 +1722,7 @@ const handleNotificationsOnStatusChangeforTimeReport = async (status, id, appId,
    if (loggedUserId) {
        try {
            intiaterManagement = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: loggedUserId }).promise();
-           console.log(intiaterManagement + 'intiaterManagement')
        } catch (e) {
-           //console.log(e)
        }
        // var firstName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:firstName")
        // var lastName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:lastName")
@@ -1945,13 +1924,6 @@ const handleNotificationsOnStatusChangeforClassifiedSubRequest = async (status, 
     // const substituteCertificateRequestDetails = await DataStore.query(SubstituteCertificateRequest, id);
     const substituteCertificateRequestDetails = await graphQLFindRecordById("getSubstituteCertificateRequest", id)
 
-    console.log("status", status)
-    console.log("userId", userId)
-    console.log("employee", employee)
-    console.log("id", id)
-    console.log("appId", appId)
-    console.log("loggedUserId", loggedUserId)
-    console.log("reason", reason)
 
 
     let employeeUserId = '';
@@ -1984,9 +1956,7 @@ const handleNotificationsOnStatusChangeforClassifiedSubRequest = async (status, 
     if (loggedUserId) {
         try {
             intiaterManagement = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: loggedUserId }).promise();
-            console.log(intiaterManagement + 'intiaterManagement')
         } catch (e) {
-            //console.log(e)
         }
         // var firstName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:firstName")
         // var lastName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:lastName")
@@ -2198,9 +2168,7 @@ const handleNotificationsOnStatusChangeforWeeklyAbsenceReportAdmin = async (stat
    if (loggedUserId) {
        try {
            intiaterManagement = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: loggedUserId }).promise();
-           console.log(intiaterManagement + 'intiaterManagement')
        } catch (e) {
-           //console.log(e)
        }
        // var firstName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:firstName")
        // var lastName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:lastName")
@@ -2357,11 +2325,6 @@ const handleNotificationsOnStatusChangeforWeeklyAbsenceReportAdmin = async (stat
 
 const handleNotificationsOnStatusChangeforPSA = async (status, id, appId, userId, loggedUserId, rejectReson = "",submmitedOn) => {
 
-    console.log("info--status", status);
-    console.log("info---id", id);
-    console.log("info----appId", appId);
-    console.log("info-----userId", userId);
-    console.log("info------loggedUserId", loggedUserId);
 
     // const employee = await DataStore.query(Employee, (c) => c.user_Id.eq(userId));
     const employee = await graphQLGetAllData("listEmployees", [{ user_Id: { eq: userId } }])
@@ -2379,9 +2342,7 @@ const handleNotificationsOnStatusChangeforPSA = async (status, id, appId, userId
     if (loggedUserId) {
         try {
             intiaterManagement = await cognito.adminGetUser({ UserPoolId: awsmobile.aws_user_pools_id, Username: loggedUserId }).promise();
-            console.log(intiaterManagement + 'intiaterManagement')
         } catch (e) {
-            //console.log(e)
         }
         // var firstName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:firstName")
         // var lastName = await GetValueFromArray(intiaterManagement.UserAttributes, "custom:lastName")
@@ -2391,7 +2352,6 @@ const handleNotificationsOnStatusChangeforPSA = async (status, id, appId, userId
         var fullNameApprovedBy = fullName
     }
 
-    console.log("fullNameApprovedBy", fullNameApprovedBy);
 
     // const PSADetails = await DataStore.query(PSAConsultant, id);
     const PSADetails = await graphQLFindRecordById("getPSAConsultant", id)

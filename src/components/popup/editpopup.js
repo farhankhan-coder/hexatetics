@@ -36,7 +36,6 @@ export default function Editpopup(props) {
         const loggedUserId = reactLocalStorage.get("loggedUserId");
         const currentDateTime = moment();
 
-        //console.log(InitiateClassifiedWeeklyAbsenceReportStatus)
         if (props.type === "Payroll") {
             if (props.reportId) {
 

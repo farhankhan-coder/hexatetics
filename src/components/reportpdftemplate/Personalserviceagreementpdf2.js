@@ -30,13 +30,10 @@ const uploadPDF = (pdfFile, filePath) => {
   try {
     s3.upload(params, (err, data) => {
       if (err) {
-        console.log("S3 filesaving Error uploading PDF file:", err);
       } else {
-        console.log("S3 filesaving PDF file uploaded successfully:", data);
       }
     });
   } catch (e) {
-    console.log("Error when upload pdf:-", e);
   }
 };
 
@@ -49,7 +46,6 @@ const PsaPdf2 = forwardRef((props, ref) => {
       const pdfFile = report.output("blob");
       // const fileName = `report-${Date.now()}.pdf`;
       const filePath = "public/psareport/" + props.psaConsultantId + "/PSAReport.pdf";
-      console.log("pdfFile blob:-", pdfFile);
       uploadPDF(pdfFile, filePath);
     });
   };
@@ -57,7 +53,6 @@ const PsaPdf2 = forwardRef((props, ref) => {
     generatePDF
   }));
 
-  console.log("propspsaConsultantIdpsaConsultantId--", props.psaConsultantId);
   const numberToWords = require("number-to-words");
 
   const year = props.amount ? props.amount : "";

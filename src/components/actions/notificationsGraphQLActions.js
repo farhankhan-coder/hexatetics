@@ -123,7 +123,6 @@ export const create_notification = async (userId, type, sourceId, sourceType, su
         );
         
         // Please do not remove this console
-        console.log("notification created", notificationData)
 
         if (notificationData?.data?.createNotificationTable) {
             const createNotificationTable = notificationData?.data?.createNotificationTable;
@@ -141,7 +140,6 @@ export const create_notification = async (userId, type, sourceId, sourceType, su
 
         }
     } catch (e) {
-        console.log("Error while creating notifications ", e);
     }
 }
 

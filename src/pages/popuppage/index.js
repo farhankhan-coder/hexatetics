@@ -517,14 +517,17 @@ export default function Index() {
                       </div>
                     </div>
                     <div className="px-3 xl:px-[0.677vw] custp-table-d initiatorperiodtable">
-                      <DataTable  tableStyle={{ width: '100%' }}>
-    <Column field="code" header="Name of Employee"></Column>
-    <Column field="name" header="Dates Absent"></Column>
-    <Column field="category" header="Absent Codes"></Column>
-    <Column field="quantity" header="Total Hours"></Column>
-    <Column field="quantity" header="Name of Substitute"></Column>
-    <Column field="quantity" header="Action"></Column>
-</DataTable>
+                      <DataTable tableStyle={{ width: "100%" }}>
+                        <Column field="code" header="Name of Employee"></Column>
+                        <Column field="name" header="Dates Absent"></Column>
+                        <Column field="category" header="Absent Codes"></Column>
+                        <Column field="quantity" header="Total Hours"></Column>
+                        <Column
+                          field="quantity"
+                          header="Name of Substitute"
+                        ></Column>
+                        <Column field="quantity" header="Action"></Column>
+                      </DataTable>
                     </div>
                   </div>
                 </div>

@@ -95,7 +95,7 @@ const StipendFormPdf = (props) => {
                     </div>
                     <div id="page-container">
                         <div className='pt-5'>
-                            <div>
+                            <div className='marginTop'>
                                 <div className='flex gap-4 w-10/12 justify-center m-auto item-center lg:h-[100px]'>
                                     {/* <Image src={landing_logo} width={"150"} height={"150"}
                                         className="rounded-full w-[160px] h-[160px] xl:w-[10.292vw] xl:h-[10.292vw]"
@@ -111,13 +111,13 @@ const StipendFormPdf = (props) => {
                                     </div>
                                 </div>
 
-                                <div style={{ textAlign: 'center', fontSize: '16pt' }} className='my-[30px]'><strong><u>Official Stipend Form</u></strong></div>
+                                <div style={{ textAlign: 'center', fontSize: '16pt' }} className='my-[55px]'><strong><u>Official Stipend Form</u></strong></div>
 
                                 {/* <div style={{ marginTop: '4.55pt', marginLeft: '6pt', marginBottom: '0pt' }}><span style={{ letterSpacing: '-0.45pt' }}>&nbsp;</span>:<span style={{ letterSpacing: '0.05pt' }}>&nbsp;</span> </div>
                                 <div style={{ marginTop: '0.4pt', marginBottom: '0pt', fontSize: '7pt' }}>&nbsp;</div> */}
-                                <div className='px-16'>
+                                <div className='px-16 '>
                                 <div className='grid grid-cols-2 gap-2 my-2'>
-                                    <div className='col-span-2'>
+                                    <div className='col-span-2 mt-[25px]'>
                                         <div className='flex'>
                                             <div style={{fontFamily:'serif'}}>SCHOOL NAME:  &nbsp;</div>
                                             <div className='grow'>{props.data?.schoolName}</div>

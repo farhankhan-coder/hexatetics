@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import HtmlToPdfSix from '../../Component/Pop-up/sixPeriodpdf/htmltoPdf';
+import HtmlToPdfSix from '../../components/popup/sixPeriodPDF/htmltopdf'
 // import { Link } from 'react-router-dom';
 import Link from "next/link";
 

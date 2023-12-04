@@ -90,7 +90,6 @@ export default function createSchool() {
             setSchoolIDForEdit(editSchoolId);
 
             const original = await DataStore.query(Schools, editSchoolId);
-			console.log(original.isValidator)
             if (original != null) {
                 setSchoolName(original.name);
                 setAddressOne(original.address);
@@ -107,7 +106,6 @@ export default function createSchool() {
             }
         }
 		
-		console.log(isValidator)
     }
 
 

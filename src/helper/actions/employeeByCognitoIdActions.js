@@ -6,7 +6,6 @@ export const employeeByCognitoIdActions = async (userId,accessToken) => {
         "accessToken": accessToken,
         "userId": userId
     }
-    console.log('requestedData',requestedData)
     try {
         const response = await axios.post("/api/common/getEmployeeByCognitoId", { requestedData });
         let getEmployeeByIdDetails = response.data
@@ -16,6 +15,5 @@ export const employeeByCognitoIdActions = async (userId,accessToken) => {
         // }
     }
     catch (err) {
-        console.log("err----" + err)
     }
 }

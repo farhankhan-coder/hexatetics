@@ -1,10 +1,8 @@
-import React, { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import Layout from "@/components/layout/layout";
 import { Button } from "primereact/button";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
+import { Dropdown } from "primereact/dropdown";
 import Link from "next/link";
 import { Tooltip } from "primereact/tooltip";
 const {
@@ -12,9 +10,6 @@ const {
   CertificatedAdminWeeklyAbsenceReportStatus,
 } = require("../../helper/enum");
 import axios from "axios";
-import { Dialog } from "primereact/dialog";
-import { InputText } from "primereact/inputtext";
-import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import moment from "moment/moment";
 import { getEmployeeById } from "../../helper/actions/employeeByIdActions";
@@ -22,12 +17,9 @@ import { getSchoolById } from "../../helper/actions/schoolByIdActions";
 import { InputNumber } from "primereact/inputnumber";
 import { getAbsenceCodeList } from "../../helper/actions/absenceCodeListActions";
 import {
-  ConvertResponseForSelect,
   ConvertResponseForSelectWithRefCode,
   checkDuplicates,
   getResponseFromKeyCertifiedAdmin,
-  graphQLGetAllData,
-  graphQLFindRecordById,
 } from "../../helper/commonfunction";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -36,15 +28,11 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useRouter } from "next/router";
-import { reactLocalStorage } from "reactjs-localstorage";
 import EmployeePopup from "@/components/common/EmployeePopup";
 
 export default function InitiateNewReportClassified() {
   const router = useRouter();
   const { reportId } = router.query;
-
-  // page
-  // const { reportId } = useParams();
   const [value, setValue] = useState("");
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [schoolList, setSchoolList] = useState([]);
@@ -64,11 +52,7 @@ export default function InitiateNewReportClassified() {
   const [isApply, setApply] = useState(false);
   const [isNoAbsence, setIsNoAbsence] = useState(false);
   const [comment, setComment] = useState("");
-  const [NewEmployeeCode, setNewEmployeeCode] = useState("");
-  const [NewEmployeeEmail, setNewEmployeeEmail] = useState("");
-  const [isMasterDataLoaded, setIsMasterDataLoaded] = useState(false);
   const fullDay = "Full Day";
-  const [NewEmployeeSchool, setNewEmployeeSchool] = useState(null);
   const [isShowSelectedDate, setIsShowSelectedDate] = useState(false);
   const [selectedDateFinal, setSelectedDateFinal] = useState([]);
   const [selectedEmpDate, setSelectedEmpDate] = useState([]);
@@ -88,54 +72,19 @@ export default function InitiateNewReportClassified() {
       item.employeeType === "Admin"
   );
 
-  console.log("existingResultsAdministrator", existingResultsAdministrator);
 
   var existingResultsCertifiedCertificated = mappedData.filter(
     (item) => item.employeeType === "Certificated"
   );
 
-  console.log(
-    "existingResultsCertifiedCertificated",
-    existingResultsCertifiedCertificated
-  );
-
-  //set employee type list
-  const employeeTypeList = [
-    { name: "Administrator", code: "Administrator" },
-    { name: "Certificated", code: "Certificated" },
-  ];
-  const [employeeTypeField, setEmployeeTypeField] = useState("");
-
   const [isDataLoaded, setDataLoaded] = useState(false);
-  const [SPUsersWithoutAdmin, setSPUsersWithoutAdmin] = useState([]);
-  const [users, SetUsersList] = useState([]);
-  const [payrollUser, setPayrollUserList] = useState([]);
-  const [indexEdit, setIndexEdit] = useState("");
-  const [detailIndexEdit, setDetailIndexEdit] = useState("");
   const [employeeWiseMapp, setEmployeeWiseMapp] = useState("");
-  const [buttonClicked, setButtonClicked] = useState(false);
   const [mapDataIndex, setMapDataIndex] = useState(0);
   const [selectedDateRecordNew, setSelectedDateRecordNew] = useState([]);
-
   const [selectedName, setSelectedName] = useState([]);
   const [selectedItem, setSelectedItem] = useState([]);
-
-  // const [NewEmployeeName, setNewEmployeeName] = useState('');
-
-  const [newEmpFirstName, setNewEmpFirstName] = useState("");
-  const [newEmpLastName, setNewEmpLastName] = useState("");
-  const rolesArray = [
-    { name: "Initiator", code: "I" },
-    { name: "Approver", code: "AP" },
-    { name: "Payroll", code: "P" },
-  ];
-  const [newEmpSelectedRole, setNewEmpSelectedRole] = useState(null);
-  const [newEmpSelectedDesignation, setNewEmpSelectedDesignation] =
-    useState(null);
-
   const [selectApprover, setSelectApprover] = useState([]);
   const [isPendingRequest, setIsPendingRequest] = useState(false);
-
   const [remark, setRemark] = useState("");
   const [status, setStatus] = useState("");
 
@@ -162,14 +111,12 @@ export default function InitiateNewReportClassified() {
       limit: 100,
       search: searchText,
     };
-    console.log("accessToken", requestedData);
 
     try {
       const response = await axios.post("/api/common/getSchoolList", {
         requestedData,
       });
       let getSchoolListDetails = response.data;
-      console.log(response, "getSchoolListDetails");
 
       // if (getSchoolListDetails.responseCode === API_STATUS.SUCCESS) {
       let getSchoolListResponse = getSchoolListDetails.rows;
@@ -184,8 +131,6 @@ export default function InitiateNewReportClassified() {
       //   setSchoolList([])
       // }
     } catch (err) {
-      console.log("err----" + err);
-      console.log("error", err.response.status);
       if (err.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push("/");
@@ -213,7 +158,6 @@ export default function InitiateNewReportClassified() {
             requestedData,
           });
           var employeeResponses = response.data;
-          console.log("employeeResponses", employeeResponses);
 
           if (employeeResponses !== null) {
             let employee = [{ name: "No Absence", code: "1" }];
@@ -232,8 +176,6 @@ export default function InitiateNewReportClassified() {
             setEmployeeList(employee);
           }
         } catch (error) {
-          console.log(error);
-          console.log("error", error.response.status);
           if (error.response.status === API_STATUS.UNAUTHORIZED) {
             toast.error("Session Expired");
             router.push("/");
@@ -262,7 +204,6 @@ export default function InitiateNewReportClassified() {
     let absenceCodeList = [];
     absenceCodeList = await getAbsenceCodeList(accessToken);
     setAbsenceCodeList(absenceCodeList?.rows);
-    console.log(absenceCodeList?.rows, "absenceCodeList");
 
     var myArray = [];
     myArray = ConvertResponseForSelectWithRefCode(absenceCodeList?.rows);
@@ -271,7 +212,6 @@ export default function InitiateNewReportClassified() {
 
   async function EmployeeList(e) {
     let schoolId = e?.code;
-    // console.log("schoolId", schoolId)
 
     setSelectedSchool(e);
     try {
@@ -291,7 +231,6 @@ export default function InitiateNewReportClassified() {
         requestedData,
       });
       var employeeResponses = response.data;
-      // console.log('response',response);
 
       if (employeeResponses !== null) {
         let employee = [{ name: "No Absence", code: "1" }];
@@ -310,8 +249,6 @@ export default function InitiateNewReportClassified() {
         setEmployeeList(employee);
       }
     } catch (error) {
-      console.log(error);
-      console.log("error", error.response.status);
       if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push("/");
@@ -320,8 +257,6 @@ export default function InitiateNewReportClassified() {
   }
 
   const submitForm = async () => {
-    console.log("mappedData", mappedData);
-    console.log("selectedDateRecord", selectedDateRecord);
 
     let accessToken = window.localStorage.getItem("accessToken");
     let loggedUserId = window.localStorage.getItem("loggedUserId");
@@ -342,7 +277,6 @@ export default function InitiateNewReportClassified() {
     }
 
     if (reportId) {
-      console.log("hello");
       let requestedData = {
         accessToken: accessToken,
         reportId: reportId,
@@ -434,8 +368,6 @@ export default function InitiateNewReportClassified() {
         setApproverList(employee);
       }
     } catch (error) {
-      console.log(error);
-      console.log("error", error.response.status);
       if (error.response.status === API_STATUS.UNAUTHORIZED) {
         toast.error("Session Expired");
         router.push("/");
@@ -530,7 +462,6 @@ export default function InitiateNewReportClassified() {
     // let empName = await DataStore.query(Employee, (c) => c.id.eq(selectedEmployee.code));
     let accessToken = window.localStorage.getItem("accessToken");
     let empName = await getEmployeeById(selectedEmployee.code, accessToken);
-    // console.log('empName', empName)
     if (reportId) {
       for (let i = 0; i < date.length; i++) {
         selEmpDate[i] = date[i];
@@ -696,7 +627,6 @@ export default function InitiateNewReportClassified() {
           return 0;
         });
 
-        console.log("sortedArray", sortedArray);
         setMappedData(sortedArray);
 
         //setMappcount
@@ -953,7 +883,6 @@ export default function InitiateNewReportClassified() {
         { requestedData }
       );
 
-      console.log("initialData", getAbsenceReport);
       if (getAbsenceReport.data) {
         let approverEmployee = await getEmployeeById(
           getAbsenceReport.data.l1Authority,
@@ -979,7 +908,6 @@ export default function InitiateNewReportClassified() {
           let name = empName.employee_code
             ? `${empName.employee_name} (${empName.employee_code})`
             : empName.employee_name;
-          console.log("empName", name);
 
           let objFirst = {
             name: name,
@@ -1027,7 +955,6 @@ export default function InitiateNewReportClassified() {
       if (getAbsenceReport.data.formEmployeeDetails) {
         var getAbsenceReportOfEmployee =
           getAbsenceReport.data.formEmployeeDetails;
-        console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
 
         let newResponse = [];
         let dataRec = [];
@@ -1102,9 +1029,7 @@ export default function InitiateNewReportClassified() {
           let employeeResponse =
             getAbsenceReportOfEmployee[i].employeeCalendarDetails;
 
-          console.log("employeeResponse", employeeResponse);
           // for(var j=0; j<getAbsenceReportOfEmployee[i].employeeCalendarDetails.length; j++){
-          //   console.log("THIS IS", getAbsenceReportOfEmployee[i].employeeCalendarDetails[j])
           // }
 
           // let employeeResponse = await getEmployeeDetails(getAbsenceReportOfEmployee[i].id, getAbsenceReportOfEmployee[i].employee_id);
@@ -1131,7 +1056,6 @@ export default function InitiateNewReportClassified() {
             }
           }
 
-          console.log("employeeResponse", employeeResponse);
 
           let empName = await getEmployeeById(
             getAbsenceReportOfEmployee[i].employeeId,
@@ -1151,8 +1075,6 @@ export default function InitiateNewReportClassified() {
               employeeType: empName.employeeType,
             };
 
-            console.log("empName", empName);
-            console.log("setSelectedEmployee", obj1);
             setSelectedEmployee(obj1);
             newEmp = empName.id;
           }
@@ -1174,7 +1096,6 @@ export default function InitiateNewReportClassified() {
 
           let newdate = [];
           if (i === getAbsenceReportOfEmployee.length - 1) {
-            console.log("newResponse", newResponse);
             const groupedData = newResponse.reduce((acc, obj) => {
               const existingObj = acc.find(
                 (item) => item.employeeId === obj.employeeId
@@ -1189,8 +1110,6 @@ export default function InitiateNewReportClassified() {
 
             // let newR = newResponse.filter(abc => abc.employeeId === getAbsenceReportOfEmployee[i].employeeId)
             let newR = newResponse;
-            console.log("gettttting", getAbsenceReportOfEmployee[i].employeeId);
-            console.log("newR", newR);
             let countR = 0;
             for (let key in newR) {
               if (newR[key] && newR[key].employeeResponse) {
@@ -1218,7 +1137,6 @@ export default function InitiateNewReportClassified() {
               }
             }
 
-            console.log("groupedData", groupedData);
             const sortedArray = groupedData.slice().sort((a, b) => {
               const nameA = a.employeeName.toLowerCase();
               const nameB = b.employeeName.toLowerCase();
@@ -1238,7 +1156,6 @@ export default function InitiateNewReportClassified() {
               (item) => item.employeeType === "Certificated"
             );
 
-            console.log("certificatedData", certificatedData);
 
             setAdministratorData(administratorData);
             setCertificatedDatas(certificatedData);
@@ -1259,7 +1176,6 @@ export default function InitiateNewReportClassified() {
         setSelectedEmpDate(updatedList);
       }
     } catch (e) {
-      console.log("error", e);
     }
   };
 
@@ -1297,12 +1213,6 @@ export default function InitiateNewReportClassified() {
 
   //   setMappedData(newArray);
 
-  //   console.log("newArray", newArray);
-  //   console.log("mappedData", mappedData);
-  //   // console.log("index", index);
-  //   // console.log("detailIndex", detailIndex);
-  //   // console.log("detail", detail);
-  //   // console.log("item", item);
 
   // }
 
@@ -1364,7 +1274,6 @@ export default function InitiateNewReportClassified() {
 
   useEffect(() => {
     getMasterData();
-    console.log("getMasterData called");
   }, []);
 
   return (

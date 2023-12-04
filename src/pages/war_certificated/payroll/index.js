@@ -1,32 +1,20 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import Head from 'next/head';
+import React, { useState, useEffect } from 'react';
 import Layout from '@/components/layout/layout';
 import WARCertificatedReports from '@/pages/war_certificated/reports';
-import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { useFullScreenHandle } from "react-full-screen";
 import Link from 'next/link';
-import { DataTable } from "primereact/datatable";
-import { InputText } from 'primereact/inputtext';
-import { Column } from 'primereact/column';
-import { Dropdown } from "primereact/dropdown";
-import { Tag } from "primereact/tag";
 import EyePopup from '@/components/popups/eyePopup';
 import { reactLocalStorage } from 'reactjs-localstorage';
 import axios from 'axios';
-import { CertificatedAdminWeeklyAbsenceReportStatus } from '../../../helper/enum'
 import moment from "moment";
 import { useRouter } from 'next/router';
 import { toast } from "react-toastify";
-import { API_STATUS, Apps } from '../../../helper/enum'
+import { API_STATUS } from '../../../helper/enum'
 import { getEmployeeById } from "../../../helper/actions/employeeByIdActions";
 import { getSchoolById } from "../../../helper/actions/schoolByIdActions";
-import { ProgressSpinner } from 'primereact/progressspinner';
-import { TabPanel, TabView } from 'primereact/tabview';
 import { employeeByCognitoIdActions } from '../../../helper/actions/employeeByCognitoIdActions'
 import { AllStatusData } from '@/components/helper/enum';
 import { getTimeline } from '../../../helper/actions/getTimeline'
-
-
-
 
 export default function Index() {
   const router = useRouter();
@@ -42,13 +30,11 @@ export default function Index() {
     rows: 10,
     page: 1,
   });
-  const [onPageNumber, setOnPageNumber] = useState();
   const [rows, setRows] = useState(10)
   const [schoolFilterValue, setSchoolFilter] = useState('');
   const [weekFilterValue, setWeekFilter] = useState('');
   const [submittedFilterVlaue, setSubmittedFilter] = useState('');
   const [statusFilterValue, setStatusFilter] = useState('')
-  const [activeIndex, setActiveIndex] = useState(0);
 
   //State's for EYEPOPUP
   const [schoolName, setSchoolName] = useState("");
@@ -58,15 +44,12 @@ export default function Index() {
   const [approvedBy, setApprovedBy] = useState("");
   const [submittedBy, setSubmittedBy] = useState("");
   const [comment, setComment] = useState("");
-  const [employeeReports, setEmployeeReports] = useState([]);
   const [administratorData, setAdministratorData] = useState([]);
   const [CertificatedDatas, setCertificatedDatas] = useState([]);
   const [events, setEvents] = useState([])
   const [isEdit, setIsEdit] = useState(true);
   const [camundaProcessId, setCamundaProcessId] = useState('');
   const [reportId, setReportId] = useState('');
-
-
 
   const populatePopup = async (rowData) => {
 
@@ -77,11 +60,7 @@ export default function Index() {
     }
 
     setReportId(rowData.id);
-    console.log('rowData.camundaProcessTaskId___________', rowData.camundaProcessTaskId); setCamundaProcessId(rowData.camundaProcessTaskId)
     setStatus(rowData.status)
-
-
-
 
     let accessToken = window.localStorage.getItem('accessToken');
     let requestedData = {
@@ -98,28 +77,20 @@ export default function Index() {
       var getAbsenceReport = await axios.post("/api/war_certificated/getReportById", { requestedData });
 
 
-      console.log('getAbsenceReport', getAbsenceReport);
       initiateDateTime = moment(getAbsenceReport.data.createdAt).format('MM/DD/YYYY HH:mm ');
       approverDateTime = moment(getAbsenceReport.data.approverDateTime).format('MM/DD/YYYY HH:mm ');
       payrollDateTime = moment(getAbsenceReport.data.payrollDateTime).format('MM/DD/YYYY HH:mm ');
-
-
-
 
       if (getAbsenceReport.data) {
         if (getAbsenceReport.data.userId) {
           let empName = await employeeByCognitoIdActions(getAbsenceReport.data.userId, accessToken);
 
-
           let name = empName.employee_code ? `${empName.employee_name} (${empName.employee_code})` : empName.employee_name;
-          console.log('name', name);
-
 
           setSubmittedBy(name)
           let eventsTimeline = await getTimeline(getAbsenceReport.data.camundaProcessInstanceId, accessToken)
           eventsTimeline = eventsTimeline.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-          console.log('eventsTimeline', eventsTimeline);
           for (var i = 0; i < eventsTimeline.length; i++) {
             let obj = {};
 
@@ -127,11 +98,9 @@ export default function Index() {
             obj.name = eventsTimeline[i].assignee
             obj.empTitle = eventsTimeline[i].role
             obj.status = eventsTimeline[i].status
-
             eventsData.push(obj);
 
           }
-
           setEvents(eventsData);
         }
 
@@ -140,7 +109,6 @@ export default function Index() {
           let empName = await employeeByCognitoIdActions(getAbsenceReport.data.l1Authority, accessToken);
 
           let name = empName.employee_code ? `${empName.employee_name} (${empName.employee_code})` : empName.employee_name;
-          console.log("empName", name);
 
           setApprovedBy(name)
         }
@@ -152,7 +120,6 @@ export default function Index() {
           let payrollname = empName.employee_code ? `${empName.employee_name} (${empName.employee_code})` : empName.employee_name;
 
         }
-
 
         let to_date = moment(getAbsenceReport.data.toDate).format("YYYY-MM-DD");
         setToDate(to_date)
@@ -166,9 +133,7 @@ export default function Index() {
 
       if (getAbsenceReport.data.formEmployeeDetails) {
 
-
         var getAbsenceReportOfEmployee = getAbsenceReport.data.formEmployeeDetails;
-        console.log("getAbsenceReportOfEmployee", getAbsenceReportOfEmployee);
 
         let newResponse = [];
         let dataRec = [];
@@ -181,9 +146,7 @@ export default function Index() {
 
           let employeeResponse = getAbsenceReportOfEmployee[i].employeeCalendarDetails;
 
-          console.log("employeeResponse", employeeResponse)
           employeeResponse.map((item) => item.selectedDate = new Date(moment(item.selectedDate).format("ddd MMM DD YYYY HH:mm:ss [GMT]ZZ")))
-
 
           employeeResponse = [...employeeResponse].sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate));
 
@@ -193,9 +156,7 @@ export default function Index() {
             }
           }
 
-          console.log("employeeResponse", employeeResponse);
-
-          let empName = await employeeByCognitoIdActions(getAbsenceReportOfEmployee[i].employeeId, accessToken);
+          let empName = await getEmployeeById(getAbsenceReportOfEmployee[i].employeeId, accessToken);
 
           let data = []
           if (empName) {
@@ -204,10 +165,6 @@ export default function Index() {
               "code": empName.id,
               "employeeType": empName.employeeType
             }
-
-
-            console.log("empName", empName)
-            console.log("setSelectedEmployee", obj1)
             // setSelectedEmployee(obj1);
             newEmp = empName.id;
 
@@ -230,7 +187,6 @@ export default function Index() {
 
           let newdate = [];
           if (i === getAbsenceReportOfEmployee.length - 1) {
-            console.log("newResponse", newResponse)
             const groupedData = newResponse.reduce((acc, obj) => {
               const existingObj = acc.find(item => item.employeeId === obj.employeeId);
               if (existingObj) { existingObj.employeeResponse.push(...obj.employeeResponse); }
@@ -240,8 +196,6 @@ export default function Index() {
 
 
             let newR = newResponse;
-            console.log("gettttting", getAbsenceReportOfEmployee[i].employeeId);
-            console.log("newR", newR);
             let countR = 0
             for (let key in newR) {
               if (newR[key] && newR[key].employeeResponse) {
@@ -257,7 +211,6 @@ export default function Index() {
               }
             }
 
-            console.log("groupedData", groupedData);
             const sortedArray = groupedData.slice().sort((a, b) => {
               const nameA = a.employeeName.toLowerCase();
               const nameB = b.employeeName.toLowerCase();
@@ -270,14 +223,8 @@ export default function Index() {
               return 0;
             });
 
-
-
             let administratorData = sortedArray.filter(item => item.employeeType === 'Administrator');
             let certificatedData = sortedArray.filter(item => item.employeeType === 'Certificated');
-
-
-
-            console.log("certificatedData", certificatedData)
 
             setAdministratorData(administratorData)
             setCertificatedDatas(certificatedData)
@@ -285,13 +232,12 @@ export default function Index() {
         }
       }
     } catch (e) {
-      console.log("error", e)
     }
 
     setVisible(true);
   }
 
-  const superAdminActions = (rowData) => {
+  const reportListActions = (rowData) => {
     return (
       <>
         <div className="flex justify-center w-full gap-2">
@@ -354,29 +300,8 @@ export default function Index() {
     }
   };
 
-  const [statuses] = useState([AllStatusData.APPROVED, AllStatusData.PENDING, AllStatusData.REJECTED,
-  AllStatusData.SUBMITTED, AllStatusData.REVIEWED_AND_RESUBMITTED]);
-
-
-  const statusRowFilterTemplate = (options) => {
-    return (
-      <Dropdown value={statusFilterValue} options={statuses}
-        // onChange={(e) => {options.filterApplyCallback(e.value)}}
-        onChange={(e) => { setStatusFilter(e.value) }}
-        itemTemplate={statusItemTemplate} placeholder="Select" className="p-column-filter custDropdown" showClear style={{ minWidth: '7rem' }} />
-    );
-
-  };
-
-  const statusItemTemplate = (option) => {
-    return <Tag value={option} severity={getSeverity(option)} />;
-  };
-
-
-
   const loadAbsenceReport = async (pageNumber, row) => {
 
-    console.log('calling load absense report')
     const accessToken = reactLocalStorage.get('accessToken');
     const loggedUserId = reactLocalStorage.get('loggedUserId');
 
@@ -398,13 +323,10 @@ export default function Index() {
     try {
       const response = await axios.post("/api/war_certificated/war_certificated_listing", { requestedData });
       weeklyAbsenceReport = response.data.rows;
-      console.log('weeklyAbsenceReport', weeklyAbsenceReport);
       const weeklyAbsenceReportCount = response.data.count
       setCount(weeklyAbsenceReportCount)
-      // console.log('weeklyAbsenceReportCount', weeklyAbsenceReportCount);
     }
     catch (err) {
-      console.log("err----" + err.response.status)
     }
 
     let newResponse = [];
@@ -430,7 +352,6 @@ export default function Index() {
 
           submittedOn = weeklyAbsenceReport[i].statusDateTime;
         } else { submittedOn = "-" }
-
 
         // //*School Name
         if (weeklyAbsenceReport[i].schoolId !== null && weeklyAbsenceReport[i].schoolId !== undefined) {
@@ -485,10 +406,6 @@ export default function Index() {
     setRows(event.rows)
   };
 
-  const onSelectionChange = (event) => {
-    const value = event.value;
-  };
-
   const BindList = async () => {
     loadAbsenceReport(1, rows);
   }
@@ -531,7 +448,6 @@ export default function Index() {
   useEffect(() => {
     // onLoad();
     getMasterData();
-    // MyAccountTable.getProductsSmall().then((data) => setProducts(data.slice(0, 9)));
   }, []);
 
   useEffect(() => {
@@ -544,18 +460,14 @@ export default function Index() {
     try {
       loadAbsenceReport(pageNo, rows);
     } catch (error) {
-      console.log('error', error);
     }
   }, [schoolFilterValue, weekFilterValue, submittedFilterVlaue, statusFilterValue]);
-
 
   return (
     <>
       <Layout pageTitle="WAR Certificated-Admin" activeMenu="Initiator">
         <div className='report-wrapper pt-24 md:pt-28 xl:pt-[2.083vw] mb-10'>
-          <FullScreen handle={handle}>
-            <WARCertificatedReports weeklyAbsenceReports={weeklyAbsenceReports} isListLoaded={isListLoaded} onPage={onPage} count={count} weekFilterValue={weekFilterValue} schoolFilterValue={schoolFilterValue} submittedFilterVlaue={submittedFilterVlaue} statusFilterValue={statusFilterValue} setWeekFilter={setWeekFilter} setSchoolFilter={setSchoolFilter} setSubmittedFilter={setSubmittedFilter} setStatusFilter={setStatusFilter} reportType='Requested Reports' lazyState={lazyState} rows={rows} activeIndex={2} superAdminActions={superAdminActions}></WARCertificatedReports>
-          </FullScreen>
+            <WARCertificatedReports weeklyAbsenceReports={weeklyAbsenceReports} isListLoaded={isListLoaded} onPage={onPage} count={count} weekFilterValue={weekFilterValue} schoolFilterValue={schoolFilterValue} submittedFilterVlaue={submittedFilterVlaue} statusFilterValue={statusFilterValue} setWeekFilter={setWeekFilter} setSchoolFilter={setSchoolFilter} setSubmittedFilter={setSubmittedFilter} setStatusFilter={setStatusFilter} reportType='Requested Reports' lazyState={lazyState} rows={rows} activeIndex={2} reportListActions={reportListActions}></WARCertificatedReports>
         </div>
         <EyePopup
           visible={visible}

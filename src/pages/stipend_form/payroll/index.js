@@ -58,8 +58,7 @@ import { Request_Stipend_Status, stipend_Type, Request_Stipend_Status_Name, desi
 import handleDateSelect from "@/components/helper/convertDateIntoPSTFormat";
 import capitalizeFirstChar from "@/components/common/capitalizeFirstChar";
 import EmployeePopup from "@/components/common/EmployeePopup";
-// import { approvalStatus } from "./Misc";
-import ReportTable from "./Components/ReportTable";
+import ReportTable from "../Components/ReportTable";
 import axios from "axios";
 import { useRouter } from "next/router";
 // import EditPopups from "@/pages/stipend_form/EditPopups";
@@ -3048,21 +3047,21 @@ export default function StipendInitiatorReportList() {
                                             <div className="flex gap-2 xl:gap-[0.990vw] items-center">
 
 
-                                                <Link href='#' className="lg:w-full text-center tableBtn blue radius8" onClick={() => initiateNewReport()}>
-                                                    <i className="gusd-pluse-circle mx-1.5"></i> Initiate New Report</Link>
+                                                {/* <Link href='#' className="lg:w-full text-center tableBtn blue radius8" onClick={() => initiateNewReport()}>
+                                                    <i className="gusd-pluse-circle mx-1.5"></i> Initiate New Report</Link> */}
 
-                                                <Link href="#" onClick={() => { exportFilteredDataToCSV("StipendInitiatorReport.csv") }} className=" " > <i className="pi pi-download "></i></Link>
+                                                <Link href="#" onClick={() => { exportFilteredDataToCSV("StipendInitiatorReport.csv") }} className=" " > <i className="pi pi-download text-black"></i></Link>
 
 
 
-                                                <Link href="" onClick={onToggle}> <i className="gusd-expand"></i></Link>
+                                                <Link href="" onClick={onToggle}> <i className="gusd-expand text-black"></i></Link>
                                             </div>
 
                                         </div>
                                         <TabView className="">
-                                            <TabPanel header="Initiate Reports">
+                                            {/* <TabPanel header="Initiate Reports">
                                                 <div className="initiator  arrowshow">
-                                                    <div className="xl:h-[28.646vw] h-[500px] overflow-auto">
+                                                    <div className="xl:h-[28.646vw] h-[500px] overflow-auto"> */}
                                                         {/* <DataTable
                                                             className="custpaginator custIconsTable custmBtnTable custTable"
                                                             scrollable
@@ -3149,10 +3148,10 @@ export default function StipendInitiatorReportList() {
                                                                 style={{ minWidth: "6rem" }}
                                                             ></Column>
                                                         </DataTable> */}
-                                                        <ReportTable isListLoaded={true} view={setShowNextPopUp} edit={setVisibleApprovalRequestedReportEdit} />
+                                                        {/* <ReportTable isListLoaded={true} view={setShowNextPopUp} edit={setVisibleApprovalRequestedReportEdit} />
                                                     </div>
                                                 </div>
-                                            </TabPanel>
+                                            </TabPanel> */}
 
                                             <TabPanel header="Requested Reports">
                                                 <div className="initiator  arrowshow">
@@ -3232,7 +3231,7 @@ export default function StipendInitiatorReportList() {
                                                                 style={{ minWidth: "6rem" }}
                                                             ></Column>
                                                         </DataTable> */}
-                                                        <ReportTable isListLoaded={true} />
+                                                        <ReportTable isListLoaded={true} view={setVisibleApprovalRequestedReportEdit} edit={setShowNextPopUp}/>
                                                     </div>
                                                 </div>
                                             </TabPanel>
@@ -3350,7 +3349,7 @@ export default function StipendInitiatorReportList() {
                                                                             <div className="py-3 emp-simple-tbl">
                                                                                 <DataTable
                                                                                     className="custpaginator custIcons custmBtnTable custTable"
-                                                                                    value={"test"}
+                                                                                    value={approvalCompleteData}
                                                                                 >
                                                                                     <Column field="empCode" header="Employee Id"></Column>
                                                                                     <Column field="empName" header="Name"></Column>

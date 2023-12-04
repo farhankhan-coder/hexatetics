@@ -13,9 +13,10 @@ import { TabPanel, TabView } from 'primereact/tabview';
 import { useRouter } from "next/router";
 import { Button } from 'primereact/button';
 import { AllStatusData } from '@/components/helper/enum';
-import { tableData } from '../Misc';
-
+// import { tableData } from '../Misc';
+import { Badge } from 'primereact/badge';
 export default function ReportTable(props) {
+    const { view,setEditStipend, setRowData } = props;
     const handle = useFullScreenHandle();
     const router = useRouter();
     const [lazyState, setlazyState] = useState({
@@ -23,12 +24,121 @@ export default function ReportTable(props) {
         rows: 10,
         page: 1,
     });
+    const tableData = [
+        {
+            sLNo: "1",
+            assignmentTitle: "Test 1 ",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "09",
+            inventoryStatus: "Pending",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Rejected",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Submitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Reviewed & Resubmitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Approved",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Rejected",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Submitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Reviewed & Resubmitted",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:true,
+        },
+        {
+            sLNo: "2",
+            assignmentTitle: "Test 2",
+            dates: "2023/08/9",
+            submittedOn: "20223/09/09",
+            noOfsubstitute: "90",
+            inventoryStatus: "Approved",
+            asignee: "GUSD",
+            remark: "-",
+            action: "",
+            edit:false,
+        },
+    ];
     const [rows, setRows] = useState(10)
     const [schoolFilterValue, setSchoolFilter] = useState('');
     const [weekFilterValue, setWeekFilter] = useState('');
     const [submittedFilterVlaue, setSubmittedFilter] = useState('');
     const [statusFilterValue, setStatusFilter] = useState('')
-    console.log('props.activeIndex', props.activeIndex)
     //State's for EYEPOPUP
     const [schoolName, setSchoolName] = useState("");
     const [fromDate, setFromDate] = useState("");
@@ -53,7 +163,7 @@ export default function ReportTable(props) {
 
             case 'Rejected':
                 return 'danger';
-            
+
             case 'Submitted':
                 return 'Submitted';
 
@@ -142,29 +252,44 @@ export default function ReportTable(props) {
 
     const onSelectionChange = (event) => {
         const value = event.value;
-        // console.log("value",value)
     };
 
     const statusBodyTemplate = (product) => {
-        return <Tag value={product.inventoryStatus} severity={getSeverity(product)}></Tag>;
+        return <><Badge value="" severity={getSeverity(product)}> </Badge>&nbsp; {product.inventoryStatus}</>
     };
 
-    const superAdminActions = (row) => {
+    const reportListActions = (row) => {
+        const handleView = () => {
+            // Pass specific data from the row to another component or set it as a new state
+            const { sLNo, assignmentTitle, dates, submittedOn, noOfsubstitute, inventoryStatus, asignee, remark, action, edit } = row;
+
+            view(true);
+        };
+
+        const handleEdit = () => {
+            props.edit(true);
+            setRowData(row)
+            setEditStipend(true);
+        };
         return [
             <>
-                <Link
-                    href="#"
-                    className="px-2.5"
-                    onClick={props.view}
-                >
-                    <i   className="gusd-eye text-[#667085] text-[20px] font-meduim"></i>
-                </Link>
-                <Link
-                    href="#"
-                    className="py-2 px-2.5"
-                >
-                    <i onClick={props.edit} className="gusd-edit text-[18px] text-[#667085] font-meduim"></i>
-                </Link>
+                {
+                    !row?.edit ?
+                        <Link
+                            href="#"
+                            className="px-2.5"
+                            onClick={handleView}
+                        >
+                            <i className="gusd-eye text-[#667085] text-[20px] font-meduim"></i>
+                        </Link>
+                        :
+                        <Link
+                            href="#"
+                            className="py-2 px-2.5"
+                        >
+                            <i onClick={handleEdit} className="gusd-edit text-[18px] text-[#667085] font-meduim"></i>
+                        </Link>
+                }
             </>,
         ];
     };
@@ -177,8 +302,8 @@ export default function ReportTable(props) {
                 data-aos="fade-down"
                 data-aos-duration="800"
             > */}
-                {/* <div className="bg-[#fff] box-shadow-2 radius8 border border-[#E4E7EC]"> */}
-                    {/* <div className="flex items-center justify-between p-[20px] xl:px-[1.250vw] xl:py-[0.990vw] border-b border-[#E4E7EC] ">
+            {/* <div className="bg-[#fff] box-shadow-2 radius8 border border-[#E4E7EC]"> */}
+            {/* <div className="flex items-center justify-between p-[20px] xl:px-[1.250vw] xl:py-[0.990vw] border-b border-[#E4E7EC] ">
                         <div className="flex items-center gap-2">
                             <p className="text-[22px] xl:text-[0.938vw] text-[#101828] font-medium">
                                 {Apps.WeeklyAbsentReportCertificatedAdmin}
@@ -200,15 +325,15 @@ export default function ReportTable(props) {
                         </div>
                     </div> */}
 
-                    {props.isListLoaded === true ?
-                        <>
-                            {/* <div className="flex flex-wrap gap-2 mb-3 borderTabs">
+            {props.isListLoaded === true ?
+                <>
+                    {/* <div className="flex flex-wrap gap-2 mb-3 borderTabs">
                                 <Button onClick={() => router.push("/war_certificated")} className={props.activeIndex === 0 ? 'active_tabed' : 'p-button-text tab_inactived'} label="Initiate Reports" />
                                 <Button onClick={() => router.push("/war_certificated/approver")} className={props.activeIndex === 1 ? 'active_tabed' : 'p-button-text tab_inactived'} label="Requested Reports" />
                                 <Button onClick={() => router.push("/war_certificated/payroll")} className={props.activeIndex === 2 ? 'active_tabed' : 'p-button-text tab_inactived'} label="Payroll Reports" />
                             </div> */}
-                            {/* <div className={props.weeklyAbsenceReports?.length === 0 ? "datatableemptymessage arrowhide" : "initiator  arrowshow"}> */}
-                                {/* <DataTable
+                    {/* <div className={props.weeklyAbsenceReports?.length === 0 ? "datatableemptymessage arrowhide" : "initiator  arrowshow"}> */}
+                    {/* <DataTable
                   className="custpaginator custIconsTable custmBtnTable custTable "
                   sortField="submittedOn"
                   filters={""}
@@ -292,105 +417,105 @@ export default function ReportTable(props) {
                     alignFrozen='right'
                     header="Action"
                     align="center"
-                    body={props.superAdminActions}
+                    body={props.reportListActions}
                     style={{ minWidth: "3rem" }}
 
                   ></Column>
                 </DataTable> */}
 
 
-                                <DataTable
-                                    className="custpaginator custIconsTable custmBtnTable custTable"
-                                    scrollable
-                                    filters={""}
-                                    filterDisplay="row"
-                                    value={tableData}
-                                    paginator
-                                    rowsPerPageOptions={[10, 20, 30]}
-                                    responsiveLayout="scroll"
-                                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                                    rows={11}
-                                    emptyMessage="No records found."
-                                >
+                    <DataTable
+                        className="custpaginator custIconsTable custmBtnTable custTable"
+                        scrollable
+                        filters={""}
+                        filterDisplay="row"
+                        value={tableData}
+                        paginator
+                        rowsPerPageOptions={[10, 20, 30]}
+                        responsiveLayout="scroll"
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        rows={11}
+                        emptyMessage="No records found."
+                    >
 
-                                    <Column
-                                        header="SL#"
-                                        field="sLNo"
-                                        style={{ maxWidth: "3rem" }}
-                                    ></Column>
-                                    <Column
-                                        field="submittedOn"
-                                        header="Title"
-                                        filter
-                                        filterPlaceholder="Search"
-                                        sortable
-                                        style={{ minWidth: "5rem" }}
-                                    ></Column>
-                                    {/* <Column field="schoolOrDeptName" header="School or Department Name" filter filterPlaceholder="Search" sortable></Column> */}
-                                    <Column
-                                        field="assignmentTitle"
-                                        header="Employee Name"
-                                        filter
-                                        filterPlaceholder="Search"
-                                        sortable
-                                    ></Column>
-                                    <Column
-                                        field="noOfsubstitute"
-                                        header="School"
-                                        filter
-                                        filterPlaceholder="Search"
-                                        sortable
-                                    ></Column>
+                        <Column
+                            header="SL#"
+                            field="sLNo"
+                            style={{ maxWidth: "3rem" }}
+                        ></Column>
+                        <Column
+                            field="submittedOn"
+                            header="Title"
+                            filter
+                            filterPlaceholder="Search"
+                            sortable
+                            style={{ minWidth: "5rem" }}
+                        ></Column>
+                        {/* <Column field="schoolOrDeptName" header="School or Department Name" filter filterPlaceholder="Search" sortable></Column> */}
+                        <Column
+                            field="assignmentTitle"
+                            header="Employee Name"
+                            filter
+                            filterPlaceholder="Search"
+                            sortable
+                        ></Column>
+                        <Column
+                            field="noOfsubstitute"
+                            header="School"
+                            filter
+                            filterPlaceholder="Search"
+                            sortable
+                        ></Column>
 
-                                    <Column
-                                        field="asignee"
-                                        header="Year"
-                                        filter
-                                        filterPlaceholder="Search"
-                                        sortable
-                                    ></Column>
-                                    <Column
-                                        header="Semester"
-                                        field="remark"
-                                        filter
-                                        filterPlaceholder="Search"
-                                        sortable
-                                        style={{ minWidth: "14rem" }}
-                                    ></Column>
+                        <Column
+                            field="asignee"
+                            header="Year"
+                            filter
+                            filterPlaceholder="Search"
+                            sortable
+                        ></Column>
+                        <Column
+                            header="Semester"
+                            field="remark"
+                            filter
+                            filterPlaceholder="Search"
+                            sortable
+                            style={{ minWidth: "14rem" }}
+                        ></Column>
 
-                                    <Column
-                                        header="Status"
-                                        field="status"
-                                        filter
-                                        filterElement={statusRowFilterTemplate}
-                                        body={statusBodyTemplate}
-                                        sortable
-                                        style={{ minWidth: "14rem" }}
-                                    ></Column>
-                                    <Column
-                                        field="remark"
-                                        header="Remarks"
-                                        align="center"
-                                        style={{ minWidth: "6rem" }}
-                                        filter
-                                        filterPlaceholder="Search"
-                                    ></Column>
-                                    <Column
-                                        field="action"
-                                        header="Action"
-                                        frozen
-                                        alignFrozen="right"
-                                        align="center"
-                                        body={superAdminActions}
-                                        style={{ minWidth: "6rem" }}
-                                    ></Column>
-                                </DataTable>
-                            {/* </div> */}
-                        </>
-                        :
-                        <div className='text-center py-8' ><ProgressSpinner /></div>
-                    }
-                {/* </div > */}
+                        <Column
+                            header="Status"
+                            field="status"
+                            filter
+                            filterElement={statusRowFilterTemplate}
+                            body={statusBodyTemplate}
+                            sortable
+                            style={{ minWidth: "14rem" }}
+                        ></Column>
+                        <Column
+                            field="remark"
+                            header="Remarks"
+                            align="center"
+                            style={{ minWidth: "6rem" }}
+                            filter
+                            filterPlaceholder="Search"
+                        ></Column>
+                        <Column
+                            field="action"
+                            header="Action"
+                            frozen
+                            alignFrozen="right"
+                            align="center"
+                            body={reportListActions}
+                            style={{ minWidth: "6rem" }}
+                        ></Column>
+                    </DataTable>
+                    {/* </div> */}
+                </>
+                :
+                <div className='text-center py-8' ><ProgressSpinner /></div>
+            }
+            {/* </div > */}
             {/* </div > */}
 
         </>
