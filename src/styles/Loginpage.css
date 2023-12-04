@@ -1,0 +1,103 @@
+.login-btn{
+    background-color: #113699;
+    color: #fff;
+    border-radius: 0.417vw;
+}
+.login-main{
+    background-color: #f5f9ff;
+}
+.sign{
+    display: flex;
+}
+.googlebtn {
+    border: 1px solid #e8f0f3;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,.05);
+}
+
+.personal-tabel{
+    color: #667085;
+    font-size: "64px";
+    font-weight: 600;
+}
+.p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    background: #fff;
+    border-color: #6366f1;
+    color: #6366f1;
+}
+*, :after, :before {
+    border: 0 solid #e5e7eb;
+    box-sizing: border-box;
+}
+.blue {
+    background-color: #113699;
+    color: white;
+}
+.radius8 {
+    border-radius: 0.417vw;
+}
+.custmBtn {
+    font-size: 0.938vw;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 0.5vw 1.25vw;
+    display: inline-block;
+    box-shadow: 4px 0px 64px rgba(0, 0, 0, 0.08);
+}
+.login-ip{
+    padding: 0.5vw 0.7vw !important;
+}
+.sign:after {
+    content: '';
+    flex: 1 1;
+    border-bottom: 1px solid #e4e7ec;
+    margin: auto;
+}
+.login-page{
+    background-color: rgb(249 250 251);
+}
+.sign:before {
+    content: '';
+    flex: 1 1;
+    border-bottom: 1px solid #e4e7ec;
+    margin: auto;
+}
+
+/* ---------------employee page--------------- */
+.employeetable th {
+    background: #113699 !important;
+    color: #fff !important;
+    border: none !important;
+    font-size: 14px;
+}
+.employeetable td{
+    border: none !important;
+}
+.employeetable tr{
+    /* display: flex !important;
+    -webkit-box-align: stretch !important;
+    align-items: stretch !important;
+    align-content: stretch !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    background-color: rgb(255, 255, 255) !important;
+    min-height: 50px !important; */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+.employeetable tr:hover {
+    color: rgba(0, 0, 0, 0.87) !important;
+    background-color: rgb(238, 238, 238) !important;
+    transition-duration: 0.15s !important;
+    transition-property: background-color;
+    border-bottom-color: rgb(255, 255, 255) !important;
+    outline: rgb(255, 255, 255) solid 1px !important;
+}
+
+  @media screen and (max-width: 1200px){
+    input.login-ip.p-inputtext.p-component.rounded.w-full{
+        padding: 15px 10px !important;
+    }   
+}

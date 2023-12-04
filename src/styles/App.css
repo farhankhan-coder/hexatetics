@@ -1,0 +1,633 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.active_tabed{
+  background: transparent !important;
+  border: none !important;
+  color: #6366f1 !important;
+    border-width: 3px !important;
+ 
+ 
+  border-bottom: solid !important;
+  border-radius: 0px !important;
+
+}
+.tab_inactived{
+color:#6c757d !important;
+}
+.borderTabs{
+  border: 1px solid #dee2e6;
+border-width: 0 0 1px 0;
+}
+.active_tabed:hover{
+background: transparent !important;
+ color: blue !important;
+}
+
+
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.arrowhide    .p-paginator-prev {
+  display: none;
+}
+.arrowshow   .p-paginator-prev{
+  display: block;
+}
+
+.arrowhide  .p-paginator-next{
+  display: none;
+
+}
+.arrowshow  .p-paginator-next{
+  display: block;
+
+}
+
+.arrowhide  .p-paginator-first{
+  display: none;
+
+}
+.arrowshow  .p-paginator-first{
+  display: block;
+
+}
+.arrowhide  .p-paginator-last{
+  display: none;
+
+}
+.arrowshow  .p-paginator-last{
+  display: block;
+
+}
+/* .arrowhide .p-dropdown.p-component.p-inputwrapper.p-inputwrapper-filled {
+   display: none; 
+
+} */
+
+
+.active_tab{
+  background: transparent;
+  border: none;
+  color: #6366f1;
+    border-width: 3px !important;
+  /* text-decoration: underline; */
+  /* margin-bottom: 10px; */
+  border-bottom: solid;
+  border-radius: 0px;
+
+}
+.tab_inactive{
+color:#6c757d !important;
+}
+.active_tab:hover{
+background: transparent !important;
+ color: blue !important;
+}
+.no-page-break {
+  page-break-before: avoid;
+  page-break-after: avoid;
+}
+
+.no-print {
+    display: none;
+}
+
+.page-break {
+  page-break-before: always;
+}
+
+
+/* / CSS for screen display / */
+.print-page {
+  display: none;
+}
+
+/* / CSS for printing / */
+/* @media print {
+  .print-page {
+    display: block;
+  }
+} */
+
+/* / Common styles for both screen and print / */
+/* .page {
+  width: 8.27in; 
+  height: 11.7in; 
+  margin: 0 auto;
+  padding: 20px; 
+  box-sizing: border-box; 
+  page-break-after: always;
+}
+
+
+@media print {
+  #pf1 {
+    page-break-after: auto; 
+  }
+
+  
+  #pf2 {
+    display: none;
+  }
+}
+ */
+
+ /* / export pdf / */
+
+.isMar{
+  margin-top: 70px !important;
+}
+.isMar2{
+  margin-top: 150px;
+}
+.isMar3{
+  margin-top: 500px;
+}
+.isMar4{
+  margin-top: 90px !important;
+}
+.isMar5{
+  margin-top: 475px;
+}
+.isMar6{
+  margin-top: 250px;
+}
+.isMar7{
+  margin-top: 530px;
+}
+.isMar8{
+  margin-top: 400px;
+}
+.isMar9{
+  margin-top: 350px;
+}
+.isMar10{
+  margin-top: 200px;
+}
+.isMarine1{
+  margin-top: 100px;
+}
+
+
+ @media screen and (min-width: 992px){
+  .pageA{
+    height: 1050px !important;
+  }
+  .pageB{
+    height: 1000px;
+    margin-top: 0 !important;
+  }
+  .pageC{
+    height: 1000px;
+  }
+  .pageD{
+    height: 1000px;
+  }
+  .pageE{
+    height: 1000px;
+  }
+  .pageF{
+    height: 1050px;
+  }
+  .pageG{
+    height: 1050px;
+  }
+  .pageH{
+    height: 1050px;
+  }
+  .pageI{
+    height: 800px;
+  }
+/* / 2////////////////////////////////// / */
+.pageA1{
+  height: 1200px;
+}
+.pageA2{
+  height: 1200px;
+}
+.pageA3{
+  height: 1135px;
+}
+.pageA4{
+  height: 1135px;
+}
+.pageA5{
+  height: 1135px;
+}
+.pageA6{
+  height: 1135px;
+}
+.pageA7{
+  height: 1135px;
+}
+.pageA8{
+  height: 900px;
+}
+.pageA9{
+  height: 1135px;
+}
+/* / 3////////////////////////////// / */
+.page1{
+  height: 1360px;
+}
+.page2{
+  height: 1350px;
+}
+.page3{
+  height: 1350px;
+}
+.page4{
+  height: 1350px;
+}
+.page5{
+  height: 1350px;
+}
+.page6{
+  height: 1350px;
+}
+.page7{
+  height: 1400px;
+}
+.page8{
+  height: 1350px;
+}
+}
+ @media screen and (min-width: 1200px){
+  .pageA{
+    height: 1050px !important;
+  }
+  .pageB{
+    height: 1000px;
+    margin-top: 0 !important;
+  }
+  .pageC{
+    height: 1000px;
+  }
+  .pageD{
+    height: 1000px !important;
+  }
+  .pageE{
+    height: 1000px;
+  }
+  .pageF{
+    height: 1050px;
+  }
+  .pageG{
+    height: 1050px;
+  }
+  .pageH{
+    height: 1050px;
+  }
+  .pageI{
+    height: 800px;
+  }
+/* / 2////////////////////////////////// / */
+.pageA1{
+  height: 1200px;
+}
+.pageA2{
+  height: 1200px;
+}
+.pageA3{
+  height: 1135px;
+}
+.pageA4{
+  height: 1135px;
+}
+.pageA5{
+  height: 1135px;
+}
+.pageA6{
+  height: 1135px;
+}
+.pageA7{
+  height: 1135px;
+}
+.pageA8{
+  height: 900px;
+}
+.pageA9{
+  height: 1135px;
+}
+/* / 3////////////////////////////// / */
+.page1{
+  height: 1360px;
+}
+.page2{
+  height: 1350px;
+}
+.page3{
+  height: 1350px;
+}
+.page4{
+  height: 1350px;
+}
+.page5{
+  height: 1350px;
+}
+.page6{
+  height: 1350px;
+}
+.page7{
+  height: 1400px;
+}
+.page8{
+  height: 1350px;
+}
+}
+ @media screen and (min-width: 1400px){
+  .pageA{
+    height: 1020px !important;
+  }
+  .pageB{
+    height: 990px;
+    margin-top: 0 !important;
+  }
+  .pageC{
+    height: 1000px;
+  }
+  .pageD{
+    height: 1100px !important;
+  }
+  .pageE{
+    height: 1000px;
+  }
+  .pageF{
+    height: 1050px;
+  }
+  .pageG{
+    height: 1050px;
+  }
+  .pageH{
+    height: 1050px;
+  }
+  .pageI{
+    height: 800px;
+  }
+/* / 2////////////////////////////////// / */
+.pageA1{
+  height: 1200px;
+}
+.pageA2{
+  height: 1200px;
+}
+.pageA3{
+  height: 1135px;
+}
+.pageA4{
+  height: 1135px;
+}
+.pageA5{
+  height: 1135px;
+}
+.pageA6{
+  height: 1135px;
+}
+.pageA7{
+  height: 1135px;
+}
+.pageA8{
+  height: 900px;
+}
+.pageA9{
+  height: 1135px;
+}
+/* / 3////////////////////////////// / */
+.page1{
+  height: 1360px;
+}
+.page2{
+  height: 1350px;
+}
+.page3{
+  height: 1350px;
+}
+.page4{
+  height: 1350px;
+}
+.page5{
+  height: 1350px;
+}
+.page6{
+  height: 1350px;
+}
+.page7{
+  height: 1400px;
+}
+.page8{
+  height: 1350px;
+}
+}
+ /* @media screen and (max-width: 1400px){
+  .pageA{
+    height: 1020px !important;
+  }
+  .pageB{
+    height: 990px;
+    margin-top: 0 !important;
+  }
+  .pageC{
+    height: 990px;
+  }
+  .pageD{
+    height: 1080px;
+  }
+  .pageE{
+    height: 1000px;
+  }
+  .pageF{
+    height: 1050px;
+  }
+  .pageG{
+    height: 1050px;
+  }
+  .pageH{
+    height: 1050px;
+  }
+  .pageI{
+    height: 800px;
+  }
+/* / 2////////////////////////////////// / */
+/* .pageA1{
+  height: 1200px;
+}
+.pageA2{
+  height: 1200px;
+}
+.pageA3{
+  height: 1135px;
+}
+.pageA4{
+  height: 1135px;
+}
+.pageA5{
+  height: 1135px;
+}
+.pageA6{
+  height: 1135px;
+}
+.pageA7{
+  height: 1135px;
+}
+.pageA8{
+  height: 900px;
+}
+.pageA9{
+  height: 1135px;
+} */
+/* / 3////////////////////////////// / */
+/* .page1{
+  height: 1360px;
+}
+.page2{
+  height: 1350px;
+}
+.page3{
+  height: 1350px;
+}
+.page4{
+  height: 1350px;
+}
+.page5{
+  height: 1350px;
+}
+.page6{
+  height: 1350px;
+}
+.page7{
+  height: 1400px;
+}
+.page8{
+  height: 1350px;
+} */
+/* } */
+
+  
+  @media screen and (min-width: 1600px){
+
+  .pageA{
+    height: 1800px !important;
+  }
+  .text-sm{
+    line-height: 2rem;
+  }
+  .pageB{
+    height: 1800px !important;
+  }
+  .pageC{
+    height: 1800px !important;
+  }
+  .pageD{
+    height: 1800px !important;
+  }
+  .pageE{
+    height: 1800px !important;
+  }
+  .pageF{
+    height: 1800px !important;
+  }
+  .pageG{
+    height: 1800px !important;
+  }
+  .pageH{
+    height: 1800px !important;
+  }
+  .pageI{
+    height: 1800px !important;
+  }
+
+
+
+
+  .pageA1{
+    height: 1500px !important;
+  }
+  .text-sm{
+    line-height: 3rem;
+  }
+  .pageA2{
+    height: 1400px !important;
+  }
+  .pageA3{
+    height: 1100px !important;
+  }
+  .pageA4{
+    height: 1700px !important;
+  }
+  .pageA5{
+    height: 1700px !important;
+  }
+  .pageA6{
+    height: 1700px !important;
+  }
+  .pageA7{
+    height: 1700px !important;
+  }
+  .pageA8{
+    height: 1700px !important;
+  }
+  .pageA9{
+    height: 1700px !important;
+  }
+
+
+
+  .page1{
+    height: 1360px;
+  }
+  .page2{
+    height: 1350px;
+  }
+  .page3{
+    height: 1350px;
+  }
+  .page4{
+    height: 1350px;
+  }
+  .page5{
+    height: 1350px;
+  }
+  .page6{
+    height: 1350px;
+  }
+  .page7{
+    height: 1400px;
+  }
+  .page8{
+    height: 1350px;
+  }
+}

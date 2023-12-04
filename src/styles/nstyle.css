@@ -1,0 +1,535 @@
+.menu-wrap {
+    transition: all 0.3s;
+    overflow: hidden;
+}
+
+.menu-wrap.active {
+    max-width: 14.063vw;
+}
+
+.menu-wrap .logo {
+    margin-bottom: 2.604vw;
+}
+
+.menu-wrap .logo {
+    padding: 0;
+}
+
+
+.menu-wrap .logo img {
+    width: 2.917vw;
+    transition: all 0.3s;
+}
+
+.menu-wrap:hover .logo img {
+    width: 5.417vw;
+}
+
+.menu-wrap ul li a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-size: 0.833vw;
+    color: white;
+    font-weight: 500;
+    padding: 0.833vw 0.938vw;
+    transition: all 0.3s;
+}
+
+.flexboxview {
+    flex: 1 1 0 !important;
+    margin-right: 1rem;
+}
+
+.flexboxview .custp-calender div .p-calendar {
+    width: 100% !important;
+    height: 3.5rem !important;
+}
+
+.menu-wrap ul li a:hover {
+    color: #113699;
+    background-color: #eaefff;
+    border-radius: 0.521vw;
+}
+
+.menu-wrap ul li a.active {
+    color: #113699;
+    background-color: #eaefff;
+    border-radius: 0.521vw;
+}
+
+.menu-wrap ul li:not(:last-child) a {
+    margin-bottom: 0.417vw;
+}
+
+.menu-wrap ul li a i {
+    font-size: 1.042vw;
+}
+
+.menu-wrap ul li a span {
+    padding-left: 0.625vw;
+    line-height: normal;
+}
+
+.menu-wrap ul li a span {
+    visibility: hidden;
+}
+
+.menu-wrap:hover ul li a span {
+    visibility: visible;
+}
+
+.menu-wrap:hover ul li a .gusd-arrow-down {
+    position: absolute;
+    right: 1.042vw;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.menu-wrap .sub-menu {
+    display: none;
+}
+
+.menu-wrap #active .sub-menu {
+    display: none;
+}
+
+.menu-wrap.active #active .sub-menu {
+    display: block;
+}
+
+/* Custom Table */
+.custTable .p-datatable-wrapper {
+    border-bottom: 1px solid #e4e7ec;
+}
+
+.custpaginator .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+    background: #eff8ff;
+    color: #0487c8;
+    font-weight: 500;
+}
+
+.custpaginator .p-paginator .p-paginator-pages .p-paginator-page {
+    border-radius: 8px;
+    min-width: 40px;
+    height: 40px;
+}
+
+.custpaginator .p-paginator .p-paginator-pages .p-paginator-page:not(.p-highlight):hover {
+    background: #eff3f7;
+    color: #272848;
+    font-weight: 600;
+}
+
+.custIconsTable .p-sortable-column-icon {
+    font-size: 10px;
+}
+
+.custIconsTable .pi-sort-alt:before,
+.custIconsTable .pi-sort-amount-down:before {
+    font-size: 10px;
+}
+
+.custIconsTable .pi-sort-amount-up-alt:before {
+    font-size: 10px;
+}
+
+.custIconsTable .pi-filter:before {
+    font-size: 12px;
+}
+
+.custmBtnTable .p-tag {
+    font-size: 13px;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-weight: 400;
+}
+
+.custpaginator .p-paginator .p-paginator-next,
+.custpaginator .p-paginator .p-paginator-prev {
+    border-radius: 0.417vw;
+    border: 1px solid #DDE8EB;
+    text-align: center;
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+    height: auto;
+    padding: 0.417vw 0.729vw;
+}
+
+.custTable.p-datatable .p-datatable-tbody>tr>td {
+    border: none;
+    color: #2c2e33;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 10px 15px;
+}
+
+.custTable.p-datatable .p-datatable-tbody>tr:nth-child(odd) {
+    background: #f9fafb;
+}
+
+.custTable.p-datatable .p-datatable-thead>tr>th {
+    border: none;
+    background: white;
+    color: #667085;
+    font-size: 14px !important;
+    font-weight: 600;
+    padding: 12px 15px;
+}
+
+.custTable.p-datatable .p-column-header-content {
+    width: 100%;
+    justify-content: space-between;
+}
+
+.custTable.p-datatable .p-column-header-content svg {
+    width: 10px !important;
+}
+
+.custTable.p-column-filter-row .p-column-filter-menu-button,
+.p-column-filter-row .p-column-filter-clear-button {
+    display: none !important;
+}
+
+.p-column-filter-menu-button,
+.p-column-filter-clear-button {
+    display: none !important;
+}
+
+.p-column-filter-element input.p-inputtext,
+textarea.p-inputtext {
+    padding: 0.4vw 0.729vw !important;
+    /* width: 110px !important; */
+}
+
+/* Dropdown  */
+.custDropdown .p-dropdown:not(.p-disabled).p-focus {
+    box-shadow: none !important;
+}
+
+.custDropdown .p-inputtext {
+    padding: 0.521vw 0.729vw !important;
+    font-size: 0.833vw !important;
+}
+
+.p-dropdown-items .p-tag {
+    background: none !important;
+    color: #101828;
+    font-weight: 400 !important;
+    font-size: 0.95rem;
+}
+
+.custDropdown .p-dropdown-panel .p-dropdown-items .p-dropdown-item:not(.p-highlight):not(.p-disabled):hover {
+    background: white !important;
+}
+
+.p-dropdown-item .p-tag .p-component .p-tag-value {
+    background: white !important;
+    font-weight: 400 !important;
+}
+
+.custDropdown .p-icon {
+    width: 0.877vw;
+    height: 0.877vw;
+}
+
+/* Dropdown  */
+.p-tag-value {
+    display: flex;
+    align-items: center;
+}
+
+.custTable .p-tag .p-tag-value:before {
+    margin-bottom: -2px;
+}
+
+.custTable .p-tag.p-tag-warning {
+    background-color: #fff2e5;
+    color: #ff7f01;
+    position: relative;
+    font-size: 13px;
+    border-radius: 20px;
+    padding: 6px 11px 6px 20px;
+    font-weight: normal;
+}
+
+.custTable .p-tag.p-tag-warning .p-tag-value:before {
+    font-family: primeicons;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    content: '\e9dd';
+    color: #ff7f01;
+    position: absolute;
+    left: 7px;
+    font-size: 6px;
+}
+
+.custTable .p-tag.p-tag-danger {
+    background-color: #fef3f2;
+    color: #d92d20;
+    position: relative;
+    font-size: 13px;
+    border-radius: 20px;
+    padding: 6px 11px 6px 20px;
+    font-weight: normal;
+}
+
+.custTable .p-tag {}
+
+.custTable .p-tag.p-tag-danger .p-tag-value:before {
+    font-family: primeicons;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    content: '\e9dd';
+    color: #d92d20;
+    position: absolute;
+    left: 9px;
+    font-size: 6px;
+}
+
+.custTable .p-tag.p-tag-success {
+    background-color: #e5f3ec;
+    color: #029046;
+    position: relative;
+    font-size: 13px;
+    border-radius: 20px;
+    padding: 6px 11px 6px 20px;
+    font-weight: normal;
+}
+
+.custTable .p-tag.p-tag-success .p-tag-value:before {
+    font-family: primeicons;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    content: '\e9dd';
+    color: #029046;
+    position: absolute;
+    left: 9px;
+    font-size: 6px;
+}
+
+.custTable .p-tag.p-tag-info {
+    background-color: #e4effa;
+    color: #05a6f6;
+    position: relative;
+    font-size: 13px;
+    border-radius: 20px;
+    padding: 6px 11px 6px 20px;
+    font-weight: normal;
+}
+
+.custTable .p-tag.p-tag-info .p-tag-value:before {
+    font-family: primeicons;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    content: '\e9dd';
+    color: #05a6f6;
+    position: absolute;
+    left: 9px;
+    font-size: 6px;
+}
+
+.p-datatable .p-datatable-tfoot>tr>td {
+    padding: 20px 10px;
+    background: #fef0c7 !important;
+    color: #4c525f !important;
+}
+
+.p-datatable .p-datatable-tfoot>tr>td {
+    background: #fef0c7 !important;
+}
+
+.lastColShadow.p-datatable .p-datatable-tbody>tr>td:last-child {
+    box-shadow: 0px 5px 20px rgba(77, 77, 77, 0.1);
+}
+
+.custpaginator .p-paginator .p-paginator-prev {
+    position: absolute;
+    left: 15px;
+    max-width: 115px;
+}
+
+.custpaginator .p-paginator .p-paginator-next {
+    position: absolute;
+    right: 15px;
+    max-width: 89px;
+}
+
+.custpaginator .p-paginator .p-paginator-next,
+.custpaginator .p-paginator .p-paginator-prev {
+    border-radius: 8px;
+    border: 1px solid #dde8eb;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+    height: auto;
+    padding: 8px 14px;
+}
+
+
+.custIconsTable .pi-angle-right {
+    position: relative;
+    width: 100%;
+    left: 0;
+    right: 0;
+    font-size: 12px;
+}
+
+.custIconsTable .pi-angle-left {
+    position: relative;
+    width: 100%;
+    left: 0;
+    right: 0;
+    font-size: 12px;
+}
+
+
+/* Custom Table End */
+
+/* custom_tabs  */
+.custom_tabs .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+    margin: 0;
+}
+
+.custom_tabs .p-tabview .p-tabview-nav .p-tabview-ink-bar {
+    display: none !important;
+}
+.custom_tabs .p-tabview .p-tabview-nav {
+    border-width: 0 0 1px 0;
+}
+/* responsive  */
+@media only screen and (max-width: 1280px) {
+
+    /* header */
+    .headerTitle {
+        font-size: 18px !important;
+    }
+
+    .menu-wrap.active {
+        max-width: 270px;
+    }
+
+    .menu-wrap .logo {
+        margin-bottom: 50px;
+    }
+
+    .menu-wrap .logo img {
+        width: 56px;
+    }
+
+    .menu-wrap:hover .logo img {
+        width: 104px;
+    }
+
+    .menu-wrap ul li a {
+        font-size: 16px;
+        padding: 16px 18px;
+    }
+
+    .menu-wrap ul li a:hover {
+        border-radius: 10px;
+    }
+
+    .menu-wrap ul li:not(:last-child) a {
+        margin-bottom: 8px;
+    }
+
+    .menu-wrap ul li a i {
+        font-size: 20px;
+    }
+
+    .menu-wrap ul li a span {
+        padding-left: 12px;
+    }
+
+    .menu-wrap:hover ul li a .gusd-arrow-down {
+        right: 20px;
+    }
+
+    /* custom input */
+    input.p-inputtext,
+    textarea.p-inputtext {
+        padding: 10px 14px;
+        font-size: 16px;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .custTable.p-datatable .p-datatable-tbody>tr>td {
+        font-size: 15px;
+    }
+
+    .custTable.p-datatable .p-datatable-thead>tr>th {
+        font-size: 15px;
+    }
+
+    .custTable .p-tag.p-tag-success,
+    .custTable .p-tag.p-tag-danger,
+    .custTable .p-tag.p-tag-info,
+    .custTable .p-tag.p-tag-warning {
+        font-size: 12px;
+    }
+
+    .tableBtn {
+        font-size: 13px;
+    }
+
+    .tableBtn i {
+        font-size: 13px;
+    }
+
+    .p-dropdown .p-dropdown-label.p-placeholder {
+        font-size: 12px;
+    }
+
+    .custp-table-d .p-datatable .p-datatable-tbody>tr>td {
+        font-size: 14px;
+    }
+
+    .custp-table .p-datatable .p-datatable-tbody>tr>td {
+        font-size: 14px;
+        padding-top: 17px;
+        padding-bottom: 17px;
+    }
+}
+
+@media only screen and (max-width: 960px) {
+    .tableBtn {
+        font-size: 13px;
+    }
+
+    .tableBtn i {
+        font-size: 13px;
+    }
+}
+
+
+@media only screen and (max-width: 767px) {
+    .notification.p-overlaypanel {
+        width: 400px;
+        right: 0;
+        left: auto !important;
+    }
+
+    .tableBtn {
+        font-size: 12px;
+    }
+
+    .tableBtn i {
+        font-size: 12px;
+    }
+}
+
+
+@media only screen and (max-width: 575px) {
+    .tableBtn {
+        font-size: 12px;
+    }
+
+    .tableBtn i {
+        font-size: 12px;
+    }
+}
